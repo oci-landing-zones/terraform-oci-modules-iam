@@ -1,0 +1,81 @@
+# Copyright (c) 2023 Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
+
+#---------------------------------------------------------------------------------------------------------------------
+# 1. Rename this file to <project-name>.auto.tfvars, where <project-name> is any name of your choice.
+# 2. Provide values for "Tenancy Connectivity Variables".
+
+# The groups variable defines a Terraform object describing any set of OCI IAM groups.
+# The object defines sub-objects indexed by uppercased strings, like IAM-ADMIN-GROUP, COST-ADMIN-GROUP, etc.
+# These strings can actually be any random strings, but once defined they MUST NOT BE CHANGED, 
+# or Terraform will try to destroy and recreate the groups.
+# The sub-objects have a members attribute that is used to assign users to the group. 
+# Note that users are not created, they must exist beforehand.
+# To assign users, pass the respective user names you want as group members.
+#---------------------------------------------------------------------------------------------------------------------
+
+#---------------------------------------
+# Tenancy Connectivity Variables
+#---------------------------------------
+
+tenancy_ocid         = "<tenancy OCID>"             # Get this from OCI Console (after logging in, go to top-right-most menu item and click option "Tenancy: <your tenancy name>").
+user_ocid            = "<user OCID>"                # Get this from OCI Console (after logging in, go to top-right-most menu item and click option "My profile").
+fingerprint          = "<PEM key fingerprint>"      # The fingerprint can be gathered from your user account. In the "My profile page, click "API keys" on the menu in left hand side).
+private_key_path     = "<path to the private key>"  # This is the full path on your local system to the API signing private key.
+private_key_password = ""                           # This is the password that protects the private key, if any.
+home_region          = "<your tenancy home region>" # This is your tenancy home region.
+
+
+#---------------------------------------
+# Input variable
+#---------------------------------------
+
+groups = {  
+  IAM-ADMIN-GROUP  : { 
+    name : "vision-iam-admin-group",  
+    description : "CIS Landing Zone IAM administrators group."     
+    #members : [], 
+    #defined_tags : null, 
+    #freeform_tags : null
+  },
+  CRED-ADMIN-GROUP  : { 
+    name : "vision-cred-admin-group",  
+    description : "CIS Landing Zone credential administrators group."
+  },  
+  COST-ADMIN-GROUP  : { 
+    name : "vision-cost-admin-group",  
+    description : "CIS Landing Zone cost administrators group."
+  },                                        
+  NETWORK-ADMIN-GROUP  : { 
+    name : "vision-network-admin-group",  
+    description : "CIS Landing Zone Network administrators group."
+  },
+  SECURITY-ADMIN-GROUP : { 
+    name : "vision-security-admin-group", 
+    description : "CIS Landing Zone Security admininstrators group."
+  },
+  APP-ADMIN-GROUP      : { 
+    name : "vision-app-admin-group",      
+    description : "CIS Landing Zone Application admininstrators group."
+  },
+  DATABASE-ADMIN-GROUP : { 
+    name : "vision-database-admin-group", 
+    description : "CIS Landing Zone Database admininstrators group."
+  },
+  EXAINFRA-ADMIN-GROUP : { 
+    name : "vision-exainfra-admin-group", 
+    description : "CIS Landing Zone Exadata Cloud Service infrastructure admininstrators group."
+  },
+  STORAGE-ADMIN-GROUP  : { 
+    name : "vision-storage-admin-group",  
+    description : "CIS Landing Zone storage administrators group."
+  }, 
+  AUDITOR-GROUP  : { 
+    name : "vision-auditor-group",  
+    description : "CIS Landing Zone auditor group."
+  },    
+  ANNOUNCEMENT-READER-GROUP  : { 
+    name : "vision-announcement-reader-group",  
+    description : "CIS Landing Zone group for reading OCI announcements."
+  }                                                                
+}

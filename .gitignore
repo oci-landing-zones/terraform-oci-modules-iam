@@ -1,0 +1,10 @@
+**/*.tfstate*
+**/*.out
+**/.terraform/*
+**/.terraform.*
+**/.DS_Store
+**/crash.log
+**/*.pem
+**/terraform_*.tfvars*
+**/terraform.tfvars
+**/input.auto.tfvars

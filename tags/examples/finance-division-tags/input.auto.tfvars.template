@@ -1,0 +1,90 @@
+# Copyright (c) 2023 Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
+
+#---------------------------------------------------------------------------------------------------------------------
+# 1. Rename this file to <project-name>.auto.tfvars, where <project-name> is any name of your choice.
+# 2. Provide values for "Tenancy Connectivity Variables".
+#
+# The defined_tags variable defines a Terraform object describing any set of OCI IAM defined_tags resources.
+# The object is a two level map, with the first level defining the tag namespace and the second level defining
+# the tags. Each map element is indexed by a unique string in uppercase, like BASE-TAG-NAMESPACE, GROUP-ROLES-TAG,
+# CMP-TYPE-TAG, etc. These strings can actually be any random string, but once defined they MUST NOT BE CHANGED, 
+# or Terraform will try to destroy and recreate the resources.
+# Within the tags objects:
+#   - is_cost_tracking defines whether the tag is used for cost tracking.
+#   - is_retired indicates whether the tag is retired. Retired tags are no longer applied to resources.
+#   - valid_values enforce the allowed values for the tag. 
+#   - apply_default_to_compartments defined the list of compartments to which a default value is auto assigned.
+#   - default_value defines the auto assigned value to compartments in the list.
+#   - is_default_required, when true, sets default_value during resource creation.
+#
+# If "Oracle-Tags" namespace is not defined in the tenancy, it also manages a tag namespace and tags for 
+# identifying resource creators (CreatedBy) and the time when resources are created (CreatedOn). 
+# These tags are recommended by CIS OCI Foundations Benchmark. If for some reason you want to disable them, 
+# set enable_cislz_namespace variable to false in file main.tf.
+#---------------------------------------------------------------------------------------------------------------
+
+#---------------------------------------
+# Tenancy Connectivity Variables
+#---------------------------------------
+
+tenancy_ocid         = "<tenancy OCID>"             # Get this from OCI Console (after logging in, go to top-right-most menu item and click option "Tenancy: <your tenancy name>").
+user_ocid            = "<user OCID>"                # Get this from OCI Console (after logging in, go to top-right-most menu item and click option "My profile").
+fingerprint          = "<PEM key fingerprint>"      # The fingerprint can be gathered from your user account. In the "My profile page, click "API keys" on the menu in left hand side).
+private_key_path     = "<path to the private key>"  # This is the full path on your local system to the API signing private key.
+private_key_password = ""                           # This is the password that protects the private key, if any.
+home_region          = "<your tenancy home region>" # This is your tenancy home region.
+
+
+#---------------------------------------
+# Input variable
+#---------------------------------------
+
+defined_tags = {  
+  FINANCE-NAMESPACE  : { 
+    compartment_id : null,
+    namespace_name : "finance",  
+    namespace_description : "Finances division's tag namespace.",    
+    is_namespace_retired : false,  
+    defined_tags : null,
+    freeform_tags : null
+    tags : {
+      COST-CENTER-TAG : {
+        name : "cost-center",
+        description : "Cost center.",
+        is_cost_tracking : true,
+        is_retired : false,
+        valid_values : ["a1","b1","c1"] # tag values are checked against these values upon resource tagging.
+        apply_default_to_compartments : null, # ["ocid1","ocid2","ocidN"] Optional, provide a list of compartment ocids where you want to apply the default_value.
+        default_value : null,
+        is_default_required : true,
+        defined_tags : null,
+        freeform_tags : null                
+      },
+      ENVIRONMENT-TAG : {
+        name : "environment-class",
+        description : "Environment class. high for production, low for others, like development, test, sandbox etc.",
+        is_cost_tracking : false,
+        is_retired : false,
+        valid_values : ["high","low"], # tag values are checked against these values upon resource tagging.
+        apply_default_to_compartments : null, # ["ocid1","ocid2","ocidN"] Optional, provide a list of compartment ocids where you want to apply the default_value.
+        default_value : null,
+        is_default_required : true,
+        defined_tags : null,
+        freeform_tags : null 
+      },
+      RESOURCE-ID-TAG : {
+        name : "resource-id",
+        description : "A random resource id, used to communicate any business-specific metadata about resources",
+        is_cost_tracking : false,
+        is_retired : false,
+        valid_values : null, # no checks upon resource tagging
+        apply_default_to_compartments : null, # ["ocid1","ocid2","ocidN"] Optional, provide a list of compartment ocids where you want to apply the default_value.
+        default_value : null,
+        is_default_required : true,
+        defined_tags : null,
+        freeform_tags : null 
+      }
+    } 
+  }
+}  

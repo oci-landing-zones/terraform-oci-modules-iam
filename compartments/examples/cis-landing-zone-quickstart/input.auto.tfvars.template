@@ -1,0 +1,121 @@
+# Copyright (c) 2023 Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
+
+#---------------------------------------------------------------------------------------------------------------------
+# 1. Rename this file to <project-name>.auto.tfvars, where <project-name> is a name of your choice.
+# 2. Provide values for "Tenancy Connectivity Variables".
+# 3. Replace <REPLACE-BY-THE-PARENT-COMPARTMENT-OCID> placeholder in TOP-CMP object by a compartment OCID. 
+# This compartment determines the compartment that TOP-CMP compartment gets attached to.
+
+# The compartments variable defines a Terraform object describing CIS Landing Zone Quick Start compartments topology.
+# This object is passed into a generic Terraform module that creates any compartments topology in OCI.
+# The object defines sub-objects indexed by uppercased strings, like TOP-CMP, NETWORK-CMP, SECURITY-CMP, etc.
+# These strings can actually be any random strings, but once defined they MUST NOT BE CHANGED, or Terraform 
+# will try to destroy and recreate the compartments.
+
+# Notice the freeform_tags applied to each compartment. They are not required, but if defined they are leveraged 
+# by OCI CIS Landing Zone IAM Policies Module for deploying template (pre-configured) policies.
+#----------------------------------------------------------------------------------------------------------------------
+
+#---------------------------------------
+# Tenancy Connectivity Variables
+#---------------------------------------
+
+tenancy_ocid         = "<tenancy OCID>"             # Get this from OCI Console (after logging in, go to top-right-most menu item and click option "Tenancy: <your tenancy name>").
+user_ocid            = "<user OCID>"                # Get this from OCI Console (after logging in, go to top-right-most menu item and click option "My profile").
+fingerprint          = "<PEM key fingerprint>"      # The fingerprint can be gathered from your user account. In the "My profile page, click "API keys" on the menu in left hand side).
+private_key_path     = "<path to the private key>"  # This is the full path on your local system to the API signing private key.
+private_key_password = ""                           # This is the password that protects the private key, if any.
+home_region          = "<your tenancy home region>" # This is your tenancy home region.
+
+
+#---------------------------------------
+# Input variable
+#---------------------------------------
+
+compartments = { 
+  TOP-CMP : { 
+    name : "vision-top-cmp", 
+    description : "CIS Landing Zone enclosing compartment", 
+    parent_ocid : "<REPLACE-BY-THE-PARENT-COMPARTMENT-OCID>",
+    freeform_tags : {
+      "cislz":"vision",
+      "cislz-cmp-type":"enclosing",
+      "cislz-consumer-groups-security":"vision-security-admin-group",
+      "cislz-consumer-groups-application":"vision-app-admin-group",
+      "cislz-consumer-groups-iam":"vision-iam-admin-group"
+    },
+    children : {
+      NETWORK-CMP : { 
+        name : "vision-network-cmp", 
+        description : "CIS Landing Zone Network compartment", 
+        freeform_tags : {
+          "cislz":"vision",
+          "cislz-cmp-type":"network",
+          "cislz-consumer-groups-security":"vision-security-admin-group",
+          "cislz-consumer-groups-application":"vision-app-admin-group",
+          "cislz-consumer-groups-database":"vision-database-admin-group",
+          "cislz-consumer-groups-network":"vision-network-admin-group",
+          "cislz-consumer-groups-storage":"vision-storage-admin-group",
+          "cislz-consumer-groups-exainfra":"vision-exainfra-admin-group"
+        }, 
+      },
+      SECURITY-CMP : { 
+        name : "vision-security-cmp", 
+        description : "CIS Landing Zone Security compartment", 
+        freeform_tags : {
+          "cislz":"vision",
+          "cislz-cmp-type":"security",
+          "cislz-consumer-groups-security":"vision-security-admin-group",
+          "cislz-consumer-groups-application":"vision-app-admin-group,vision-db-admin-group",
+          "cislz-consumer-groups-database":"vision-database-admin-group",
+          "cislz-consumer-groups-network":"vision-network-admin-group",
+          "cislz-consumer-groups-storage":"vision-storage-admin-group",
+          "cislz-consumer-groups-exainfra":"vision-exainfra-admin-group"
+        },
+      },
+      APP-CMP : { 
+        name : "vision-application-cmp", 
+        description : "CIS Landing Zone Application compartment", 
+        freeform_tags : {
+          "cislz":"vision",
+          "cislz-cmp-type":"application",
+          "cislz-consumer-groups-security":"vision-security-admin-group",
+          "cislz-consumer-groups-application":"vision-app-admin-group",
+          "cislz-consumer-groups-database":"vision-database-admin-group",
+          "cislz-consumer-groups-network":"vision-network-admin-group",
+          "cislz-consumer-groups-storage":"vision-storage-admin-group",
+          "cislz-consumer-groups-exainfra":"vision-exainfra-admin-group"
+        },
+      },
+      DB-CMP : { 
+        name : "vision-database-cmp", 
+        description : "CIS Landing Zone Database compartment", 
+        freeform_tags : {
+          "cislz":"vision",
+          "cislz-cmp-type":"database",
+          "cislz-consumer-groups-security":"vision-security-admin-group",
+          "cislz-consumer-groups-application":"vision-app-admin-group",
+          "cislz-consumer-groups-database":"vision-database-admin-group",
+          "cislz-consumer-groups-network":"vision-network-admin-group",
+          "cislz-consumer-groups-storage":"vision-storage-admin-group",
+          "cislz-consumer-groups-exainfra":"vision-exainfra-admin-group"
+        },
+      },
+      EXACS-CMP : { 
+        name : "vision-exainfra-cmp", 
+        description : "CIS Landing Zone Exadata Cloud Service compartment",  
+        freeform_tags : {
+          "cislz":"vision",
+          "cislz-cmp-type":"exainfra",
+          "cislz-consumer-groups-security":"vision-security-admin-group",
+          "cislz-consumer-groups-application":"vision-app-admin-group",
+          "cislz-consumer-groups-database":"vision-database-admin-group",
+          "cislz-consumer-groups-network":"vision-network-admin-group",
+          "cislz-consumer-groups-storage":"vision-storage-admin-group",
+          "cislz-consumer-groups-exainfra":"vision-exainfra-admin-group"
+        },
+      } 
+    }
+  }
+}
