@@ -1,0 +1,68 @@
+# Copyright (c) 2023 Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
+
+#------------------------------------------------------------------------------------------------------------------------------------
+# 1. Rename this file to <project-name>.auto.tfvars, where <project-name> is any name of your choice.
+# 2. Provide values for "Tenancy Connectivity Variables".
+# 3. Replace <REPLACE-BY-COMPARTMENT-OCID> placeholder by a compartment OCID. 
+#    This determines the compartment that sample *supplied_policies* get attached to. 
+#    If you are not interested in supplying your own policies, you can remove *supplied_policies* attribute altogether.
+#
+# This example depends on compartments properly tagged with required metadata for CIS Landing Zone policies.
+# A matching coompartments example is available at 
+# https://github.com/oracle-quickstart/terraform-oci-cis-landing-zone-iam-modules/compartments/examples/vision
+#-------------------------------------------------------------------------------------------------------------------------------------
+
+#---------------------------------------
+# Tenancy Connectivity Variables
+#---------------------------------------
+
+tenancy_ocid         = "<tenancy OCID>"             # Get this from OCI Console (after logging in, go to top-right-most menu item and click option "Tenancy: <your tenancy name>").
+user_ocid            = "<user OCID>"                # Get this from OCI Console (after logging in, go to top-right-most menu item and click option "My profile").
+fingerprint          = "<PEM key fingerprint>"      # The fingerprint can be gathered from your user account. In the "My profile page, click "API keys" on the menu in left hand side).
+private_key_path     = "<path to the private key>"  # This is the full path on your local system to the API signing private key.
+private_key_password = ""                           # This is the password that protects the private key, if any.
+region               = "<your tenancy home region>" # This is your tenancy home region.
+
+#---------------------------------------
+# Input variable
+#---------------------------------------
+
+policies_configuration = {
+  cislz_tag_lookup_value : "vision"
+  groups_with_tenancy_level_roles : [
+    {"name":"vision-iam-admin-group",     "roles":"iam"},
+    {"name":"vision-cred-admin-group",    "roles":"cred"},
+    {"name":"vision-cost-admin-group",    "roles":"cost"},
+    {"name":"vision-security-admin-group","roles":"security"},
+    {"name":"vision-app-admin-group",     "roles":"application"},
+    {"name":"vision-auditor-group",       "roles":"auditor"},
+    {"name":"vision-database-admin-group","roles":"basic"},
+    {"name":"vision-exainfra-admin-group","roles":"basic"},
+    {"name":"vision-storage-admin-group", "roles":"basic"},
+    {"name":"vision-announcement_reader-group","roles":"announcement-reader"}
+  ] 
+  #policy_name_prefix : "cis"
+  #policy_name_suffix : ""
+  supplied_policies : {
+    "SAMPLE-POLICY" : {
+      name : "sample-policy"
+      description : "Sample policy to verify CIS checks."
+      compartment_ocid : "<REPLACE-BY-COMPARTMENT-OCID>"
+      #-- The "not ok" statements below are flagged by the module if attribute enable_cis_benchmark_checks = true (default)
+      statements : [
+        #"allow group-a to manage all-resources in tenancy", # not ok
+        #"allow group-b to manage all-resources in tenancy ", # not ok
+        "allow group group-a to use groups in tenancy where target.group.name != 'Administrators'", # ok
+        "allow group group-a to use groups in tenancy where target.group.name = 'group-a'", # ok
+        "allow group vision-cred-admin-group to manage users in tenancy where any {target.group.name != 'Administrators'}", # ok
+        #"allow group vision-cred-admin-group to manage users in tenancy where any {target.group.name != 'Administrators', request.operation = 'UpdateGroup'}", # not ok
+        "allow group vision-cred-admin-group to manage users in tenancy where any {target.group.name != 'Administrators', request.operation = 'ListAPiKeys'}" # ok
+        #"allow group vision-cred-admin-group to manage groups in tenancy", # not ok
+        #"allow group vision-cred-admin-group to manage users in tenancy" # not ok
+      ]            
+      defined_tags : null
+      freeform_tags : null
+    }
+  } 
+}

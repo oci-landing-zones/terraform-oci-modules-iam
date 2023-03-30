@@ -1,0 +1,83 @@
+# Copyright (c) 2023 Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
+
+#---------------------------------------------------------------------------------------------------------------------
+# 1. Rename this file to <project-name>.auto.tfvars, where <project-name> is any name of your choice.
+# 2. Provide values for "Tenancy Connectivity Variables".
+
+# Each object in the *groups* map is indexed by an uppercase string, like IAM-ADMIN-GROUP, CRED-ADMIN-GROUP, etc. 
+# These strings are used by Terraform as keys to the actual managed resources. 
+# They can actually be any random strings, but once defined they MUST NOT BE CHANGED, 
+# or Terraform will try to destroy and recreate the groups.
+# To assign users, pass the existing user names you want as group members.
+#---------------------------------------------------------------------------------------------------------------------
+
+#---------------------------------------
+# Tenancy Connectivity Variables
+#---------------------------------------
+
+tenancy_ocid         = "<tenancy OCID>"             # Get this from OCI Console (after logging in, go to top-right-most menu item and click option "Tenancy: <your tenancy name>").
+user_ocid            = "<user OCID>"                # Get this from OCI Console (after logging in, go to top-right-most menu item and click option "My profile").
+fingerprint          = "<PEM key fingerprint>"      # The fingerprint can be gathered from your user account. In the "My profile page, click "API keys" on the menu in left hand side).
+private_key_path     = "<path to the private key>"  # This is the full path on your local system to the API signing private key.
+private_key_password = ""                           # This is the password that protects the private key, if any.
+region               = "<your tenancy home region>" # This is your tenancy home region.
+
+
+#---------------------------------------
+# Input variable
+#---------------------------------------
+
+groups_configuration = {
+  default_defined_tags : null
+  default_freeform_tags : null
+  groups : {  
+    IAM-ADMIN-GROUP  : { 
+      name : "vision-iam-admin-group",  
+      description : "IAM administrators group."     
+      #members : [], 
+      #defined_tags : null, 
+      #freeform_tags : null
+    },
+    CRED-ADMIN-GROUP  : { 
+      name : "vision-cred-admin-group",  
+      description : "Credential administrators group."
+    },  
+    COST-ADMIN-GROUP  : { 
+      name : "vision-cost-admin-group",  
+      description : Cost administrators group."
+    },                                        
+    NETWORK-ADMIN-GROUP  : { 
+      name : "vision-network-admin-group",  
+      description : "Network administrators group."
+    },
+    SECURITY-ADMIN-GROUP : { 
+      name : "vision-security-admin-group", 
+      description : "Security admininstrators group."
+    },
+    APP-ADMIN-GROUP      : { 
+      name : "vision-app-admin-group",      
+      description : "Application admininstrators group."
+    },
+    DATABASE-ADMIN-GROUP : { 
+      name : "vision-database-admin-group", 
+      description : "Database admininstrators group."
+    },
+    EXAINFRA-ADMIN-GROUP : { 
+      name : "vision-exainfra-admin-group", 
+      description : "Exadata Cloud Service infrastructure admininstrators group."
+    },
+    STORAGE-ADMIN-GROUP  : { 
+      name : "vision-storage-admin-group",  
+      description : "Storage administrators group."
+    }, 
+    AUDITOR-GROUP  : { 
+      name : "vision-auditor-group",  
+      description : "Auditor group."
+    },    
+    ANNOUNCEMENT-READER-GROUP  : { 
+      name : "vision-announcement-reader-group",  
+      description : "Group for reading OCI announcements."
+    }                                                                
+  }
+}

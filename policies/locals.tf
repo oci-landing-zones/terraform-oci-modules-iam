@@ -1,4 +1,4 @@
-# Copyright (c) 2022 Oracle and/or its affiliates.
+# Copyright (c) 2023 Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 locals {  
@@ -17,8 +17,17 @@ locals {
   database_kms_dyn_group_tag_name  = "cislz-consumer-groups-dyn-database-kms"
   compute_agent_dyn_group_tag_name = "cislz-consumer-groups-dyn-compute-agent"
 
+  #-- Module defaults
+  enable_cis_benchmark_checks = var.policies_configuration.enable_cis_benchmark_checks != null ? var.policies_configuration.enable_cis_benchmark_checks : true
+  enable_tenancy_level_template_policies = var.policies_configuration.enable_tenancy_level_template_policies != null ? var.policies_configuration.enable_tenancy_level_template_policies : true
+  enable_compartment_level_template_policies = var.policies_configuration.enable_compartment_level_template_policies != null ? var.policies_configuration.enable_compartment_level_template_policies : true
+  enable_output = var.policies_configuration.enable_output != null ? var.policies_configuration.enable_output : false
+  enable_debug = var.policies_configuration.enable_debug != null ? var.policies_configuration.enable_debug : false
+  supplied_compartments = var.policies_configuration.supplied_compartments != null ? var.policies_configuration.supplied_compartments : []
+  supplied_policies = var.policies_configuration.supplied_policies != null ? var.policies_configuration.supplied_policies : {}
+
   #-- Map derived from compartments input variable.
-  cmp_name_to_cislz_tag_map_from_var = {for cmp in var.target_compartments : cmp.name => {
+  cmp_name_to_cislz_tag_map_from_var = {for cmp in local.supplied_compartments : cmp.name => {
     cmp-type     : lookup(cmp.freeform_tags, local.cmp_type_tag_name,""),
     iam-group    : length(lookup(cmp.freeform_tags, local.iam_group_tag_name,"")) > 0 ? lookup(cmp.freeform_tags, local.iam_group_tag_name,"") : null,
     sec-group    : length(lookup(cmp.freeform_tags, local.security_group_tag_name,"")) > 0 ? lookup(cmp.freeform_tags, local.security_group_tag_name,"") : null,
@@ -47,11 +56,11 @@ locals {
     db-dyn-group : length(lookup(cmp.freeform_tags, local.database_kms_dyn_group_tag_name,"")) > 0 ? lookup(cmp.freeform_tags, local.database_kms_dyn_group_tag_name,"") : null,
     ca-dyn-group : length(lookup(cmp.freeform_tags, local.compute_agent_dyn_group_tag_name,"")) > 0 ? lookup(cmp.freeform_tags,local.compute_agent_dyn_group_tag_name,"") : null,
     ocid         : cmp.id
-  } if lookup(cmp.freeform_tags, local.lz_tag_name,"") == var.cislz_tag_lookup_value }
+  } if lookup(cmp.freeform_tags, local.lz_tag_name,"") == var.policies_configuration.cislz_tag_lookup_value }
 
   #-- Map from variable takes precedence
   cmp_name_to_cislz_tag_map = length(local.cmp_name_to_cislz_tag_map_from_var) > 0 ? local.cmp_name_to_cislz_tag_map_from_var : local.cmp_name_to_cislz_tag_map_from_data_source  
 
-  policy_name_prefix = var.policy_name_prefix != null ? "${var.policy_name_prefix}-" : ""
-
+  policy_name_prefix = var.policies_configuration.policy_name_prefix != null ? "${var.policies_configuration.policy_name_prefix}-" : ""
+  policy_name_suffix = var.policies_configuration.policy_name_suffix != null ? (var.policies_configuration.policy_name_suffix == "" ? "" : "-${var.policies_configuration.policy_name_suffix}") : "-policy"
 }  

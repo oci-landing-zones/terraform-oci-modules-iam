@@ -1,4 +1,4 @@
-# Copyright (c) 2022 Oracle and/or its affiliates.
+# Copyright (c) 2023 Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 #--------------------------------------------------------------------------------------------
@@ -17,7 +17,9 @@ locals {
   auditor_role     = "auditor"
   announcement_reader_role = "announcement-reader"
 
-  group_name_to_role_map = {for group in var.groups_with_tenancy_level_roles : group.name => split(",", lookup(group,"roles","basic"))} # this produces objects like {"group-name-1" : ["iam", "security"]}
+  groups_with_tenancy_level_roles = var.policies_configuration.groups_with_tenancy_level_roles != null ? var.policies_configuration.groups_with_tenancy_level_roles : []
+
+  group_name_to_role_map = {for group in local.groups_with_tenancy_level_roles : group.name => split(",", lookup(group,"roles","basic"))} # this produces objects like {"group-name-1" : ["iam", "security"]}
   group_names = join(",", keys(local.group_name_to_role_map)) # this produces a comma separated string of group names, like "group-name-1, group-name-2, group-name-3"
   group_name_map_transpose = transpose(local.group_name_to_role_map) # this produces objects like {"iam" : ["group-name-1"], "security" : ["group-name-1"]}
   group_role_to_name_map = {for key, value in local.group_name_map_transpose : key => value[0]} # this is the same transposed matrix, but it takes group name string at index 0.
@@ -128,30 +130,30 @@ locals {
   #-- Policies
   #-- Naming
   root_cmp_admin_policy_key = "ROOT-CMP-ADMIN-POLICY"
-  root_cmp_admin_policy_name = "${local.policy_name_prefix}root-cmp-admin-policy"
+  root_cmp_admin_policy_name = "${local.policy_name_prefix}root-admin${local.policy_name_suffix}"
     
   root_cmp_admin_policy = length(local.root_cmp_admin_grants) > 0 ? {
     (local.root_cmp_admin_policy_key) = {
       name           = local.root_cmp_admin_policy_name
       compartment_ocid = var.tenancy_ocid
       description    = "CIS Landing Zone root policy for admin groups."
-      defined_tags   = var.defined_tags
-      freeform_tags  = var.freeform_tags
+      defined_tags   = var.policies_configuration.defined_tags
+      freeform_tags  = var.policies_configuration.freeform_tags
       statements     = local.root_cmp_admin_grants
     }
   } : {}
 
   #-- Naming
   root_cmp_nonadmin_policy_key = "ROOT-CMP-NONADMIN-POLICY"
-  root_cmp_nonadmin_policy_name = "${local.policy_name_prefix}root-cmp-nonadmin-policy"
+  root_cmp_nonadmin_policy_name = "${local.policy_name_prefix}root-non-admin${local.policy_name_suffix}"
   
   root_cmp_nonadmin_policy = length(local.root_cmp_nonadmin_grants) > 0 ? {
     (local.root_cmp_nonadmin_policy_key) = {
       name             = local.root_cmp_nonadmin_policy_name
       compartment_ocid = var.tenancy_ocid
       description      = "CIS Landing Zone root policy for non-admin groups."
-      defined_tags     = var.defined_tags
-      freeform_tags    = var.freeform_tags
+      defined_tags     = var.policies_configuration.defined_tags
+      freeform_tags    = var.policies_configuration.freeform_tags
       statements       = local.root_cmp_nonadmin_grants
     }
   } : {}

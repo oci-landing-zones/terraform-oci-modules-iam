@@ -1,4 +1,4 @@
-# Copyright (c) 2022 Oracle and/or its affiliates.
+# Copyright (c) 2023 Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 locals {
@@ -47,11 +47,11 @@ locals {
   #-- Policies
   exainfra_cmps_policies = {for cmp, values in local.cmp_name_to_cislz_tag_map : 
     (upper("${cmp}-exainfra-policy")) => {
-      name             = "${local.policy_name_prefix}${cmp}-exainfra-policy"
+      name             = "${local.policy_name_prefix}${cmp}${local.policy_name_suffix}"
       compartment_ocid = values.ocid
       description      = "CIS Landing Zone policy for Exadata Cloud Service infrastructure compartment."
-      defined_tags     = var.defined_tags
-      freeform_tags    = var.freeform_tags
+      defined_tags     = var.policies_configuration.defined_tags
+      freeform_tags    = var.policies_configuration.freeform_tags
       statements       = concat(local.exainfra_admin_grants_on_exainfra_cmp_map[cmp],
                                 local.exainfra_read_grants_on_exainfra_cmp_map[cmp],
                                 local.database_admin_grants_on_exainfra_cmp_map[cmp])

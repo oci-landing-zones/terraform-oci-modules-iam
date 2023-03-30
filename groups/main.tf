@@ -6,12 +6,12 @@ data "oci_identity_users" "these" {
 }
 
 resource "oci_identity_group" "these" {
-  for_each       = var.groups
+  for_each       = var.groups_configuration.groups
     compartment_id = var.tenancy_ocid
     name           = each.value.name
     description    = each.value.description
-    defined_tags   = each.value.defined_tags 
-    freeform_tags  = each.value.freeform_tags
+    defined_tags   = each.value.defined_tags != null ? each.value.defined_tags : var.groups_configuration.default_defined_tags != null ? var.groups_configuration.default_defined_tags : null
+    freeform_tags  = each.value.freeform_tags != null ? each.value.freeform_tags : var.groups_configuration.default_freeform_tags != null ? var.groups_configuration.default_freeform_tags : null
 }
 
 resource "oci_identity_user_group_membership" "these" {
@@ -24,7 +24,7 @@ locals {
   users  = { for u in data.oci_identity_users.these.users : u.name => u }
 
   group_memberships = flatten([
-    for k, v in var.groups : [
+    for k, v in var.groups_configuration.groups : [
       for name in v.members : {
         group_key  = k
         user_name  = name

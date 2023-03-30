@@ -1,10 +1,13 @@
 # Copyright (c) 2023 Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 
-variable "tenancy_ocid" {
-  description = "The tenancy OCID."
-  type = string
-}
+variable "tenancy_ocid" {}
+variable "region" {description = "Your tenancy home region"}
+variable "user_ocid" {default = ""}
+variable "fingerprint" {default = ""}
+variable "private_key_path" {default = ""}
+variable "private_key_password" {default = ""}
+
 variable "policies_configuration" {
   description = "Policies configuration"
   type = object({
@@ -16,8 +19,8 @@ variable "policies_configuration" {
     })))
     enable_compartment_level_template_policies = optional(bool) # Enables the module to manage template (pre-configured) policies at the compartment level (compartments other than root). Default is true.
     cislz_tag_lookup_value = optional(string) # The tag value used for looking up compartments. This module searches for compartments that are freeform tagged with cislz = <cislz_tag_lookup_value>. The selected compartments are eligible for template (pre-configured) policies. If the lookup fails, no template policies are applied.
-    policy_name_prefix = optional(string) # A prefix to be prepended to all policy names
-    policy_name_suffix = optional(string) # A suffix to be appended to all policy names
+    policy_name_prefix = optional(string) # A prefix to be prepended to all policy names. Default is ""
+    policy_name_suffix = optional(string) # A suffix to be appended to all policy names. Default is "-policy"
     supplied_compartments = optional(list(object({ # List of compartments that are policy targets. This is a workaround to Terraform behavior. Please see note below.
       name = string
       ocid = string
@@ -37,32 +40,3 @@ variable "policies_configuration" {
     enable_debug = optional(bool) # # Whether the module generates debug output. Default is false.
   })
 }
-
-#------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#-- Note about supplied_compartments attribute:
-#-- TL;DR
-#-- When using this module in the same Terraform configuration that is used to manage compartments, provide compartments via target_compartments variable.
-#-- When using this module in stand alone mode, you don't need to use target_compartments variable. The module will obtain compartments from a data source.
-#--
-#-- Rationale:
-#-- The original ideia was having the module reading compartments from a data source only. But that introduces an issue to the processing logic, as
-#-- Terraform requires compartments to be known at plan time, because compartment names are used as map keys by the module. 
-#-- The error is:
-#--
-#-- Error: Invalid for_each argument
-#--│
-#--│   on .terraform\modules\cislz_policies\main.tf line 23, in resource "oci_identity_policy" "these":
-#--│   23:   for_each = {for k, v in local.policies : k => v if length(v.statements) > 0}
-#--│     ├────────────────
-#--││     │ local.policies will be known only after apply
-#--││
-#--││ The "for_each" map includes keys derived from resource attributes that cannot be determined until apply, 
-#--|| and so Terraform cannot determine the full set of keys that will identify the instances of this resource.
-#--││
-#--││ When working with unknown values in for_each, it's better to define the map keys statically in your configuration and place apply-time results only in the map values.
-#--││
-#--││ Alternatively, you could use the -target planning option to first apply only the resources that the for_each value depends on, and then apply a second time to fully converge.
-#--
-#-- This problem only happens when this module is used in the same Terraform configuration (hence single state) as compartments, i.e., the same Terraform configuration
-#-- manages compartments and policies. **Not a problem when used standalone**.
-#-- To workaround this limitation, the module also takes the target compartments as an input. By doing this, Terraform has the map keys at plan time and does not error out.

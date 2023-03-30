@@ -1,4 +1,4 @@
-# Copyright (c) 2022 Oracle and/or its affiliates.
+# Copyright (c) 2023 Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 locals {
@@ -115,8 +115,8 @@ locals {
       name             : "${local.policy_name_prefix}${cmp}-security-policy"
       compartment_ocid : values.ocid
       description      : "CIS Landing Zone policy for Security compartment."
-      defined_tags     : var.defined_tags
-      freeform_tags    : var.freeform_tags
+      defined_tags     : var.policies_configuration.defined_tags
+      freeform_tags    : var.policies_configuration.freeform_tags
       statements       : concat(local.security_read_grants_on_security_cmp_map[cmp],local.security_admin_grants_on_security_cmp_map[cmp],
                                 local.network_admin_grants_on_security_cmp_map[cmp],local.database_admin_grants_on_security_cmp_map[cmp],
                                 local.appdev_admin_grants_on_security_cmp_map[cmp],local.exainfra_admin_grants_on_security_cmp_map[cmp],
