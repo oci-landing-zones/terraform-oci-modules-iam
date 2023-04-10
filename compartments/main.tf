@@ -58,7 +58,8 @@ locals {
             description = v4.description
             parent_ocid = oci_identity_compartment.level_3[k3].id
             defined_tags = v4.defined_tags != null ? v4.defined_tags :  var.compartments_configuration.default_defined_tags != null ?  var.compartments_configuration.default_defined_tags : null
-            tag_defaults = v4.freeform_tags != null ? v4.freeform_tags : var.compartments_configuration.default_freeform_tags ?  var.compartments_configuration.default_freeform_tags : null
+            freeform_tags = v4.freeform_tags != null ? v4.freeform_tags : var.compartments_configuration.default_freeform_tags ?  var.compartments_configuration.default_freeform_tags : null
+            tag_defaults = v4.tag_defaults
             enable_delete = var.compartments_configuration.enable_delete != null ? var.compartments_configuration.enable_delete : false
           } 
         ] if v3.children != null  
