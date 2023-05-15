@@ -10,7 +10,7 @@ locals {
       description = v1.description
       parent_ocid = v1.parent_ocid != null ? v1.parent_ocid : var.compartments_configuration.default_parent_ocid != null ? var.compartments_configuration.default_parent_ocid : var.tenancy_ocid
       defined_tags = v1.defined_tags != null ? v1.defined_tags :  var.compartments_configuration.default_defined_tags != null ?  var.compartments_configuration.default_defined_tags : null
-      freeform_tags = v1.freeform_tags != null ? v1.freeform_tags : var.compartments_configuration.default_freeform_tags ?  var.compartments_configuration.default_freeform_tags : null
+      freeform_tags = v1.freeform_tags != null ? v1.freeform_tags : var.compartments_configuration.default_freeform_tags != null ?  var.compartments_configuration.default_freeform_tags : null
       tag_defaults = v1.tag_defaults
       enable_delete = var.compartments_configuration.enable_delete != null ? var.compartments_configuration.enable_delete : false
     }
@@ -24,7 +24,7 @@ locals {
         description = v2.description
         parent_ocid = oci_identity_compartment.these[k1].id
         defined_tags = v2.defined_tags != null ? v2.defined_tags :  var.compartments_configuration.default_defined_tags != null ?  var.compartments_configuration.default_defined_tags : null
-        freeform_tags = v2.freeform_tags != null ? v2.freeform_tags : var.compartments_configuration.default_freeform_tags ?  var.compartments_configuration.default_freeform_tags : null
+        freeform_tags = v2.freeform_tags != null ? v2.freeform_tags : var.compartments_configuration.default_freeform_tags != null ?  var.compartments_configuration.default_freeform_tags : null
         tag_defaults = v2.tag_defaults
         enable_delete = var.compartments_configuration.enable_delete != null ? var.compartments_configuration.enable_delete : false
       } 
@@ -40,7 +40,7 @@ locals {
           description = v3.description
           parent_ocid = oci_identity_compartment.level_2[k2].id
           defined_tags = v3.defined_tags != null ? v3.defined_tags :  var.compartments_configuration.default_defined_tags != null ?  var.compartments_configuration.default_defined_tags : null
-          freeform_tags = v3.freeform_tags != null ? v3.freeform_tags : var.compartments_configuration.default_freeform_tags ?  var.compartments_configuration.default_freeform_tags : null
+          freeform_tags = v3.freeform_tags != null ? v3.freeform_tags : var.compartments_configuration.default_freeform_tags != null ?  var.compartments_configuration.default_freeform_tags : null
           tag_defaults = v3.tag_defaults
           enable_delete = var.compartments_configuration.enable_delete != null ? var.compartments_configuration.enable_delete : false
         } 
@@ -58,7 +58,7 @@ locals {
             description = v4.description
             parent_ocid = oci_identity_compartment.level_3[k3].id
             defined_tags = v4.defined_tags != null ? v4.defined_tags :  var.compartments_configuration.default_defined_tags != null ?  var.compartments_configuration.default_defined_tags : null
-            freeform_tags = v4.freeform_tags != null ? v4.freeform_tags : var.compartments_configuration.default_freeform_tags ?  var.compartments_configuration.default_freeform_tags : null
+            freeform_tags = v4.freeform_tags != null ? v4.freeform_tags : var.compartments_configuration.default_freeform_tags != null ?  var.compartments_configuration.default_freeform_tags : null
             tag_defaults = v4.tag_defaults
             enable_delete = var.compartments_configuration.enable_delete != null ? var.compartments_configuration.enable_delete : false
           } 
@@ -78,7 +78,7 @@ locals {
               description = v5.description
               parent_ocid = oci_identity_compartment.level_4[k4].id
               defined_tags = v5.defined_tags != null ? v5.defined_tags :  var.compartments_configuration.default_defined_tags != null ?  var.compartments_configuration.default_defined_tags : null
-              freeform_tags = v5.freeform_tags != null ? v5.freeform_tags : var.compartments_configuration.default_freeform_tags ?  var.compartments_configuration.default_freeform_tags : null
+              freeform_tags = v5.freeform_tags != null ? v5.freeform_tags : var.compartments_configuration.default_freeform_tags != null ?  var.compartments_configuration.default_freeform_tags : null
               tag_defaults = v5.tag_defaults
               enable_delete = var.compartments_configuration.enable_delete != null ? var.compartments_configuration.enable_delete : false
             }  
@@ -100,7 +100,7 @@ locals {
                 description = v6.description
                 parent_ocid = oci_identity_compartment.level_5[k5].id
                 defined_tags = v6.defined_tags != null ? v6.defined_tags :  var.compartments_configuration.default_defined_tags != null ?  var.compartments_configuration.default_defined_tags : null
-                freeform_tags = v6.freeform_tags != null ? v6.freeform_tags : var.compartments_configuration.default_freeform_tags ?  var.compartments_configuration.default_freeform_tags : null
+                freeform_tags = v6.freeform_tags != null ? v6.freeform_tags : var.compartments_configuration.default_freeform_tags != null ?  var.compartments_configuration.default_freeform_tags : null
                 tag_defaults = v6.tag_defaults
                 enable_delete = var.compartments_configuration.enable_delete != null ? var.compartments_configuration.enable_delete : false
               } 
@@ -140,7 +140,7 @@ resource "oci_identity_compartment" "these" {
     description    = each.value.description
     enable_delete  = each.value.enable_delete
     defined_tags   = each.value.defined_tags
-    freeform_tags  = each.value.freeform_tags
+    freeform_tags  = merge(local.cislz_module_tag, each.value.freeform_tags)
 }
 
 resource "oci_identity_compartment" "level_2" {
@@ -155,7 +155,7 @@ resource "oci_identity_compartment" "level_2" {
     description    = each.value.description
     enable_delete  = each.value.enable_delete
     defined_tags   = each.value.defined_tags
-    freeform_tags  = each.value.freeform_tags
+    freeform_tags  = merge(local.cislz_module_tag, each.value.freeform_tags)
 }
 
 resource "oci_identity_compartment" "level_3" {
@@ -170,7 +170,7 @@ resource "oci_identity_compartment" "level_3" {
     description    = each.value.description
     enable_delete  = each.value.enable_delete
     defined_tags   = each.value.defined_tags
-    freeform_tags  = each.value.freeform_tags
+    freeform_tags  = merge(local.cislz_module_tag, each.value.freeform_tags)
 }
 
 resource "oci_identity_compartment" "level_4" {
@@ -185,7 +185,7 @@ resource "oci_identity_compartment" "level_4" {
     description    = each.value.description
     enable_delete  = each.value.enable_delete
     defined_tags   = each.value.defined_tags
-    freeform_tags  = each.value.freeform_tags
+    freeform_tags  = merge(local.cislz_module_tag, each.value.freeform_tags)
 }
 
 resource "oci_identity_compartment" "level_5" {
@@ -200,7 +200,7 @@ resource "oci_identity_compartment" "level_5" {
     description    = each.value.description
     enable_delete  = each.value.enable_delete
     defined_tags   = each.value.defined_tags
-    freeform_tags  = each.value.freeform_tags
+    freeform_tags  = merge(local.cislz_module_tag, each.value.freeform_tags)
 }
 
 resource "oci_identity_compartment" "level_6" {
@@ -215,7 +215,7 @@ resource "oci_identity_compartment" "level_6" {
     description    = each.value.description
     enable_delete  = each.value.enable_delete
     defined_tags   = each.value.defined_tags
-    freeform_tags  = each.value.freeform_tags
+    freeform_tags  = merge(local.cislz_module_tag, each.value.freeform_tags)
 } 
 
 resource "oci_identity_tag_default" "these" {

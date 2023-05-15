@@ -27,8 +27,8 @@ variable "policies_configuration" {
       description      = string
       compartment_ocid = string
       statements       = list(string)
-      defined_tags     = map(string)
-      freeform_tags    = map(string)
+      defined_tags     = optional(map(string))
+      freeform_tags    = optional(map(string))
     })))
     defined_tags = optional(map(string)) # Any defined tags to apply on the template (pre-configured) policies.
     freeform_tags = optional(map(string)) # Any freeform tags to apply on the template (pre-configured) policies.
@@ -57,3 +57,9 @@ variable "policies_configuration" {
 #--││
 #--││ Alternatively, you could use the -target planning option to first apply only the resources that the for_each value depends on, and then apply a second time to fully converge.
 #--
+
+variable module_name {
+  description = "The module name."
+  type = string
+  default = "iam-policies"
+}

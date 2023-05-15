@@ -2,7 +2,7 @@
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 variable "tenancy_ocid" {}
-vvariable "region" {description = "Your tenancy home region"}
+variable "region" {description = "Your tenancy home region"}
 variable "user_ocid" {default = ""}
 variable "fingerprint" {default = ""}
 variable "private_key_path" {default = ""}

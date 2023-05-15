@@ -27,10 +27,6 @@ If the top-most compartment is the root compartment, the permission becomes:
 ```
 Allow group <group> to manage policies in tenancy
 ```
-Additionally, it needs to read compartments in the tenancy:
-```
-Allow group <group> to read compartments in tenancy
-```
 
 ### Terraform Version < 1.3.x and Optional Object Type Attributes
 This module relies on [Terraform Optional Object Type Attributes feature](https://developer.hashicorp.com/terraform/language/expressions/type-constraints#optional-object-type-attributes), which is experimental from Terraform 0.14.x to 1.2.x. It shortens the amount of input values in complex object types, by having Terraform automatically inserting a default value for any missing optional attributes. The feature has been promoted and it is no longer experimental in Terraform 1.3.x.
@@ -70,44 +66,40 @@ module "policies" {
 For invoking the module remotely, set the module *source* attribute to the policies module folder in this repository, as shown:
 ```
 module "policies" {
-  source = "git@github.com:oracle-quickstart/terraform-oci-cis-landing-zone-iam-modules.git//policies"
+  source = "git@github.com:oracle-quickstart/terraform-oci-cis-landing-zone-iam.git//policies"
   tenancy_ocid = var.tenancy_ocid
   policies_configuration = var.policies_configuration
 }
 ```
 For referring to a specific module version, append *ref=\<version\>* to the *source* attribute value, as in:
 ```
-  source = "git@github.com:oracle-quickstart/terraform-oci-cis-landing-zone-iam-modules.git//policies?ref=v0.1.0"
+  source = "git@github.com:oracle-quickstart/terraform-oci-cis-landing-zone-iam.git//policies?ref=v0.1.0"
 ```
 ## <a name="functioning">Module Functioning</a>
 
  The module operates in two non-exclusive modes: 
- - **Template policies**: At the compartment level (excluding the *root* compartment), policies are driven off freeform tags applied to compartments. At the tenancy level (*root* compartment), policies are driven off supplied roles assigned to groups that must be passed to the module.
- - **Supplied policies**: a map of policies is supplied to the module.
+ - [**Template policies**](#template-policies): At the compartment level (excluding the Root compartment), policies are driven off freeform tags applied to compartments. At the tenancy level (Root compartment), policies are driven off supplied roles assigned to groups that must be passed to the module.
+ - [**Supplied policies**](#supplied-policies): a map of policies is supplied to the module.
 
  Regardless the mode, the module checks policy statements against CIS OCI Foundations Benchmark recommendations. For example, the module would not allow a statement like *allow group to manage all-resources in tenancy*.
 
- ### 1) Template Policies
+ ### <a name="template-policies">1) Template Policies</a>
 
  In this mode, policies are pre-configured, providing an RBAC implementation across a set of pre-defined group roles. 
  
  At the compartment level, freeform tags applied to compartments drive the creation of policies. These tags define the set of target compartments, the compartments types and consumer groups. 
  
- Target compartments to which policies are applied can be provided in two ways: 
- 
- - internal data source: the module select compartments that have the *cislz* freeform tag value matching *cislz_tag_lookup_value* input attribute.
- - *supplied_compartments* attribute: a list of compartments with *name*, *ocid* and *freeform_tags* attributes set.
-  
- - *supplied_compartments* takes precedence over the data source. If *supplied_compartments* is not set, the data source is used.
- - As a rule of thumb, use the data source when using the module in stand alone mode. Use *supplied_compartments* when this module is part of the same Terraform configuration that manages compartments. 
- 
- At the tenancy level, policies are created based on groups roles passed to the module via *groups_with_tenancy_level_roles* attribute.
+ Target compartments to which policies are applied must be provided to the module using *supplied_compartments* attribute. *supplied_compartments* is a map of objects, where each object is composed of the following attributes:
+ - **name** : the compartment name.
+ - **ocid** : the compartment ocid.
+ - **freeform_tags** : the compartment freeform tags.
 
  #### 1.1) Compartment Level Policies
 
-The module looks up for the following **freeform tags** applied to **compartments**. Check [Compartments Module examples](../compartments/examples) for how these tags are applied.
+Compartment level policies are only generated if *enable_compartment_level_template_policies* attribute is set to true, which is the default value.
 
-- cislz
+The module looks up for the following **freeform tags** applied to **compartments**. Check [Compartments Module examples](../compartments/examples) for an example how these tags are applied.
+
 - cislz-cmp-type
 - cislz-consumer-groups-read
 - cislz-consumer-groups-iam
@@ -119,10 +111,6 @@ The module looks up for the following **freeform tags** applied to **compartment
 - cislz-consumer-groups-storage
 - cislz-consumer-groups-dyn-database-kms
 - cislz-consumer-groups-dyn-compute-agent
-
-##### Tag cislz
-
-Defines the set of target compartments for policy generation. Compartments tagged with *cislz* freeform tag are selected if the tag value matches the lookup value passed in *cislz_tag_lookup_value* attribute. No policies are created if *cislz* tag and *cislz_tag_lookup_value* do not match. Ignored if *supplied_compartments* attribute is set.
 
 ##### Tag cislz-cmp-type
 
@@ -197,7 +185,6 @@ As an example, assume the following tags are assigned to the *vision-network-cmp
 
 ![Tagged Compartment](images/tagged-compartment.PNG)
 
-- *cislz: vision*: the value is matched against provided *cislz_tag_lookup_value* attribute for retrieving the compartment.
 - *cislz-cmp-type: network*: the value communicates this compartment is about *network* resource types, hence network policy statements should be pulled from the template.
 - *cislz-consumer-groups-network: vision-network-admin-group*: the value communicates the group name that effectively manages compartment resources, because the tag name *\<suffix\>* matches *cislz-cmp-type* value, per table above.
 - *cislz-consumer-groups-security: vision-security-admin-group*: the value communicates the group name that consumes compartment resources from a *security* admin perspective.  
@@ -255,7 +242,9 @@ allow group vision-storage-admin-group to manage file-family in compartment visi
 
 #### 1.2) Tenancy Level Policies
 
-Tenancy level policies are not based off compartment tags because they are applied at the root compartment level. Per design we decided not to tag the root compartment for policy configuration. Instead, tenancy level policies are configured per group roles passed into the module as input through *groups_with_tenancy_level_roles* attribute.
+Tenancy level policies (policies attached to Root compartment) are only generated if *enable_tenancy_level_template_policies* attribute is set to true, which is the default value.
+
+Tenancy level policies are not based off compartment tags because they are applied at the root compartment level. Per design, the policy module does not look up for tags on the root compartment. Instead, tenancy level policies are configured based on group roles passed into the module as input via *groups_with_tenancy_level_roles* attribute.
 
 Supported tenancy level roles:
 
@@ -282,7 +271,7 @@ You can tweak policy names by changing *policy_name_prefix* and *policy_name_suf
 
 ##### Policy Attachment
 
-Tenancy level policies are always attached at the root compartment.
+Tenancy level policies are always attached to the root compartment.
 
 ##### Putting it Together - A Concrete Example
 
@@ -358,15 +347,17 @@ allow group vision-auditor-group to read data-safe-family in tenancy
 allow group vision-announcement_reader-group to read announcements in tenancy
 ```
 
-### 2) Supplied Policies
+A fully functional example is provided in [Template policies example](./examples/template-policies/).
+
+### <a name="supplied-policies">2) Supplied Policies</a>
 
 In this mode, policies are provided as an input parameter and can supplement or completely override the template policies.
 
-For completely overriding the template policies, set attributes *enable_compartment_level_template_policies* and *enable_tenancy_level_template_policies* to false.
+For completely overriding the template policies, do not set *supplied_compartments* attribute.
 
 Supplied policies are defined using the *supplied_policies* attribute.
 
-Check the [Vision example](./examples/vision) for how to supply your own policies.
+Check the [Supplied Policies example](./examples/supplied-policies/) for how to supply your own policies.
 
 ## <a name="related">Related Documentation</a>
 - [Getting Started with OCI Policies](https://docs.oracle.com/en-us/iaas/Content/Identity/Concepts/policygetstarted.htm)

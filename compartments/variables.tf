@@ -85,3 +85,9 @@ variable "compartments_configuration" {
     }))
   })
 }
+
+variable module_name {
+  description = "The module name."
+  type = string
+  default = "iam-compartments"
+}
