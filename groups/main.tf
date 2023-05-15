@@ -11,7 +11,7 @@ resource "oci_identity_group" "these" {
     name           = each.value.name
     description    = each.value.description
     defined_tags   = each.value.defined_tags != null ? each.value.defined_tags : var.groups_configuration.default_defined_tags != null ? var.groups_configuration.default_defined_tags : null
-    freeform_tags  = each.value.freeform_tags != null ? each.value.freeform_tags : var.groups_configuration.default_freeform_tags != null ? var.groups_configuration.default_freeform_tags : null
+    freeform_tags  = merge(local.cislz_module_tag, each.value.freeform_tags != null ? each.value.freeform_tags : var.groups_configuration.default_freeform_tags != null ? var.groups_configuration.default_freeform_tags : null)
 }
 
 resource "oci_identity_user_group_membership" "these" {

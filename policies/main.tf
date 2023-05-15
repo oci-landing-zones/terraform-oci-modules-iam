@@ -26,7 +26,7 @@ resource "oci_identity_policy" "these" {
     compartment_id = each.value.compartment_ocid
     statements     = each.value.statements
     defined_tags   = each.value.defined_tags
-    freeform_tags  = each.value.freeform_tags
+    freeform_tags  = merge(local.cislz_module_tag, each.value.freeform_tags)
 
     ##-- The can(regex(pattern)) combination used below is a way to ask if pattern is present in each policy statement.
     ##-- Conversely, !can(regex(pattern)) asks if pattern is not present.

@@ -8,5 +8,5 @@ resource "oci_identity_dynamic_group" "these" {
     compartment_id = var.tenancy_ocid
     matching_rule  = each.value.matching_rule
     defined_tags   = each.value.defined_tags != null ? each.value.defined_tags : var.dynamic_groups_configuration.default_defined_tags != null ? var.dynamic_groups_configuration.default_defined_tags : null
-    freeform_tags  = each.value.freeform_tags != null ? each.value.freeform_tags : var.dynamic_groups_configuration.default_freeform_tags != null ? var.dynamic_groups_configuration.default_freeform_tags : null
+    freeform_tags  = merge(local.cislz_module_tag, each.value.freeform_tags != null ? each.value.freeform_tags : var.dynamic_groups_configuration.default_freeform_tags != null ? var.dynamic_groups_configuration.default_freeform_tags : null)
 }
