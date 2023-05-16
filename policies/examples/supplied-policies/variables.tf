@@ -8,17 +8,15 @@ variable "fingerprint" {default = ""}
 variable "private_key_path" {default = ""}
 variable "private_key_password" {default = ""}
 
-variable "dynamic_groups_configuration" {
-  description = "The dynamic groups."
+variable "policies_configuration" {
+  description = "Policies configuration"
   type = object({
-    default_defined_tags = optional(map(string)),
-    default_freeform_tags = optional(map(string))
-    dynamic_groups = map(object({
-      name          = string,
-      description   = string,
-      matching_rule = string
-      defined_tags  = optional(map(string)),
-      freeform_tags = optional(map(string))
+    supplied_policies = map(object({
+      name             = string
+      description      = string
+      compartment_ocid = string
+      statements       = list(string)
     }))
+    enable_output = bool
   })
 }

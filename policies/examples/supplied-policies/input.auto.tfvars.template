@@ -6,11 +6,6 @@
 # 2. Provide values for "Tenancy Connectivity Variables".
 # 3. Replace <REPLACE-BY-COMPARTMENT-OCID> placeholder by a compartment OCID. 
 #    This determines the compartment that sample *supplied_policies* get attached to. 
-#    If you are not interested in supplying your own policies, you can remove *supplied_policies* attribute altogether.
-#
-# This example depends on compartments properly tagged with required metadata for CIS Landing Zone policies.
-# A matching coompartments example is available at 
-# https://github.com/oracle-quickstart/terraform-oci-cis-landing-zone-iam-modules/compartments/examples/vision
 #-------------------------------------------------------------------------------------------------------------------------------------
 
 #---------------------------------------
@@ -29,27 +24,12 @@ region               = "<your tenancy home region>" # This is your tenancy home 
 #---------------------------------------
 
 policies_configuration = {
-  cislz_tag_lookup_value : "vision"
-  groups_with_tenancy_level_roles : [
-    {"name":"vision-iam-admin-group",     "roles":"iam"},
-    {"name":"vision-cred-admin-group",    "roles":"cred"},
-    {"name":"vision-cost-admin-group",    "roles":"cost"},
-    {"name":"vision-security-admin-group","roles":"security"},
-    {"name":"vision-app-admin-group",     "roles":"application"},
-    {"name":"vision-auditor-group",       "roles":"auditor"},
-    {"name":"vision-database-admin-group","roles":"basic"},
-    {"name":"vision-exainfra-admin-group","roles":"basic"},
-    {"name":"vision-storage-admin-group", "roles":"basic"},
-    {"name":"vision-announcement_reader-group","roles":"announcement-reader"}
-  ] 
-  #policy_name_prefix : "cis"
-  #policy_name_suffix : ""
   supplied_policies : {
     "SAMPLE-POLICY" : {
       name : "sample-policy"
-      description : "Sample policy to verify CIS checks."
+      description : "Sample policy to verify CIS checks performed by policy module."
       compartment_ocid : "<REPLACE-BY-COMPARTMENT-OCID>"
-      #-- The "not ok" statements below are flagged by the module if attribute enable_cis_benchmark_checks = true (default)
+      #-- The "not ok" statements below are flagged by the policy module per CIS recommendations.
       statements : [
         #"allow group-a to manage all-resources in tenancy", # not ok
         #"allow group-b to manage all-resources in tenancy ", # not ok
@@ -61,8 +41,7 @@ policies_configuration = {
         #"allow group vision-cred-admin-group to manage groups in tenancy", # not ok
         #"allow group vision-cred-admin-group to manage users in tenancy" # not ok
       ]            
-      defined_tags : null
-      freeform_tags : null
     }
   } 
+  enable_output : true
 }

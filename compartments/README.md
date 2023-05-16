@@ -80,13 +80,13 @@ module "compartments" {
 For invoking the module remotely, set the module *source* attribute to the compartments module folder in this repository, as shown:
 ```
 module "compartments" {
-  source = "git@github.com:oracle-quickstart/terraform-oci-cis-landing-zone-iam-modules.git//compartments"
+  source = "git@github.com:oracle-quickstart/terraform-oci-cis-landing-zone-iam.git//compartments"
   compartments_configuration = var.compartments_configuration
 }
 ```
 For referring to a specific module version, append *ref=\<version\>* to the *source* attribute value, as in:
 ```
-  source = "git@github.com:oracle-quickstart/terraform-oci-cis-landing-zone-iam-modules.git//compartments?ref=v0.1.0"
+  source = "git@github.com:oracle-quickstart/terraform-oci-cis-landing-zone-iam.git//compartments?ref=v0.1.0"
 ```
 
 ## Related Documentation

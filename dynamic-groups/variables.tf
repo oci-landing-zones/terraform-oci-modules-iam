@@ -19,3 +19,9 @@ variable "dynamic_groups_configuration" {
     }))
   })
 }
+
+variable module_name {
+  description = "The module name."
+  type = string
+  default = "iam-dynamic-groups"
+}
