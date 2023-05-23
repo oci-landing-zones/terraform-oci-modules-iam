@@ -20,7 +20,7 @@ variable "policies_configuration" {
     supplied_compartments = optional(map(object({ # List of compartments that are policy targets.
       name = string
       ocid = string
-      freeform_tags = map(string)
+      cislz_metadata = map(string)
     })))
     supplied_policies = optional(map(object({ # A map of directly supplied policies. Use this to suplement or override the template (pre-configured) policies. For completely overriding the template policies, set attributes enable_compartment_level_template_policies and enable_tenancy_level_template_policies to false.
       name             = string

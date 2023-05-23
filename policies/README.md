@@ -78,7 +78,7 @@ For referring to a specific module version, append *ref=\<version\>* to the *sou
 ## <a name="functioning">Module Functioning</a>
 
  The module operates in two non-exclusive modes: 
- - [**Template policies**](#template-policies): At the compartment level (excluding the Root compartment), policies are driven off freeform tags applied to compartments. At the tenancy level (Root compartment), policies are driven off supplied roles assigned to groups that must be passed to the module.
+ - [**Template policies**](#template-policies): At the compartment level (excluding the Root compartment), policies are driven off metadata that must passed to the module. At the tenancy level (Root compartment), policies are driven off supplied roles assigned to groups that must be passed to the module.
  - [**Supplied policies**](#supplied-policies): a map of policies is supplied to the module.
 
  Regardless the mode, the module checks policy statements against CIS OCI Foundations Benchmark recommendations. For example, the module would not allow a statement like *allow group to manage all-resources in tenancy*.
@@ -87,18 +87,16 @@ For referring to a specific module version, append *ref=\<version\>* to the *sou
 
  In this mode, policies are pre-configured, providing an RBAC implementation across a set of pre-defined group roles. 
  
- At the compartment level, freeform tags applied to compartments drive the creation of policies. These tags define the set of target compartments, the compartments types and consumer groups. 
- 
- Target compartments to which policies are applied must be provided to the module using *supplied_compartments* attribute. *supplied_compartments* is a map of objects, where each object is composed of the following attributes:
- - **name** : the compartment name.
- - **ocid** : the compartment ocid.
- - **freeform_tags** : the compartment freeform tags.
-
  #### 1.1) Compartment Level Policies
 
-Compartment level policies are only generated if *enable_compartment_level_template_policies* attribute is set to true, which is the default value.
+At the compartment level, compartment metadata attributes drive policy creation. These metadata define the compartment types and consumer groups. 
+ 
+ The compartments to which policies are applied must be provided to the module using *supplied_compartments* attribute. *supplied_compartments* is a map of objects, where each object is composed of the following attributes:
+ - **name** : the compartment name.
+ - **ocid** : the compartment ocid.
+ - **cislz_metadata** : the metadata attributes.
 
-The module looks up for the following **freeform tags** applied to **compartments**. Check [Compartments Module examples](../compartments/examples) for an example how these tags are applied.
+The module supports the following metadata attributes:
 
 - cislz-cmp-type
 - cislz-consumer-groups-read
@@ -112,7 +110,9 @@ The module looks up for the following **freeform tags** applied to **compartment
 - cislz-consumer-groups-dyn-database-kms
 - cislz-consumer-groups-dyn-compute-agent
 
-##### Tag cislz-cmp-type
+Compartment level policies are only generated if *enable_compartment_level_template_policies* attribute is set to true, which is the default value.
+
+##### cislz-cmp-type Attribute
 
 Defines the compartment's intent, in other words, it communicates the OCI resource types the compartment is intended to hold. For instance, a compartment can be created with the objective of holding network resources, or security resources, or both. 
 
@@ -127,21 +127,21 @@ Currently supported values:
 
 Multiple values can be assigned to *cislz-cmp-type*, as a comma separated list. No policies are created if there is no tag assignment or an invalid value is provided.
 
-##### cislz-consumer-groups-\<suffix\> Tags
+##### cislz-consumer-groups-\<suffix\> Attribute
 
-The *cislz-consumer-groups-\<suffix\>* tags define the groups that use (or consume) resources from the compartment, denoting the groups' interest in the resources. For instance, a tag *cislz-consumer-groups-database: database-admin-group* indicates *database-admin-group* consumes resources in the compartment from a *database* admin perspective. This results in policy statements granting specific *database* related permissions to the group in the compartment.
+The *cislz-consumer-groups-\<suffix\>* metadata attributes define the groups that use (or consume) resources from the compartment, denoting the groups' interest in the resources. For instance, a tag *cislz-consumer-groups-database: database-admin-group* indicates *database-admin-group* consumes resources in the compartment from a *database* admin perspective. This results in policy statements granting specific *database* related permissions to the group in the compartment.
 
-The *cislz-consumer-groups-\<suffix\>* tags supports a comma-separated string of values, which allows for communicating the interest of multiple groups in a single compartment. This is important in scenarios where a compartment provides shared services, must be managed by different administrators and is used (consumed) by roles with other responsibilities. 
+The *cislz-consumer-groups-\<suffix\>* metadata attributes support a comma-separated string of values, which allows for communicating the interest of multiple groups in a single compartment. This is important in scenarios where a compartment provides shared services, must be managed by different administrators and is used (consumed) by roles with other responsibilities. 
 
-Picture the use case where a single compartment provide network and security services. It might be the case it requires distinct administrators for network and security resources. Moreover, distinct database administrators (Dev admin and Prod admin) may need access to those resources. In this scenario, the compartment would be tagged like:
+Picture the use case where a single compartment provide network and security services. It might be the case it requires distinct administrators for network and security resources. Moreover, distinct database administrators (Dev admin and Prod admin) may need access to those resources. In this scenario, the compartment metadata would be like:
 ```
-cislz-cmp-type: network, security
-cislz-consumer-groups-network: network-admin
-cislz-consumer-groups-security: security-admin
-cislz-consumer-groups-database: dev-database-admin, prod-database-admin
+cislz-cmp-type: "network", "security"
+cislz-consumer-groups-network: "network-admin"
+cislz-consumer-groups-security: "security-admin"
+cislz-consumer-groups-database: "dev-database-admin", "prod-database-admin"
 ```
 
-Currently supported tag names:
+These are the currently supported metadata attributes for consumer groups:
 
 - **cislz-consumer-groups-read**: defines the groups that can only read from the compartment. 
 - **cislz-consumer-groups-iam**: defines the groups that manage or consume compartment resources from an *IAM* admin perspective. 
@@ -181,19 +181,19 @@ The compartment scope in policy statements defines the compartment to which the 
 
 ##### Putting it Together - A Real Example
 
-As an example, assume the following tags are assigned to the *vision-network-cmp* compartment:
+As an example, assume the following metadata is associated with the *vision-network-cmp* compartment:
 
 ![Tagged Compartment](images/tagged-compartment.PNG)
 
-- *cislz-cmp-type: network*: the value communicates this compartment is about *network* resource types, hence network policy statements should be pulled from the template.
-- *cislz-consumer-groups-network: vision-network-admin-group*: the value communicates the group name that effectively manages compartment resources, because the tag name *\<suffix\>* matches *cislz-cmp-type* value, per table above.
-- *cislz-consumer-groups-security: vision-security-admin-group*: the value communicates the group name that consumes compartment resources from a *security* admin perspective.  
-- *cislz-consumer-groups-application: vision-app-admin-group*: the value communicates the group name that consumes compartment resources from an *application* admin perspective.
-- *cislz-consumer-groups-database: vision-database-admin-group*: the value communicates the group name that consumes compartment resources from a *database* admin perspective.
-- *cislz-consumer-groups-storage: vision-storage-admin-group*: the value communicates the group name that consumes compartment resources from a *storage* admin perspective.
-- *cislz-consumer-groups-exainfra: vision-exainfra-admin-group*: the value communicates the group name that consumes compartment resources from an *exainfra* (Exadata Cloud Service Infrastructure) admin perspective.
+- *cislz-cmp-type: "network"*: the value communicates this compartment is about *network* resource types, hence network policy statements should be pulled from the template.
+- *cislz-consumer-groups-network: "vision-network-admin-group"*: the value communicates the group name that effectively manages compartment resources, because the tag name *\<suffix\>* matches *cislz-cmp-type* value, per table above.
+- *cislz-consumer-groups-security: "vision-security-admin-group"*: the value communicates the group name that consumes compartment resources from a *security* admin perspective.  
+- *cislz-consumer-groups-application: "vision-app-admin-group"*: the value communicates the group name that consumes compartment resources from an *application* admin perspective.
+- *cislz-consumer-groups-database: "vision-database-admin-group"*: the value communicates the group name that consumes compartment resources from a *database* admin perspective.
+- *cislz-consumer-groups-storage: "vision-storage-admin-group"*: the value communicates the group name that consumes compartment resources from a *storage* admin perspective.
+- *cislz-consumer-groups-exainfra: "vision-exainfra-admin-group"*: the value communicates the group name that consumes compartment resources from an *exainfra* (Exadata Cloud Service Infrastructure) admin perspective.
 
-Per applied tags the module attaches the following policy to *vision-network-cmp* compartment:
+Per defined metadata, the module attaches the following policy to *vision-network-cmp* compartment:
 
 ```
 allow group vision-network-admin-group to read all-resources in compartment vision-network-cmp
@@ -244,7 +244,7 @@ allow group vision-storage-admin-group to manage file-family in compartment visi
 
 Tenancy level policies (policies attached to Root compartment) are only generated if *enable_tenancy_level_template_policies* attribute is set to true, which is the default value.
 
-Tenancy level policies are not based off compartment tags because they are applied at the root compartment level. Per design, the policy module does not look up for tags on the root compartment. Instead, tenancy level policies are configured based on group roles passed into the module as input via *groups_with_tenancy_level_roles* attribute.
+Tenancy level policies are configured based on group roles passed into the module as input via *groups_with_tenancy_level_roles* attribute.
 
 Supported tenancy level roles:
 
@@ -271,7 +271,7 @@ You can tweak policy names by changing *policy_name_prefix* and *policy_name_suf
 
 ##### Policy Attachment
 
-Tenancy level policies are always attached to the root compartment.
+Tenancy level policies are always attached to the Root compartment.
 
 ##### Putting it Together - A Concrete Example
 
