@@ -69,9 +69,9 @@ locals {
 
   cost_admin_grants_on_root_cmp = contains(keys(local.group_role_to_name_map),local.cost_role) ? [
     "define tenancy usage-report as ocid1.tenancy.oc1..aaaaaaaaned4fkpkisbwjlr56u7cj63lf3wffbilvqknstgtvzub7vhqkggq", 
+    "endorse group ${local.group_role_to_name_map[local.cost_role]} to read objects in tenancy usage-report",
     "allow group ${local.group_role_to_name_map[local.cost_role]} to manage usage-report in tenancy",
-    "allow group ${local.group_role_to_name_map[local.cost_role]} to manage usage-budgets in tenancy", 
-    "endorse group ${local.group_role_to_name_map[local.cost_role]} to read objects in tenancy usage-report"
+    "allow group ${local.group_role_to_name_map[local.cost_role]} to manage usage-budgets in tenancy"
   ] : []
 
   security_admin_grants_on_root_cmp = contains(keys(local.group_role_to_name_map),local.security_role) ? [
