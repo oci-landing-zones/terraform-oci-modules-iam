@@ -27,7 +27,7 @@ policies_configuration = {
   supplied_policies : {
     "SAMPLE-POLICY" : {
       name : "sample-policy"
-      description : "Sample policy to verify CIS checks performed by policy module."
+      description : "Sample policy with random statements."
       compartment_ocid : "<REPLACE-BY-COMPARTMENT-OCID>"
       #-- The "not ok" statements below are flagged by the policy module per CIS recommendations.
       statements : [
@@ -43,5 +43,4 @@ policies_configuration = {
       ]            
     }
   } 
-  enable_output : true
 }

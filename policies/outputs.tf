@@ -6,12 +6,7 @@ output "policies" {
   value = local.enable_output ? oci_identity_policy.these : null
 } 
 
-output "map_of_compartments_tagged_with_cislz_tag_lookup_value" {
-  description = "An internal map driving the assignment of pre-configured policies according to cislz tags. Enabled if enable_debug attribute is true."
+output "template_target_compartments" {
+  description = "An internal map driving the assignment of template policies according to compartment metadata. Enabled if enable_debug attribute is true."
   value = local.enable_debug ? local.cmp_name_to_cislz_tag_map : null
-}
-
-output "list_of_compartments_types_tagged_with_cislz_tag_lookup_value" {
-  description = "An internal list with compartments tagged with cislz_tag_lookup_value. Used to find if an enclosing compartment is available. Enabled if enable_debug attribute is true."
-  value = local.enable_debug ? local.cmp_type_list : null
 }

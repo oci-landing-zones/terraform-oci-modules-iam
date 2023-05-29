@@ -65,8 +65,6 @@ locals {
       "cislz-consumer-groups-exainfra":"vision-exainfra-admin-group"
     }
   }
-
-
   
   cmps_from_data_source = {
     for cmp in data.oci_identity_compartments.all_cmps.compartments : cmp.name => 
@@ -79,20 +77,26 @@ locals {
   }
 
   policies_configuration = {
-    supplied_compartments : local.cmps_from_data_source
-    groups_with_tenancy_level_roles : [
-      {"name":"vision-iam-admin-group",     "roles":"iam"},
-      {"name":"vision-cred-admin-group",    "roles":"cred"},
-      {"name":"vision-cost-admin-group",    "roles":"cost"},
-      {"name":"vision-security-admin-group","roles":"security"},
-      {"name":"vision-app-admin-group",     "roles":"application"},
-      {"name":"vision-auditor-group",       "roles":"auditor"},
-      {"name":"vision-database-admin-group","roles":"basic"},
-      {"name":"vision-exainfra-admin-group","roles":"basic"},
-      {"name":"vision-storage-admin-group", "roles":"basic"},
-      {"name":"vision-announcement_reader-group","roles":"announcement-reader"}
-    ]
-    enable_output : true
+    template_policies : {
+      tenancy_level_settings : {
+        groups_with_tenancy_level_roles : [
+          {"name":"vision-iam-admin-group",     "roles":"iam"},
+          {"name":"vision-cred-admin-group",    "roles":"cred"},
+          {"name":"vision-cost-admin-group",    "roles":"cost"},
+          {"name":"vision-security-admin-group","roles":"security"},
+          {"name":"vision-app-admin-group",     "roles":"application"},
+          {"name":"vision-auditor-group",       "roles":"auditor"},
+          {"name":"vision-database-admin-group","roles":"basic"},
+          {"name":"vision-exainfra-admin-group","roles":"basic"},
+          {"name":"vision-storage-admin-group", "roles":"basic"},
+          {"name":"vision-announcement_reader-group","roles":"announcement-reader"}
+        ]
+        policy_name_prefix : "vision"
+      }
+      compartment_level_settings : {
+        supplied_compartments : local.cmps_from_data_source
+      }
+    }
   } 
 }
 

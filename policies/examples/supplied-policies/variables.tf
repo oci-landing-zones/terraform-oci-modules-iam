@@ -17,6 +17,5 @@ variable "policies_configuration" {
       compartment_ocid = string
       statements       = list(string)
     }))
-    enable_output = bool
   })
 }

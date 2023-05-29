@@ -17,7 +17,7 @@ locals {
   auditor_role     = "auditor"
   announcement_reader_role = "announcement-reader"
 
-  groups_with_tenancy_level_roles = var.policies_configuration.groups_with_tenancy_level_roles != null ? var.policies_configuration.groups_with_tenancy_level_roles : []
+  groups_with_tenancy_level_roles = local.enable_tenancy_level_template_policies == true ? var.policies_configuration.template_policies.tenancy_level_settings.groups_with_tenancy_level_roles : []
 
   group_name_to_role_map = {for group in local.groups_with_tenancy_level_roles : group.name => split(",", lookup(group,"roles","basic"))} # this produces objects like {"group-name-1" : ["iam", "security"]}
   group_names = join(",", keys(local.group_name_to_role_map)) # this produces a comma separated string of group names, like "group-name-1, group-name-2, group-name-3"
@@ -128,9 +128,10 @@ locals {
                                     local.auditor_grants,local.announcement_reader_grants)                               
 
   #-- Policies
+  root_policy_name_prefix = local.enable_tenancy_level_template_policies == true ? (var.policies_configuration.template_policies.tenancy_level_settings.policy_name_prefix != null ? "${var.policies_configuration.template_policies.tenancy_level_settings.policy_name_prefix}-" : "") : ""
   #-- Naming
   root_cmp_admin_policy_key = "ROOT-CMP-ADMIN-POLICY"
-  root_cmp_admin_policy_name = "${local.policy_name_prefix}root-admin${local.policy_name_suffix}"
+  root_cmp_admin_policy_name = "${local.root_policy_name_prefix}root-admin${local.policy_name_suffix}"
     
   root_cmp_admin_policy = length(local.root_cmp_admin_grants) > 0 ? {
     (local.root_cmp_admin_policy_key) = {
@@ -145,7 +146,7 @@ locals {
 
   #-- Naming
   root_cmp_nonadmin_policy_key = "ROOT-CMP-NONADMIN-POLICY"
-  root_cmp_nonadmin_policy_name = "${local.policy_name_prefix}root-non-admin${local.policy_name_suffix}"
+  root_cmp_nonadmin_policy_name = "${local.root_policy_name_prefix}root-non-admin${local.policy_name_suffix}"
   
   root_cmp_nonadmin_policy = length(local.root_cmp_nonadmin_grants) > 0 ? {
     (local.root_cmp_nonadmin_policy_key) = {
