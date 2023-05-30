@@ -20,7 +20,7 @@ locals {
   groups_with_tenancy_level_roles = local.enable_tenancy_level_template_policies == true ? var.policies_configuration.template_policies.tenancy_level_settings.groups_with_tenancy_level_roles : []
 
   group_name_to_role_map = {for group in local.groups_with_tenancy_level_roles : group.name => split(",", lookup(group,"roles","basic"))} # this produces objects like {"group-name-1" : ["iam", "security"]}
-  group_names = join(",", keys(local.group_name_to_role_map)) # this produces a comma separated string of group names, like "group-name-1, group-name-2, group-name-3"
+  group_names = trimprefix(join(",", keys(local.group_name_to_role_map)),",") # this produces a comma separated string of group names, like "group-name-1, group-name-2, group-name-3"
   group_name_map_transpose = transpose(local.group_name_to_role_map) # this produces objects like {"iam" : ["group-name-1"], "security" : ["group-name-1"]}
   group_role_to_name_map = {for key, value in local.group_name_map_transpose : key => value[0]} # this is the same transposed matrix, but it takes group name string at index 0.
 
