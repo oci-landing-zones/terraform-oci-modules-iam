@@ -90,7 +90,7 @@ locals {
                                        contains(keys(local.group_role_to_name_map),local.database_role) ?    [local.group_role_to_name_map[local.database_role]]    : [],
                                        contains(keys(local.group_role_to_name_map),local.exainfra_role) ?    [local.group_role_to_name_map[local.exainfra_role]]    : []
                                       )
-  objectstorage_read_on_root_cmp = coalescelist(local.objectstorage_read_grantees,[1]) != [1] ? ["allow group ${trim(",",join(",",local.objectstorage_read_grantees))} to read objectstorage-namespaces in tenancy"] : []
+  objectstorage_read_on_root_cmp = coalescelist(local.objectstorage_read_grantees,[1]) != [1] ? ["allow group ${trim(join(",",local.objectstorage_read_grantees),",")} to read objectstorage-namespaces in tenancy"] : []
   
   # For the case when there's no enclosing compartment defined, the grants are set in the root compartment. Analogous grants are present in enclosing_cmp_policy.tf, which are applied when an enclosing compartment is defined.
   security_admin_grants_on_enclosing_cmp = contains(keys(local.group_role_to_name_map),local.security_role) && !contains(local.cmp_type_list,"enclosing") ? [
