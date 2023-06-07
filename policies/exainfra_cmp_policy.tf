@@ -26,7 +26,8 @@ locals {
       "allow group ${values["exa-group"]} to manage ons-family in compartment ${values["name"]}",
       "allow group ${values["exa-group"]} to manage alarms in compartment ${values["name"]}",
       "allow group ${values["exa-group"]} to manage metrics in compartment ${values["name"]}",
-      "allow group ${values["exa-group"]} to manage data-safe-family in compartment ${values["name"]}"
+      "allow group ${values["exa-group"]} to manage data-safe-family in compartment ${values["name"]}",
+      "allow group ${values["exa-group"]} to use vnics in compartment ${values["name"]}"
     ] : []
   }  
 
@@ -40,9 +41,17 @@ locals {
       "allow group ${values["db-group"]} to manage db-homes in compartment ${values["name"]}",
       "allow group ${values["db-group"]} to manage databases in compartment ${values["name"]}",
       "allow group ${values["db-group"]} to manage db-backups in compartment ${values["name"]}",
-      "allow group ${values["db-group"]} to manage data-safe-family in compartment ${values["name"]}"
+      "allow group ${values["db-group"]} to manage data-safe-family in compartment ${values["name"]}",
+      "allow group ${values["db-group"]} to use vnics in compartment ${values["name"]}"
     ] : []
   }  
+
+  #-- Security admin grants on Exainfra compartment
+  security_admin_grants_on_exainfra_cmp_map = {
+    for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"exainfra") && values["sec-group"] != null) ? [
+      "allow group ${values["sec-group"]} to read keys in compartment ${values["name"]}"
+    ] : []
+  }
 
   #-- Policies
   exainfra_cmps_policies = {for k, values in local.cmp_name_to_cislz_tag_map : 
@@ -54,7 +63,8 @@ locals {
       freeform_tags    = var.policies_configuration.freeform_tags
       statements       = concat(local.exainfra_admin_grants_on_exainfra_cmp_map[k],
                                 local.exainfra_read_grants_on_exainfra_cmp_map[k],
-                                local.database_admin_grants_on_exainfra_cmp_map[k])
+                                local.database_admin_grants_on_exainfra_cmp_map[k],
+                                local.security_admin_grants_on_exainfra_cmp_map[k])
     }
   }
 }

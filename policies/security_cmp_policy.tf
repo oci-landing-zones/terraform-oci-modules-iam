@@ -45,45 +45,21 @@ locals {
     ] : []
   }
 
-  #-- Network admin grants on Security compartment
-  network_admin_grants_on_security_cmp_map = {
-    for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"security") && values["net-group"] != null) ? [
-      "allow group ${values["net-group"]} to read vss-family in compartment ${values["name"]}",
-      "allow group ${values["net-group"]} to use bastion in compartment ${values["name"]}",
-      "allow group ${values["net-group"]} to manage bastion-session in compartment ${values["name"]}"
-    ] : []
-  }
-  
-  #-- Database admin grants on Security compartment
-  database_admin_grants_on_security_cmp_map = {
-    for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"security") && values["db-group"] != null) ? [
-      "allow group ${values["db-group"]} to read vss-family in compartment ${values["name"]}",
-      "allow group ${values["db-group"]} to read vaults in compartment ${values["name"]}",
-      "allow group ${values["db-group"]} to inspect keys in compartment ${values["name"]}",
-      "allow group ${values["db-group"]} to use bastion in compartment ${values["name"]}",
-      "allow group ${values["db-group"]} to manage bastion-session in compartment ${values["name"]}"
+  #-- Non security admins
+  common_groups_on_security_cmp = {
+    for k, values in local.cmp_name_to_cislz_tag_map : k => [values["net-group"] != null ? "${values["net-group"]}" : "", values["app-group"] != null ? "${values["app-group"]}" : "", values["db-group"] != null ? "${values["db-group"]}" : "", values["exa-group"] != null ? "${values["exa-group"]}" : ""]
+  if contains(split(",",values["cmp-type"]),"security")}
+
+  #-- Common grants on Security compartment to non security admins
+  common_grants_on_security_cmp_map = {
+    for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"security")) ? [
+      "allow group ${join(",",local.common_groups_on_security_cmp[k])} to read vss-family in compartment ${values["name"]}",
+      "allow group ${join(",",local.common_groups_on_security_cmp[k])} to use vaults in compartment ${values["name"]}",
+      "allow group ${join(",",local.common_groups_on_security_cmp[k])} to use bastion in compartment ${values["name"]}",
+      "allow group ${join(",",local.common_groups_on_security_cmp[k])} to manage bastion-session in compartment ${values["name"]}",
+      "allow group ${join(",",local.common_groups_on_security_cmp[k])} to read logging-family in compartment ${values["name"]}"
     ] : []
   }  
-
-  #-- Application admin grants on Security compartment
-  appdev_admin_grants_on_security_cmp_map = {
-    for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"security") && values["app-group"] != null) ? [
-      "allow group ${values["app-group"]} to read vaults in compartment ${values["name"]}",
-      "allow group ${values["app-group"]} to inspect keys in compartment ${values["name"]}",
-      "allow group ${values["app-group"]} to manage instance-images in compartment ${values["name"]}",
-      "allow group ${values["app-group"]} to read vss-family in compartment ${values["name"]}",
-      "allow group ${values["app-group"]} to use bastion in compartment ${values["name"]}",
-      "allow group ${values["app-group"]} to manage bastion-session in compartment ${values["name"]}"
-    ] : []
-  }
-  
-  #-- Exainfra admin grants on Security compartment
-  exainfra_admin_grants_on_security_cmp_map = {
-    for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"security") && values["exa-group"] != null) ? [
-      "allow group ${values["exa-group"]} to use bastion in compartment ${values["name"]}",
-      "allow group ${values["exa-group"]} to manage bastion-session in compartment ${values["name"]}"
-    ] : []
-  } 
 
   #-- Storage admin grants on Security compartment
   storage_admin_grants_on_security_cmp_map = {
@@ -118,8 +94,7 @@ locals {
       defined_tags     : var.policies_configuration.defined_tags
       freeform_tags    : var.policies_configuration.freeform_tags
       statements       : concat(local.security_read_grants_on_security_cmp_map[k],local.security_admin_grants_on_security_cmp_map[k],
-                                local.network_admin_grants_on_security_cmp_map[k],local.database_admin_grants_on_security_cmp_map[k],
-                                local.appdev_admin_grants_on_security_cmp_map[k],local.exainfra_admin_grants_on_security_cmp_map[k],
+                                local.common_grants_on_security_cmp_map[k],
                                 local.storage_admin_grants_on_security_cmp_map[k],local.database_kms_grants_on_security_cmp_map[k])
     }
   }

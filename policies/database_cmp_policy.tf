@@ -36,7 +36,8 @@ locals {
       #"allow group ${values["db-group"]} to read work-requests in compartment ${values["name"]}",
       "allow group ${values["db-group"]} to manage bastion-session in compartment ${values["name"]}",
       #"allow group ${values["db-group"]} to read instance-agent-plugins in compartment ${values["name"]}",
-      "allow group ${values["db-group"]} to manage data-safe-family in compartment ${values["name"]}"
+      "allow group ${values["db-group"]} to manage data-safe-family in compartment ${values["name"]}",
+      "allow group ${values["db-group"]} to use vnics in compartment ${values["name"]}"
     ] : []
   }  
 
@@ -64,6 +65,13 @@ locals {
     ] : []
   }  
 
+  #-- Security admin grants on database compartment
+  security_admin_grants_on_database_cmp_map = {
+    for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"database") && values["sec-group"] != null) ? [
+      "allow group ${values["sec-group"]} to read keys in compartment ${values["name"]}"
+    ] : []
+  }
+
   #-- Policies
   database_cmps_policies = {for k, values in local.cmp_name_to_cislz_tag_map : 
     (upper("${k}-database-policy")) => {
@@ -73,7 +81,8 @@ locals {
       defined_tags     = var.policies_configuration.defined_tags
       freeform_tags    = var.policies_configuration.freeform_tags
       statements       = concat(local.database_admin_grants_on_database_cmp_map[k],local.database_read_grants_on_database_cmp_map[k],
-                              local.appdev_admin_grants_on_database_cmp_map[k],local.storage_admin_grants_on_database_cmp_map[k])
+                                local.appdev_admin_grants_on_database_cmp_map[k],local.storage_admin_grants_on_database_cmp_map[k],
+                                local.security_admin_grants_on_database_cmp_map[k])
     }
   }
 }
