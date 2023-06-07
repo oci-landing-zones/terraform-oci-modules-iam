@@ -47,11 +47,11 @@ locals {
 
   common_admin_grants_on_network_cmp_map = {
     for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"network")) ? [
-      "allow group ${join(",",local.common_groups_on_network_cmp[k])} to read virtual-network-family in compartment ${values["name"]}",
-      "allow group ${join(",",local.common_groups_on_network_cmp[k])} to use subnets in compartment ${values["name"]}",
-      "allow group ${join(",",local.common_groups_on_network_cmp[k])} to use network-security-groups in compartment ${values["name"]}",
-      "allow group ${join(",",local.common_groups_on_network_cmp[k])} to use vnics in compartment ${values["name"]}",
-      "allow group ${join(",",local.common_groups_on_network_cmp[k])} to manage private-ips in compartment ${values["name"]}",
+      "allow group ${trim(",",join(",",local.common_groups_on_network_cmp[k]))} to read virtual-network-family in compartment ${values["name"]}",
+      "allow group ${trim(",",join(",",local.common_groups_on_network_cmp[k]))} to use subnets in compartment ${values["name"]}",
+      "allow group ${trim(",",join(",",local.common_groups_on_network_cmp[k]))} to use network-security-groups in compartment ${values["name"]}",
+      "allow group ${trim(",",join(",",local.common_groups_on_network_cmp[k]))} to use vnics in compartment ${values["name"]}",
+      "allow group ${trim(",",join(",",local.common_groups_on_network_cmp[k]))} to manage private-ips in compartment ${values["name"]}",
     ] : []
   } 
 
