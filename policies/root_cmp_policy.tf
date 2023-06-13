@@ -33,8 +33,8 @@ locals {
   #-- Basic grants
   basic_grants_on_root_cmp = length(local.group_names) > 0 ? [
     "allow group ${local.group_names} to use cloud-shell in tenancy",
-    "allow group ${local.group_names} to read usage-budgets in tenancy"
-    #"allow group ${local.group_names} to read usage-reports in tenancy"
+    "allow group ${local.group_names} to read usage-budgets in tenancy",
+    "allow group ${local.group_names} to read usage-reports in tenancy"
   ] : []
 
   iam_admin_grants_on_root_cmp = contains(keys(local.group_role_to_name_map),local.iam_role) ? [
