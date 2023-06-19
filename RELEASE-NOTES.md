@@ -3,7 +3,7 @@
 ## Updates
 1. [Policy Module](#0-1-2-policies)
 ### <a name="0-1-2-policies">Policy Module</a>
-- Policy names disambiguated in the case where a single compartment has multiple values in the *cislz-type* tag.
+- Policy names disambiguated in the case where a single compartment has multiple values in the *cislz-cmp-type* tag.
 
 # May 15, 2023 Release Notes - 0.1.1
 
