@@ -78,7 +78,7 @@ locals {
   #-- Policies
   application_cmps_policies = {for k, values in local.cmp_name_to_cislz_tag_map : 
     (upper("${k}-application-policy")) => {
-      name             = "${local.cmp_policy_name_prefix}${values["name"]}${local.policy_name_suffix}"
+      name             = "${local.cmp_policy_name_prefix}${values["name"]}-application${local.policy_name_suffix}"
       compartment_ocid = values.ocid
       description      = "CIS Landing Zone policy for Application compartment."
       defined_tags     = var.policies_configuration.defined_tags
