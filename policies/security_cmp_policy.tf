@@ -47,7 +47,7 @@ locals {
 
   #-- Non security admins
   common_groups_on_security_cmp = {
-    for k, values in local.cmp_name_to_cislz_tag_map : k => [values["net-group"] != null ? "${values["net-group"]}" : "", values["app-group"] != null ? "${values["app-group"]}" : "", values["db-group"] != null ? "${values["db-group"]}" : "", values["exa-group"] != null ? "${values["exa-group"]}" : ""]
+    for k, values in local.cmp_name_to_cislz_tag_map : k => compact([values["net-group"] != null ? "${values["net-group"]}" : "", values["app-group"] != null ? "${values["app-group"]}" : "", values["db-group"] != null ? "${values["db-group"]}" : "", values["exa-group"] != null ? "${values["exa-group"]}" : ""])
   if contains(split(",",values["cmp-type"]),"security")}
 
   #-- Common grants on Security compartment to non security admins
