@@ -79,7 +79,7 @@ For referring to a specific module version, append *ref=\<version\>* to the *sou
 
  The module operates in two non-exclusive modes: 
  - [**Supplied policies**](#supplied-policies): a map of policies is explicitly supplied to the module.
- - [**Template policies**](#template-policies): At the tenancy level (Root compartment), policies are driven off supplied roles assigned to groups that must be passed to the module. At the compartment level (excluding the Root compartment), policies are driven off metadata that must passed to the module.
+ - [**Template policies**](#template-policies): At the tenancy level (Root compartment), for group principals, policies are driven off supplied roles assigned to groups that must be passed to the module. For OCI service principals, policies can be enabled for all services or to specific ones. At the compartment level (excluding the Root compartment), policies are driven off metadata that must passed to the module.
 
  Regardless the mode, the module checks policy statements against CIS OCI Foundations Benchmark recommendations. For example, the module would not allow a statement like *allow group to manage all-resources in tenancy*.
 
