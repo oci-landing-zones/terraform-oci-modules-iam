@@ -97,7 +97,7 @@ Check the [Supplied Policies example](./examples/supplied-policies/) for how to 
  
  #### 2.1) Tenancy Level Policies
 
-Tenancy level policies (policies attached to Root compartment) are generated based on *groups_with_tenancy_level_roles* attribute within *tenancy_level_settings* attribute.
+Tenancy level policies (policies attached to Root compartment) for groups principals are generated based on *groups_with_tenancy_level_roles* attribute within *tenancy_level_settings* attribute.
 
 Supported tenancy level roles:
 
@@ -111,6 +111,18 @@ Supported tenancy level roles:
 - **basic**: grants simple basic permissions at the tenancy level, specifically the ability to use cloud-shell and read usage-budgets.
 
 As OCI supports 50 statements per policy, tenancy level grants are split into two policies: one for all groups with manage/use permissions over at least one resource and one for groups with only read/inspect and basic role permissions.
+
+Tenancy level policies (policies attached to Root compartment) for OCI service principals are generated based on *oci_services* attribute within *tenancy_level_settings* attribute. Policies can be enabled for all services at once or on a per service basis. The following attributes of *oci_services* control the behavior:
+
+- **enable_all_policies**: when set to true, policies are enabled for all services, except Object Storage. Default is false.
+- **enable_scanning_policies**: when set to true, policies are enabled for VSS service. Default is false.
+- **enable_cloud_guard_policies**: when set to true, policies are enabled for Cloud Guard service.
+- **enable_os_management_policies**: when set to true, policies are enabled for OS Management service. Default is false.
+- **enable_block_storage_policies**: when set to true, policies are enabled for Block Storage service. Default is false.
+- **enable_file_storage_policies**: when set to true, policies are enabled for File Storage service. Default is false.
+- **enable_oke_policies**: when set to true, policies are enabled for OKE service. Default is false.
+- **enable_streaming_policies**: when set to true, policies are enabled for Streaming service. Default is false.
+- **enable_object_storage_policies**: list with the region names where policies for Object Storage service should be enabled. Object Storage is a regional service and the region name composes the principal name in the IAM policy.
 
 ##### Policy Naming
 

@@ -92,6 +92,10 @@ locals {
           {"name":"vision-network-admin-group", "roles":"network,basic"},
           {"name":"vision-announcement_reader-group","roles":"announcement-reader"}
         ]
+        oci_services : {
+          enable_all_policies : true
+          enable_object_storage_policies : ["us-ashburn-1"]
+        }
         policy_name_prefix : "vision"
       }
       compartment_level_settings : {
