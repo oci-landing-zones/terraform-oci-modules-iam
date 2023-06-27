@@ -58,43 +58,16 @@ locals {
   #-- Security admin grants on Network compartment
   security_admin_grants_on_network_cmp_map = {
     for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"network") && values["sec-group"] != null) ? [
-      #"allow group ${values["sec-group"]} to read virtual-network-family in compartment ${values["name"]}",
-      #"allow group ${values["sec-group"]} to use subnets in compartment ${values["name"]}",
-      #"allow group ${values["sec-group"]} to use network-security-groups in compartment ${values["name"]}",
-      #"allow group ${values["sec-group"]} to use vnics in compartment ${values["name"]}",
       "allow group ${values["sec-group"]} to read keys in compartment ${values["name"]}"
     ] : []
   }
 
-  #-- Database admin grants on Network compartment
-  /* database_admin_grants_on_network_cmp_map = {
-    for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"network") && values["db-group"] != null) ? [
-      #"allow group ${values["db-group"]} to read virtual-network-family in compartment ${values["name"]}",
-      #"allow group ${values["db-group"]} to manage private-ips in compartment ${values["name"]}",
-      #"allow group ${values["db-group"]} to use subnets in compartment ${values["name"]}",
-      #"allow group ${values["db-group"]} to use network-security-groups in compartment ${values["name"]}",
-      #"allow group ${values["db-group"]} to use vnics in compartment ${values["name"]}"
-    ] : [] 
-  } */  
-
   #-- Application admin grants on Network compartment
   appdev_admin_grants_on_network_cmp_map = {
     for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"network") && values["app-group"] != null) ? [
-      #"allow group ${values["app-group"]} to read virtual-network-family in compartment ${values["name"]}",
-      #"allow group ${values["app-group"]} to manage private-ips in compartment ${values["name"]}",
-      #"allow group ${values["app-group"]} to use subnets in compartment ${values["name"]}",
-      #"allow group ${values["app-group"]} to use network-security-groups in compartment ${values["name"]}",
-      #"allow group ${values["app-group"]} to use vnics in compartment ${values["name"]}",
       "allow group ${values["app-group"]} to use load-balancers in compartment ${values["name"]}"
     ] : []
   }  
-
-  #-- Exainfra admin grants on Network compartment
-  /* exainfra_admin_grants_on_network_cmp_map = {
-    for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"network") && values["exa-group"] != null) ? [
-      #"allow group ${values["exa-group"]} to read virtual-network-family in compartment ${values["name"]}"
-    ] : []
-  } */  
 
   #-- Storag admin grants on Network compartment
   storage_admin_grants_on_network_cmp_map = {
