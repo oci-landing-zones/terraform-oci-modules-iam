@@ -71,7 +71,7 @@ locals {
       { 
         name : cmp.name, 
         ocid : cmp.id, 
-        cislz_metadata : local.cislz_compartments_metadata[cmp.freeform_tags["cislz-cmp-type"]] #-- We expect compartments to be freeform tagged with "cislz-cmp-type", so we can figure out the compartments intent and associate it with the appropriate metadata.
+        cislz_metadata : local.cislz_compartments_metadata[cmp.freeform_tags["cislz-cmp-type"]] #-- This example expects compartments to be freeform tagged with "cislz-cmp-type", so it can figure out the compartments intent and associate it with the appropriate metadata.
       } 
     if lookup(cmp.freeform_tags, "cislz","") == "vision" #-- The compartments we are interested are freeform tagged as {"cislz" : "vision"} but you could identify the compartments through some other attributes that makes sense to your deployment.
   }
@@ -94,7 +94,6 @@ locals {
         ]
         oci_services : {
           enable_all_policies : true
-          enable_object_storage_policies : ["us-ashburn-1"]
         }
         policy_name_prefix : "vision"
       }
