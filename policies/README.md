@@ -95,7 +95,7 @@ Check the [Supplied Policies example](./examples/supplied-policies/) for how to 
 
  In this mode, policies are pre-configured, automatically providing Separation of Duties across a set of pre-defined group roles. Template policies are specified with *template_policies* attribute. The module distinguishes between tenancy level and compartment level policies. Tenancy level policies are specified via *tenancy_level_settings* attribute, while compartment level policies are specified via *compartment_level_settings*.
  
- #### 2.1) Tenancy Level Policies
+ #### <a name="template-policies-tenancy-level">2.1) Tenancy Level Policies</a>
 
 Tenancy level policies (policies attached to Root compartment) for groups principals are generated based on *groups_with_tenancy_level_roles* attribute within *tenancy_level_settings* attribute.
 
@@ -114,7 +114,7 @@ As OCI supports 50 statements per policy, tenancy level grants are split into tw
 
 Tenancy level policies (policies attached to Root compartment) for OCI service principals are generated based on *oci_services* attribute within *tenancy_level_settings* attribute. Policies can be enabled for all services at once or on a per service basis. The following attributes of *oci_services* control the behavior:
 
-- **enable_all_policies**: when set to true, policies are enabled for all services, except Object Storage. Default is false.
+- **enable_all_policies**: when set to true, policies are enabled for all services. Default is false.
 - **enable_scanning_policies**: when set to true, policies are enabled for VSS service. Default is false.
 - **enable_cloud_guard_policies**: when set to true, policies are enabled for Cloud Guard service.
 - **enable_os_management_policies**: when set to true, policies are enabled for OS Management service. Default is false.
@@ -122,7 +122,7 @@ Tenancy level policies (policies attached to Root compartment) for OCI service p
 - **enable_file_storage_policies**: when set to true, policies are enabled for File Storage service. Default is false.
 - **enable_oke_policies**: when set to true, policies are enabled for OKE service. Default is false.
 - **enable_streaming_policies**: when set to true, policies are enabled for Streaming service. Default is false.
-- **enable_object_storage_policies**: list with the region names where policies for Object Storage service should be enabled. Object Storage is a regional service and the region name composes the principal name in the IAM policy.
+- **enable_object_storage_policies**: when set to true, policies are enabled for Object Storage service in all tenancy subscribed regions. Default is false.
 
 ##### Policy Naming
 
@@ -214,7 +214,7 @@ allow group vision-announcement_reader-group to read announcements in tenancy
 
 A fully functional example is provided in [Template policies example](./examples/template-policies/).
 
- #### 2.2) Compartment Level Policies
+ #### <a name="template-policies-cmp-level">2.2) Compartment Level Policies</a>
 
 At the compartment level, compartment metadata attributes drive policy creation. These metadata define the compartment types and consumer groups. 
  

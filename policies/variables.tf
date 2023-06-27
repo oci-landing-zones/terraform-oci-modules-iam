@@ -33,7 +33,7 @@ variable "policies_configuration" {
           enable_file_storage_policies = optional(bool)
           enable_oke_policies = optional(bool)
           enable_streaming_policies = optional(bool)
-          enable_object_storage_policies = optional(list(string)) # list with the region names for Object Storage service.
+          enable_object_storage_policies = optional(bool)
         }))
         policy_name_prefix = optional(string) # A prefix to Root compartment policy names.
       }))
