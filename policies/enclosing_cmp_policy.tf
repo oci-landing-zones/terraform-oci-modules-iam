@@ -8,39 +8,60 @@ locals {
 
   #-- Read grants on enclosing compartment.
   read_grants_on_enclosing_cmp_map = {
-    for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"enclosing") && values["read-group"] != null) ? [
-      "allow group ${values["read-group"]} to read all-resources in compartment ${values["name"]}"
-    ] : []
+    for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"enclosing") && values["read-group"] != null) ? 
+      values["ocid"] != var.tenancy_ocid ? 
+        ["allow group ${values["read-group"]} to read all-resources in compartment ${values["name"]}"] : 
+        
+        ["allow group ${values["read-group"]} to read all-resources in tenancy"] : 
+    []
   }
 
   #-- IAM admin grants on enclosing compartment.
   iam_admin_grants_on_enclosing_cmp_map = {
-    for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"enclosing") && values["iam-group"] != null) ? [
-      "allow group ${values["iam-group"]} to manage policies in compartment ${values["name"]}", 
-      "allow group ${values["iam-group"]} to manage compartments in compartment ${values["name"]}"
-    ] : []
+    for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"enclosing") && values["iam-group"] != null) ? 
+      values["ocid"] != var.tenancy_ocid ? 
+        ["allow group ${values["iam-group"]} to manage policies in compartment ${values["name"]}", 
+         "allow group ${values["iam-group"]} to manage compartments in compartment ${values["name"]}"] : 
+
+        ["allow group ${values["iam-group"]} to manage policies in tenancy", 
+         "allow group ${values["iam-group"]} to manage compartments in tenancy"] : 
+    []
   }  
 
   #-- Security admin grants on enclosing compartment.
   security_admin_grants_on_enclosing_cmp_map = {
-    for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"enclosing") && values["sec-group"] != null) ? [
-      "allow group ${values["sec-group"]} to manage tag-namespaces in compartment ${values["name"]}",
-      "allow group ${values["sec-group"]} to manage tag-defaults in compartment ${values["name"]}",
-      "allow group ${values["sec-group"]} to manage repos in compartment ${values["name"]}",
-      "allow group ${values["sec-group"]} to read audit-events in compartment ${values["name"]}",
-      "allow group ${values["sec-group"]} to read app-catalog-listing in compartment ${values["name"]}",
-      "allow group ${values["sec-group"]} to read instance-images in compartment ${values["name"]}",
-      "allow group ${values["sec-group"]} to inspect buckets in compartment ${values["name"]}"
-    ] : []
+    for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"enclosing") && values["sec-group"] != null) ? 
+       values["ocid"] != var.tenancy_ocid ? 
+         ["allow group ${values["sec-group"]} to manage tag-namespaces in compartment ${values["name"]}",
+          "allow group ${values["sec-group"]} to manage tag-defaults in compartment ${values["name"]}",
+          "allow group ${values["sec-group"]} to manage repos in compartment ${values["name"]}",
+          "allow group ${values["sec-group"]} to read audit-events in compartment ${values["name"]}",
+          "allow group ${values["sec-group"]} to read app-catalog-listing in compartment ${values["name"]}",
+          "allow group ${values["sec-group"]} to read instance-images in compartment ${values["name"]}",
+          "allow group ${values["sec-group"]} to inspect buckets in compartment ${values["name"]}"] : 
+
+         ["allow group ${values["sec-group"]} to manage tag-namespaces in tenancy",
+          "allow group ${values["sec-group"]} to manage tag-defaults in tenancy",
+          "allow group ${values["sec-group"]} to manage repos in tenancy",
+          "allow group ${values["sec-group"]} to read audit-events in tenancy",
+          "allow group ${values["sec-group"]} to read app-catalog-listing in tenancy",
+          "allow group ${values["sec-group"]} to read instance-images in tenancy",
+          "allow group ${values["sec-group"]} to inspect buckets in tenancy"] :
+    []
   }   
 
   #-- Application admin grants on enclosing compartment.
   application_admin_grants_on_enclosing_cmp_map = {
-    for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"enclosing") && values["app-group"] != null) ? [
-      "allow group ${values["app-group"]} to read app-catalog-listing in compartment ${values["name"]}",
-      "allow group ${values["app-group"]} to read instance-images in compartment ${values["name"]}",
-      "allow group ${values["app-group"]} to read repos in compartment ${values["name"]}"
-    ] : []
+    for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"enclosing") && values["app-group"] != null) ? 
+      values["ocid"] != var.tenancy_ocid ?
+        ["allow group ${values["app-group"]} to read app-catalog-listing in compartment ${values["name"]}",
+         "allow group ${values["app-group"]} to read instance-images in compartment ${values["name"]}",
+         "allow group ${values["app-group"]} to read repos in compartment ${values["name"]}"] : 
+
+        ["allow group ${values["app-group"]} to read app-catalog-listing in tenancy}",
+         "allow group ${values["app-group"]} to read instance-images in tenancy",
+         "allow group ${values["app-group"]} to read repos in tenancy"] :
+    []
   }   
   
   #-- Policies
