@@ -58,7 +58,7 @@ locals {
          "allow group ${values["app-group"]} to read instance-images in compartment ${values["name"]}",
          "allow group ${values["app-group"]} to read repos in compartment ${values["name"]}"] : 
 
-        ["allow group ${values["app-group"]} to read app-catalog-listing in tenancy}",
+        ["allow group ${values["app-group"]} to read app-catalog-listing in tenancy",
          "allow group ${values["app-group"]} to read instance-images in tenancy",
          "allow group ${values["app-group"]} to read repos in tenancy"] :
     []
