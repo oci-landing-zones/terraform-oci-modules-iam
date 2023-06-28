@@ -19,7 +19,7 @@ locals {
   level_2 = flatten([
     for k1, v1 in var.compartments_configuration.compartments : [
       for k2, v2 in v1.children : {
-        key  = k2
+        key  = format("%s-%s",k1,k2)
         name = v2.name
         description = v2.description
         parent_ocid = oci_identity_compartment.these[k1].id
@@ -32,10 +32,10 @@ locals {
   ])
 
   level_3 = flatten([
-    for v1 in var.compartments_configuration.compartments : [
+    for k1, v1 in var.compartments_configuration.compartments : [
       for k2, v2 in v1.children : [
         for k3, v3 in v2.children : {
-          key  = k3
+          key  = format("%s-%s-%s",k1,k2,k3)
           name = v3.name
           description = v3.description
           parent_ocid = oci_identity_compartment.level_2[k2].id
@@ -49,11 +49,11 @@ locals {
   ])
 
   level_4 = flatten([
-    for v1 in var.compartments_configuration.compartments : [
-      for v2 in v1.children : [
+    for k1, v1 in var.compartments_configuration.compartments : [
+      for k2, v2 in v1.children : [
         for k3, v3 in v2.children : [
           for k4, v4 in v3.children : {
-            key  = k4
+            key  = format("%s-%s-%s-%s",k1,k2,k3,k4)
             name = v4.name
             description = v4.description
             parent_ocid = oci_identity_compartment.level_3[k3].id
@@ -73,7 +73,7 @@ locals {
         for v3 in v2.children : [
           for k4, v4 in v3.children : [
             for k5, v5 in v4.children : {
-              key  = k5
+              key  = format("%s-%s-%s-%s-%s",k1,k2,k3,k4,k5)
               name = v5.name
               description = v5.description
               parent_ocid = oci_identity_compartment.level_4[k4].id
@@ -89,13 +89,13 @@ locals {
   ])
 
   level_6 = flatten([
-    for v1 in var.compartments_configuration.compartments : [
-      for v2 in v1.children : [
-        for v3 in v2.children : [
-          for v4 in v3.children : [
+    for k1, v1 in var.compartments_configuration.compartments : [
+      for k2, v2 in v1.children : [
+        for k3, v3 in v2.children : [
+          for k4, v4 in v3.children : [
             for k5, v5 in v4.children : [
               for k6, v6 in v5.children : {
-                key  = k6
+                key  = format("%s-%s-%s-%s-%s-%s",k1,k2,k3,k4,k5,k6)
                 name = v6.name
                 description = v6.description
                 parent_ocid = oci_identity_compartment.level_5[k5].id
