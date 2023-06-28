@@ -85,17 +85,19 @@ locals {
     ] : []
   }  
  
-  #-- Policies
-  security_cmps_policies = {for k, values in local.cmp_name_to_cislz_tag_map : 
-    (upper("${k}-security-policy")) => {
-      name             = "${local.cmp_policy_name_prefix}${values["name"]}-security${local.policy_name_suffix}"
-      compartment_ocid : values.ocid
-      description      : "CIS Landing Zone policy for Security compartment."
-      defined_tags     : var.policies_configuration.defined_tags
-      freeform_tags    : var.policies_configuration.freeform_tags
-      statements       : concat(local.security_read_grants_on_security_cmp_map[k],local.security_admin_grants_on_security_cmp_map[k],
-                                local.common_grants_on_security_cmp_map[k],
-                                local.storage_admin_grants_on_security_cmp_map[k],local.database_kms_grants_on_security_cmp_map[k])
-    }
+  #-- Policies for compartments marked as security compartments (values["cmp-type"] == "security").
+  security_cmps_policies = {
+    for k, values in local.cmp_name_to_cislz_tag_map : 
+      (upper("${k}-security-policy")) => {
+        name             = "${local.cmp_policy_name_prefix}${values["name"]}-security${local.policy_name_suffix}"
+        compartment_ocid : values.ocid
+        description      : "CIS Landing Zone policy for Security compartment."
+        defined_tags     : var.policies_configuration.defined_tags
+        freeform_tags    : var.policies_configuration.freeform_tags
+        statements       : concat(local.security_read_grants_on_security_cmp_map[k],local.security_admin_grants_on_security_cmp_map[k],
+                                  local.common_grants_on_security_cmp_map[k],
+                                  local.storage_admin_grants_on_security_cmp_map[k],local.database_kms_grants_on_security_cmp_map[k])
+      }
+    if values["cmp-type"] == "security"
   }
 }

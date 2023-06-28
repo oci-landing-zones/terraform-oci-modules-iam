@@ -64,16 +64,18 @@ locals {
     []
   }   
   
-  #-- Policies
-  enclosing_cmps_policies = {for k, values in local.cmp_name_to_cislz_tag_map : 
-    (upper("${k}-enclosing-policy")) => {
-      name             = "${local.cmp_policy_name_prefix}${values["name"]}-enclosing${local.policy_name_suffix}"
-      compartment_ocid = values.ocid
-      description      = "CIS Landing Zone policy for enclosing compartment."
-      defined_tags     = var.policies_configuration.defined_tags
-      freeform_tags    = var.policies_configuration.freeform_tags
-      statements       = concat(local.read_grants_on_enclosing_cmp_map[k],local.iam_admin_grants_on_enclosing_cmp_map[k],
-                                local.security_admin_grants_on_enclosing_cmp_map[k],local.application_admin_grants_on_enclosing_cmp_map[k])
-    }
+  #-- Policies for compartments marked as enclosing compartments (values["cmp-type"] == "enclosing").
+  enclosing_cmps_policies = {
+    for k, values in local.cmp_name_to_cislz_tag_map : 
+      (upper("${k}-enclosing-policy")) => {
+        name             = "${local.cmp_policy_name_prefix}${values["name"]}-enclosing${local.policy_name_suffix}"
+        compartment_ocid = values.ocid
+        description      = "CIS Landing Zone policy for enclosing compartment."
+        defined_tags     = var.policies_configuration.defined_tags
+        freeform_tags    = var.policies_configuration.freeform_tags
+        statements       = concat(local.read_grants_on_enclosing_cmp_map[k],local.iam_admin_grants_on_enclosing_cmp_map[k],
+                                  local.security_admin_grants_on_enclosing_cmp_map[k],local.application_admin_grants_on_enclosing_cmp_map[k])
+      }
+    if values["cmp-type"] == "enclosing"
   }
 }

@@ -20,7 +20,7 @@ locals {
 }
 
 resource "oci_identity_policy" "these" {
-  for_each = {for k, v in local.policies : k => v if length(v.statements) > 0}
+  for_each = local.policies
     name           = each.value.name
     description    = each.value.description
     compartment_id = each.value.compartment_ocid

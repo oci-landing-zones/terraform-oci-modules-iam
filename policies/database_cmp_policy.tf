@@ -72,17 +72,19 @@ locals {
     ] : []
   }
 
-  #-- Policies
-  database_cmps_policies = {for k, values in local.cmp_name_to_cislz_tag_map : 
-    (upper("${k}-database-policy")) => {
-      name             = "${local.cmp_policy_name_prefix}${values["name"]}-database${local.policy_name_suffix}"
-      compartment_ocid = values.ocid
-      description      = "CIS Landing Zone policy for Database compartment."
-      defined_tags     = var.policies_configuration.defined_tags
-      freeform_tags    = var.policies_configuration.freeform_tags
-      statements       = concat(local.database_admin_grants_on_database_cmp_map[k],local.database_read_grants_on_database_cmp_map[k],
-                                local.appdev_admin_grants_on_database_cmp_map[k],local.storage_admin_grants_on_database_cmp_map[k],
-                                local.security_admin_grants_on_database_cmp_map[k])
-    }
+  #-- Policies for compartments marked as database compartments (values["cmp-type"] == "database").
+  database_cmps_policies = {
+    for k, values in local.cmp_name_to_cislz_tag_map : 
+      (upper("${k}-database-policy")) => {
+        name             = "${local.cmp_policy_name_prefix}${values["name"]}-database${local.policy_name_suffix}"
+        compartment_ocid = values.ocid
+        description      = "CIS Landing Zone policy for Database compartment."
+        defined_tags     = var.policies_configuration.defined_tags
+        freeform_tags    = var.policies_configuration.freeform_tags
+        statements       = concat(local.database_admin_grants_on_database_cmp_map[k],local.database_read_grants_on_database_cmp_map[k],
+                                  local.appdev_admin_grants_on_database_cmp_map[k],local.storage_admin_grants_on_database_cmp_map[k],
+                                  local.security_admin_grants_on_database_cmp_map[k])
+      }
+    if values["cmp-type"] == "database"
   }
 }
