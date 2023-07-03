@@ -5,24 +5,12 @@ variable "tenancy_ocid" {
   description = "The tenancy OCID."
   type = string
 }
+
 variable "policies_configuration" {
   description = "Policies configuration"
   type = object({
     enable_cis_benchmark_checks = optional(bool) # Whether to check policies for CIS Foundations Benchmark recommendations. Default is true.
-    enable_tenancy_level_template_policies = optional(bool) # Enables the module to manage template (pre-configured) policies at the root compartment) (a.k.a tenancy) level. Attribute groups_with_tenancy_level_roles only applies if this is set to true. Default is false.
-    groups_with_tenancy_level_roles = optional(list(object({ # A list of group names and their roles at the root compartment (a.k.a tenancy) level. Pre-configured policies are assigned to each group in the root compartment. Only applicable if attribute enable_tenancy_level_template_policies is set to true.
-      name = string
-      roles = string
-    })))
-    enable_compartment_level_template_policies = optional(bool) # Enables the module to manage template (pre-configured) policies at the compartment level (compartments other than root). Default is true.
-    policy_name_prefix = optional(string) # A prefix to be prepended to all policy names
-    policy_name_suffix = optional(string) # A suffix to be appended to all policy names
-    supplied_compartments = optional(map(object({ # List of compartments that are policy targets.
-      name = string
-      ocid = string
-      freeform_tags = map(string)
-    })))
-    supplied_policies = optional(map(object({ # A map of directly supplied policies. Use this to suplement or override the template (pre-configured) policies. For completely overriding the template policies, set attributes enable_compartment_level_template_policies and enable_tenancy_level_template_policies to false.
+    supplied_policies = optional(map(object({ # A map of directly supplied policies. Use this to suplement or override the template policies.
       name             = string
       description      = string
       compartment_ocid = string
@@ -30,10 +18,37 @@ variable "policies_configuration" {
       defined_tags     = optional(map(string))
       freeform_tags    = optional(map(string))
     })))
+    template_policies = optional(object({ # An object describing the template policies. In this mode, policies are derived according to tenancy_level_settings and compartment_level_settings.
+      tenancy_level_settings = optional(object({ # Settings for tenancy level (Root compartment) policies generation.
+        groups_with_tenancy_level_roles = optional(list(object({ # A list of group names and their roles at the tenancy level. Template policies are granted to each group in the Root compartment.
+          name = string
+          roles = string
+        })))
+        oci_services = optional(object({
+          enable_all_policies = optional(bool)
+          enable_scanning_policies = optional(bool)
+          enable_cloud_guard_policies = optional(bool)
+          enable_os_management_policies = optional(bool)
+          enable_block_storage_policies = optional(bool)
+          enable_file_storage_policies = optional(bool)
+          enable_oke_policies = optional(bool)
+          enable_streaming_policies = optional(bool)
+          enable_object_storage_policies = optional(bool)
+        }))
+        policy_name_prefix = optional(string) # A prefix to Root compartment policy names.
+      }))
+      compartment_level_settings = optional(object({ # Settings for compartment (non Root) level policies generation.
+        supplied_compartments = optional(map(object({ # List of compartments that are policy targets.
+          name = string # The compartment name
+          ocid = string # The compartment ocid
+          cislz_metadata = map(string) # The compartment metadata. See module README.md for details.
+        })))
+        policy_name_prefix = optional(string) # A prefix to compartment policy names.
+      }))
+    }))
+    policy_name_suffix = optional(string) # A suffix to all policy names.
     defined_tags = optional(map(string)) # Any defined tags to apply on the template (pre-configured) policies.
     freeform_tags = optional(map(string)) # Any freeform tags to apply on the template (pre-configured) policies.
-    enable_output = optional(bool) # Whether the module generates output. Default is false.
-    enable_debug = optional(bool) # # Whether the module generates debug output. Default is false.
   })
 }
 
@@ -57,6 +72,18 @@ variable "policies_configuration" {
 #--││
 #--││ Alternatively, you could use the -target planning option to first apply only the resources that the for_each value depends on, and then apply a second time to fully converge.
 #--
+
+variable enable_output {
+  description = "Whether Terraform should enable module output."
+  type = bool
+  default = true
+}
+
+variable enable_debug {
+  description = "Whether Terraform should enable module debug information."
+  type = bool
+  default = false
+}
 
 variable module_name {
   description = "The module name."

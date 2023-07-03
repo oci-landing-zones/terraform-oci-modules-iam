@@ -11,7 +11,7 @@ locals {
   cis_iam13_non_admin_regex = ".*(target.group.name\\s*=\\s*'[^Administrator]').*"
   cis_iam13_operations_regex = ".*(request.operation|request.permission)\\s*=\\s*('AddUserToGroup'|'RemoveUserFromGroup'|'UpdateGroup'|'DeleteGroup'|'GROUP_UPDATE'|'GROUP_DELETE').*"
   
-  template_root_policies = local.enable_tenancy_level_template_policies ? merge(local.root_cmp_admin_policy, local.root_cmp_nonadmin_policy) : {}
+  template_root_policies = local.enable_tenancy_level_template_policies ? merge(local.root_cmp_admin_policy, local.root_cmp_nonadmin_policy, local.services_policy) : {}
   template_cmp_policies  = local.enable_compartment_level_template_policies ? merge(local.enclosing_cmps_policies, local.security_cmps_policies, 
                                                                                   local.network_cmps_policies, local.application_cmps_policies, 
                                                                                   local.database_cmps_policies, local.exainfra_cmps_policies) : {}
@@ -20,7 +20,7 @@ locals {
 }
 
 resource "oci_identity_policy" "these" {
-  for_each = {for k, v in local.policies : k => v if length(v.statements) > 0}
+  for_each = local.policies
     name           = each.value.name
     description    = each.value.description
     compartment_id = each.value.compartment_ocid

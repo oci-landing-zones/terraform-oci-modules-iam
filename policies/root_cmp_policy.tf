@@ -14,13 +14,16 @@ locals {
   cost_role        = "cost"
   security_role    = "security"
   application_role = "application"
+  network_role     = "network"
+  database_role    = "database"
+  exainfra_role    = "exainfra"
   auditor_role     = "auditor"
   announcement_reader_role = "announcement-reader"
 
-  groups_with_tenancy_level_roles = var.policies_configuration.groups_with_tenancy_level_roles != null ? var.policies_configuration.groups_with_tenancy_level_roles : []
+  groups_with_tenancy_level_roles = local.enable_tenancy_level_template_policies == true ? var.policies_configuration.template_policies.tenancy_level_settings.groups_with_tenancy_level_roles : []
 
   group_name_to_role_map = {for group in local.groups_with_tenancy_level_roles : group.name => split(",", lookup(group,"roles","basic"))} # this produces objects like {"group-name-1" : ["iam", "security"]}
-  group_names = join(",", keys(local.group_name_to_role_map)) # this produces a comma separated string of group names, like "group-name-1, group-name-2, group-name-3"
+  group_names = join(",", compact(keys(local.group_name_to_role_map))) # this produces a comma separated string of group names, like "group-name-1, group-name-2, group-name-3"
   group_name_map_transpose = transpose(local.group_name_to_role_map) # this produces objects like {"iam" : ["group-name-1"], "security" : ["group-name-1"]}
   group_role_to_name_map = {for key, value in local.group_name_map_transpose : key => value[0]} # this is the same transposed matrix, but it takes group name string at index 0.
 
@@ -31,7 +34,7 @@ locals {
   basic_grants_on_root_cmp = length(local.group_names) > 0 ? [
     "allow group ${local.group_names} to use cloud-shell in tenancy",
     "allow group ${local.group_names} to read usage-budgets in tenancy",
-    #"allow group ${local.group_names} to read usage-reports in tenancy"
+    "allow group ${local.group_names} to read usage-reports in tenancy"
   ] : []
 
   iam_admin_grants_on_root_cmp = contains(keys(local.group_role_to_name_map),local.iam_role) ? [
@@ -69,18 +72,27 @@ locals {
 
   cost_admin_grants_on_root_cmp = contains(keys(local.group_role_to_name_map),local.cost_role) ? [
     "define tenancy usage-report as ocid1.tenancy.oc1..aaaaaaaaned4fkpkisbwjlr56u7cj63lf3wffbilvqknstgtvzub7vhqkggq", 
+    "endorse group ${local.group_role_to_name_map[local.cost_role]} to read objects in tenancy usage-report",
     "allow group ${local.group_role_to_name_map[local.cost_role]} to manage usage-report in tenancy",
-    "allow group ${local.group_role_to_name_map[local.cost_role]} to manage usage-budgets in tenancy", 
-    "endorse group ${local.group_role_to_name_map[local.cost_role]} to read objects in tenancy usage-report"
+    "allow group ${local.group_role_to_name_map[local.cost_role]} to manage usage-budgets in tenancy"
   ] : []
 
   security_admin_grants_on_root_cmp = contains(keys(local.group_role_to_name_map),local.security_role) ? [
     "allow group ${local.group_role_to_name_map[local.security_role]} to manage cloudevents-rules in tenancy",
     "allow group ${local.group_role_to_name_map[local.security_role]} to manage cloud-guard-family in tenancy",
-    "allow group ${local.group_role_to_name_map[local.security_role]} to read tenancies in tenancy",
-    "allow group ${local.group_role_to_name_map[local.security_role]} to read objectstorage-namespaces in tenancy"
+    "allow group ${local.group_role_to_name_map[local.security_role]} to read tenancies in tenancy"
+    #"allow group ${local.group_role_to_name_map[local.security_role]} to read objectstorage-namespaces in tenancy"
   ] : []
 
+  objectstorage_read_grantees = compact(
+                                  concat(contains(keys(local.group_role_to_name_map),local.network_role) ?     [local.group_role_to_name_map[local.network_role]]     : [],
+                                         contains(keys(local.group_role_to_name_map),local.security_role) ?    [local.group_role_to_name_map[local.security_role]]    : [],
+                                         contains(keys(local.group_role_to_name_map),local.application_role) ? [local.group_role_to_name_map[local.application_role]] : [],
+                                         contains(keys(local.group_role_to_name_map),local.database_role) ?    [local.group_role_to_name_map[local.database_role]]    : [],
+                                         contains(keys(local.group_role_to_name_map),local.exainfra_role) ?    [local.group_role_to_name_map[local.exainfra_role]]    : [])
+                                )
+  objectstorage_read_on_root_cmp = coalescelist(local.objectstorage_read_grantees,[1]) != [1] ? ["allow group ${join(",",local.objectstorage_read_grantees)} to read objectstorage-namespaces in tenancy"] : []
+  
   # For the case when there's no enclosing compartment defined, the grants are set in the root compartment. Analogous grants are present in enclosing_cmp_policy.tf, which are applied when an enclosing compartment is defined.
   security_admin_grants_on_enclosing_cmp = contains(keys(local.group_role_to_name_map),local.security_role) && !contains(local.cmp_type_list,"enclosing") ? [
     "allow group ${local.group_role_to_name_map[local.security_role]} to manage tag-namespaces in tenancy",
@@ -125,12 +137,13 @@ locals {
                                  local.security_admin_grants_on_root_cmp,local.security_admin_grants_on_enclosing_cmp)
 
   root_cmp_nonadmin_grants = concat(local.basic_grants_on_root_cmp,local.application_admin_grants_on_enclosing_cmp,
-                                    local.auditor_grants,local.announcement_reader_grants)                               
+                                    local.auditor_grants,local.announcement_reader_grants, local.objectstorage_read_on_root_cmp)                               
 
   #-- Policies
+  root_policy_name_prefix = local.enable_tenancy_level_template_policies == true ? (var.policies_configuration.template_policies.tenancy_level_settings.policy_name_prefix != null ? "${var.policies_configuration.template_policies.tenancy_level_settings.policy_name_prefix}-" : "") : ""
   #-- Naming
   root_cmp_admin_policy_key = "ROOT-CMP-ADMIN-POLICY"
-  root_cmp_admin_policy_name = "${local.policy_name_prefix}root-admin${local.policy_name_suffix}"
+  root_cmp_admin_policy_name = "${local.root_policy_name_prefix}root-admin${local.policy_name_suffix}"
     
   root_cmp_admin_policy = length(local.root_cmp_admin_grants) > 0 ? {
     (local.root_cmp_admin_policy_key) = {
@@ -145,7 +158,7 @@ locals {
 
   #-- Naming
   root_cmp_nonadmin_policy_key = "ROOT-CMP-NONADMIN-POLICY"
-  root_cmp_nonadmin_policy_name = "${local.policy_name_prefix}root-non-admin${local.policy_name_suffix}"
+  root_cmp_nonadmin_policy_name = "${local.root_policy_name_prefix}root-non-admin${local.policy_name_suffix}"
   
   root_cmp_nonadmin_policy = length(local.root_cmp_nonadmin_grants) > 0 ? {
     (local.root_cmp_nonadmin_policy_key) = {

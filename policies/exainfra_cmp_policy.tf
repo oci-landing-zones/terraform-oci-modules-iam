@@ -8,53 +8,67 @@ locals {
   
   #-- Exainfra read grants on Exinfra compartment
   exainfra_read_grants_on_exainfra_cmp_map = {
-    for cmp, values in local.cmp_name_to_cislz_tag_map : cmp => (contains(split(",",values["cmp-type"]),"exainfra") && values["read-group"] != null) ? [
-      "allow group ${values["read-group"]} to read all-resources in compartment ${cmp}"
+    for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"exainfra") && values["read-group"] != null) ? [
+      "allow group ${values["read-group"]} to read all-resources in compartment ${values["name"]}"
     ] : []
   }
 
   #-- Exainfra admin grants on Exinfra compartment
   exainfra_admin_grants_on_exainfra_cmp_map = {
-    for cmp, values in local.cmp_name_to_cislz_tag_map : cmp => (contains(split(",",values["cmp-type"]),"exainfra") && values["exa-group"] != null) ? [
-      "allow group ${values["exa-group"]} to read all-resources in compartment ${cmp}",
-      "allow group ${values["exa-group"]} to manage cloud-exadata-infrastructures in compartment ${cmp}",
-      "allow group ${values["exa-group"]} to manage cloud-vmclusters in compartment ${cmp}",
-      "allow group ${values["exa-group"]} to read work-requests in compartment ${cmp}",
-      "allow group ${values["exa-group"]} to manage bastion-session in compartment ${cmp}",
-      "allow group ${values["exa-group"]} to manage instance-family in compartment ${cmp}",
-      #"allow group ${values["exa-group"]} to read instance-agent-plugins in compartment ${cmp}",
-      "allow group ${values["exa-group"]} to manage ons-family in compartment ${cmp}",
-      "allow group ${values["exa-group"]} to manage alarms in compartment ${cmp}",
-      "allow group ${values["exa-group"]} to manage metrics in compartment ${cmp}",
-      "allow group ${values["exa-group"]} to manage data-safe-family in compartment ${cmp}"
+    for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"exainfra") && values["exa-group"] != null) ? [
+      "allow group ${values["exa-group"]} to read all-resources in compartment ${values["name"]}",
+      "allow group ${values["exa-group"]} to manage cloud-exadata-infrastructures in compartment ${values["name"]}",
+      "allow group ${values["exa-group"]} to manage cloud-vmclusters in compartment ${values["name"]}",
+      "allow group ${values["exa-group"]} to read work-requests in compartment ${values["name"]}",
+      "allow group ${values["exa-group"]} to manage bastion-session in compartment ${values["name"]}",
+      "allow group ${values["exa-group"]} to manage instance-family in compartment ${values["name"]}",
+      #"allow group ${values["exa-group"]} to read instance-agent-plugins in compartment ${values["name"]}",
+      "allow group ${values["exa-group"]} to manage ons-family in compartment ${values["name"]}",
+      "allow group ${values["exa-group"]} to manage alarms in compartment ${values["name"]}",
+      "allow group ${values["exa-group"]} to manage metrics in compartment ${values["name"]}",
+      "allow group ${values["exa-group"]} to manage data-safe-family in compartment ${values["name"]}",
+      "allow group ${values["exa-group"]} to use vnics in compartment ${values["name"]}",
+      "allow group ${values["exa-group"]} to manage keys in compartment ${values["name"]}",
+      "allow group ${values["exa-group"]} to use key-delegate in compartment ${values["name"]}"
     ] : []
   }  
 
   #-- Database admin grants on Exainfra compartment
   database_admin_grants_on_exainfra_cmp_map = {
-    for cmp, values in local.cmp_name_to_cislz_tag_map : cmp => (contains(split(",",values["cmp-type"]),"exainfra") && values["db-group"] != null) ? [
-      "allow group ${values["db-group"]} to read cloud-exadata-infrastructures in compartment ${cmp}",
-      "allow group ${values["db-group"]} to use cloud-vmclusters in compartment ${cmp}",
-      "allow group ${values["db-group"]} to read work-requests in compartment ${cmp}",
-      "allow group ${values["db-group"]} to manage db-nodes in compartment ${cmp}",
-      "allow group ${values["db-group"]} to manage db-homes in compartment ${cmp}",
-      "allow group ${values["db-group"]} to manage databases in compartment ${cmp}",
-      "allow group ${values["db-group"]} to manage db-backups in compartment ${cmp}",
-      "allow group ${values["db-group"]} to manage data-safe-family in compartment ${cmp}"
+    for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"exainfra") && values["db-group"] != null) ? [
+      "allow group ${values["db-group"]} to read cloud-exadata-infrastructures in compartment ${values["name"]}",
+      "allow group ${values["db-group"]} to use cloud-vmclusters in compartment ${values["name"]}",
+      "allow group ${values["db-group"]} to read work-requests in compartment ${values["name"]}",
+      "allow group ${values["db-group"]} to manage db-nodes in compartment ${values["name"]}",
+      "allow group ${values["db-group"]} to manage db-homes in compartment ${values["name"]}",
+      "allow group ${values["db-group"]} to manage databases in compartment ${values["name"]}",
+      "allow group ${values["db-group"]} to manage db-backups in compartment ${values["name"]}",
+      "allow group ${values["db-group"]} to manage data-safe-family in compartment ${values["name"]}",
+      "allow group ${values["db-group"]} to use vnics in compartment ${values["name"]}"
     ] : []
   }  
 
-  #-- Policies
-  exainfra_cmps_policies = {for cmp, values in local.cmp_name_to_cislz_tag_map : 
-    (upper("${cmp}-exainfra-policy")) => {
-      name             = "${local.policy_name_prefix}${cmp}-exainfra${local.policy_name_suffix}"
-      compartment_ocid = values.ocid
-      description      = "CIS Landing Zone policy for Exadata Cloud Service infrastructure compartment."
-      defined_tags     = var.policies_configuration.defined_tags
-      freeform_tags    = var.policies_configuration.freeform_tags
-      statements       = concat(local.exainfra_admin_grants_on_exainfra_cmp_map[cmp],
-                                local.exainfra_read_grants_on_exainfra_cmp_map[cmp],
-                                local.database_admin_grants_on_exainfra_cmp_map[cmp])
-    }
+  #-- Security admin grants on Exainfra compartment
+  security_admin_grants_on_exainfra_cmp_map = {
+    for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"exainfra") && values["sec-group"] != null) ? [
+      "allow group ${values["sec-group"]} to read keys in compartment ${values["name"]}"
+    ] : []
+  }
+
+  #-- Policies for compartments marked as exainfra compartments (values["cmp-type"] == "exainfra").
+  exainfra_cmps_policies = {
+    for k, values in local.cmp_name_to_cislz_tag_map : 
+      (upper("${k}-exainfra-policy")) => {
+        name             = "${local.cmp_policy_name_prefix}${values["name"]}-exainfra${local.policy_name_suffix}"
+        compartment_ocid = values.ocid
+        description      = "CIS Landing Zone policy for Exadata Cloud Service infrastructure compartment."
+        defined_tags     = var.policies_configuration.defined_tags
+        freeform_tags    = var.policies_configuration.freeform_tags
+        statements       = concat(local.exainfra_admin_grants_on_exainfra_cmp_map[k],
+                                  local.exainfra_read_grants_on_exainfra_cmp_map[k],
+                                  local.database_admin_grants_on_exainfra_cmp_map[k],
+                                  local.security_admin_grants_on_exainfra_cmp_map[k])
+      }
+    if values["cmp-type"] == "exainfra"
   }
 }

@@ -28,104 +28,71 @@ region               = "<your tenancy home region>" # This is your tenancy home 
 #---------------------------------------
 
 compartments_configuration = {
-  default_parent_ocid : "<REPLACE-BY-THE-PARENT-COMPARTMENT-OCID>"
-  #default_defined_tags : null
-  #default_freeform_tags : null
-  #enable_delete : false
-  compartments : { 
-    TOP-CMP : { 
-      name : "vision-top-cmp", 
-      description : "Vision Enclosing compartment", 
-      #parent_ocid : null,
-      freeform_tags : {
-        "cislz":"vision",
-        "cislz-cmp-type":"enclosing",
-        "cislz-consumer-groups-security":"vision-security-admin-group",
-        "cislz-consumer-groups-application":"vision-app-admin-group",
-        "cislz-consumer-groups-iam":"vision-iam-admin-group"
+  default_parent_ocid = "<REPLACE-BY-THE-PARENT-COMPARTMENT-OCID>"
+  #default_defined_tags = null
+  #default_freeform_tags = null
+  #enable_delete = false
+  compartments = { 
+    TOP-CMP = { 
+      name = "vision-top-cmp", 
+      description = "Vision Enclosing compartment", 
+      #parent_ocid = null,
+      freeform_tags = {
+        "cislz"="vision",
+        "cislz-cmp-type"="enclosing"
       },
-      tag_defaults : {
-        COST-CENTER-TAG-DEFAULT : {
-          tag_ocid : "<REPLACE-BY-THE-COST-CENTER-TAG-OCID>"
-          default_value : "a1",
-          is_user_required : false 
+      tag_defaults = {
+        COST-CENTER-TAG-DEFAULT = {
+          tag_ocid = "<REPLACE-BY-THE-COST-CENTER-TAG-OCID>"
+          default_value = "a1",
+          is_user_required = false 
         }
-        ENVIRONMENT-TAG-DEFAULT : {
-          tag_ocid : "<REPLACE-BY-THE-ENVIRONMENT-TAG-OCID>"
-          default_value : "low",
-          is_user_required : true 
+        ENVIRONMENT-TAG-DEFAULT = {
+          tag_ocid = "<REPLACE-BY-THE-ENVIRONMENT-TAG-OCID>"
+          default_value = "low",
+          is_user_required = true 
         }   
       }
-      children : {
-        NETWORK-CMP : { 
-          name : "vision-network-cmp", 
-          description : "Vision Network compartment", 
-          freeform_tags : {
-            "cislz":"vision",
-            "cislz-cmp-type":"network",
-            "cislz-consumer-groups-security":"vision-security-admin-group",
-            "cislz-consumer-groups-application":"vision-app-admin-group",
-            "cislz-consumer-groups-database":"vision-database-admin-group",
-            "cislz-consumer-groups-network":"vision-network-admin-group",
-            "cislz-consumer-groups-storage":"vision-storage-admin-group",
-            "cislz-consumer-groups-exainfra":"vision-exainfra-admin-group"
-          }, 
+      children = {
+        NETWORK-CMP = { 
+          name = "vision-network-cmp", 
+          description = "Vision Network compartment", 
+          freeform_tags = {
+            "cislz"="vision",
+            "cislz-cmp-type"="network"
+          }
         },
-        SECURITY-CMP : { 
-          name : "vision-security-cmp", 
-          description : "Vision Security compartment", 
-          freeform_tags : {
-            "cislz":"vision",
-            "cislz-cmp-type":"security",
-            "cislz-consumer-groups-security":"vision-security-admin-group",
-            "cislz-consumer-groups-application":"vision-app-admin-group,vision-db-admin-group",
-            "cislz-consumer-groups-database":"vision-database-admin-group",
-            "cislz-consumer-groups-network":"vision-network-admin-group",
-            "cislz-consumer-groups-storage":"vision-storage-admin-group",
-            "cislz-consumer-groups-exainfra":"vision-exainfra-admin-group"
-          },
+        SECURITY-CMP = { 
+          name = "vision-security-cmp", 
+          description = "Vision Security compartment", 
+          freeform_tags = {
+            "cislz"="vision",
+            "cislz-cmp-type"="security"
+          }
         },
-        APP-CMP : { 
-          name : "vision-application-cmp", 
-          description : "Vision Application compartment", 
-          freeform_tags : {
-            "cislz":"vision",
-            "cislz-cmp-type":"application",
-            "cislz-consumer-groups-security":"vision-security-admin-group",
-            "cislz-consumer-groups-application":"vision-app-admin-group",
-            "cislz-consumer-groups-database":"vision-database-admin-group",
-            "cislz-consumer-groups-network":"vision-network-admin-group",
-            "cislz-consumer-groups-storage":"vision-storage-admin-group",
-            "cislz-consumer-groups-exainfra":"vision-exainfra-admin-group"
-          },
+        APP-CMP = { 
+          name = "vision-application-cmp", 
+          description = "Vision Application compartment", 
+          freeform_tags = {
+            "cislz"="vision",
+            "cislz-cmp-type"="application"
+          }
         },
-        DB-CMP : { 
-          name : "vision-database-cmp", 
-          description : "Vision Database compartment", 
-          freeform_tags : {
-            "cislz":"vision",
-            "cislz-cmp-type":"database",
-            "cislz-consumer-groups-security":"vision-security-admin-group",
-            "cislz-consumer-groups-application":"vision-app-admin-group",
-            "cislz-consumer-groups-database":"vision-database-admin-group",
-            "cislz-consumer-groups-network":"vision-network-admin-group",
-            "cislz-consumer-groups-storage":"vision-storage-admin-group",
-            "cislz-consumer-groups-exainfra":"vision-exainfra-admin-group"
-          },
+        DB-CMP = { 
+          name = "vision-database-cmp", 
+          description = "Vision Database compartment", 
+          freeform_tags = {
+            "cislz"="vision",
+            "cislz-cmp-type"="database"
+          }
         },
-        EXACS-CMP : { 
-          name : "vision-exainfra-cmp", 
-          description : "Vision Exadata Cloud Service compartment",  
-          freeform_tags : {
-            "cislz":"vision",
-            "cislz-cmp-type":"exainfra",
-            "cislz-consumer-groups-security":"vision-security-admin-group",
-            "cislz-consumer-groups-application":"vision-app-admin-group",
-            "cislz-consumer-groups-database":"vision-database-admin-group",
-            "cislz-consumer-groups-network":"vision-network-admin-group",
-            "cislz-consumer-groups-storage":"vision-storage-admin-group",
-            "cislz-consumer-groups-exainfra":"vision-exainfra-admin-group"
-          },
+        EXACS-CMP = { 
+          name = "vision-exainfra-cmp", 
+          description = "Vision Exadata Cloud Service compartment",  
+          freeform_tags = {
+            "cislz"="vision",
+            "cislz-cmp-type"="exainfra"
+          }
         } 
       }
     }
