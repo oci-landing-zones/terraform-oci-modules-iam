@@ -65,34 +65,42 @@ locals {
       "cislz-consumer-groups-exainfra":"vision-exainfra-admin-group"
     }
   }
-
-
   
   cmps_from_data_source = {
     for cmp in data.oci_identity_compartments.all_cmps.compartments : cmp.name => 
       { 
         name : cmp.name, 
         ocid : cmp.id, 
-        cislz_metadata : local.cislz_compartments_metadata[cmp.freeform_tags["cislz-cmp-type"]] #-- We expect compartments to be freeform tagged with "cislz-cmp-type", so we can figure out the compartments intent and associate it with the appropriate metadata.
+        cislz_metadata : local.cislz_compartments_metadata[cmp.freeform_tags["cislz-cmp-type"]] #-- This example expects compartments to be freeform tagged with "cislz-cmp-type", so it can figure out the compartments intent and associate it with the appropriate metadata.
       } 
     if lookup(cmp.freeform_tags, "cislz","") == "vision" #-- The compartments we are interested are freeform tagged as {"cislz" : "vision"} but you could identify the compartments through some other attributes that makes sense to your deployment.
   }
 
   policies_configuration = {
-    supplied_compartments : local.cmps_from_data_source
-    groups_with_tenancy_level_roles : [
-      {"name":"vision-iam-admin-group",     "roles":"iam"},
-      {"name":"vision-cred-admin-group",    "roles":"cred"},
-      {"name":"vision-cost-admin-group",    "roles":"cost"},
-      {"name":"vision-security-admin-group","roles":"security"},
-      {"name":"vision-app-admin-group",     "roles":"application"},
-      {"name":"vision-auditor-group",       "roles":"auditor"},
-      {"name":"vision-database-admin-group","roles":"basic"},
-      {"name":"vision-exainfra-admin-group","roles":"basic"},
-      {"name":"vision-storage-admin-group", "roles":"basic"},
-      {"name":"vision-announcement_reader-group","roles":"announcement-reader"}
-    ]
-    enable_output : true
+    template_policies : {
+      tenancy_level_settings : {
+        groups_with_tenancy_level_roles : [
+          {"name":"vision-iam-admin-group",     "roles":"iam"},
+          {"name":"vision-cred-admin-group",    "roles":"cred"},
+          {"name":"vision-cost-admin-group",    "roles":"cost"},
+          {"name":"vision-security-admin-group","roles":"security,basic"},
+          {"name":"vision-app-admin-group",     "roles":"application,basic"},
+          {"name":"vision-auditor-group",       "roles":"auditor"},
+          {"name":"vision-database-admin-group","roles":"database,basic"},
+          {"name":"vision-exainfra-admin-group","roles":"exainfra,basic"},
+          {"name":"vision-storage-admin-group", "roles":"basic"},
+          {"name":"vision-network-admin-group", "roles":"network,basic"},
+          {"name":"vision-announcement_reader-group","roles":"announcement-reader"}
+        ]
+        oci_services : {
+          enable_all_policies : true
+        }
+        policy_name_prefix : "vision"
+      }
+      compartment_level_settings : {
+        supplied_compartments : local.cmps_from_data_source
+      }
+    }
   } 
 }
 

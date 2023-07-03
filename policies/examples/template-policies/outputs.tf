@@ -4,3 +4,7 @@
 output "policies" {
   value = module.cislz_policies.policies
 }
+
+output "template_target_compartments" {
+  value = module.cislz_policies.template_target_compartments
+}
