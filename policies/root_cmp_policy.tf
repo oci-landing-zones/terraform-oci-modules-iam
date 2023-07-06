@@ -39,7 +39,7 @@ locals {
 
   iam_admin_grants_on_root_cmp = contains(keys(local.group_role_to_name_map),local.iam_role) ? [
     "allow group ${local.group_role_to_name_map[local.iam_role]} to inspect users in tenancy",
-    "allow group ${local.group_role_to_name_map[local.iam_role]} to manage users in tenancy where all {request.operation != 'ListApiKeys',request.operation != 'ListAuthTokens',request.operation != 'ListCustomerSecretKeys',request.operation != 'UploadApiKey',request.operation != 'DeleteApiKey',request.operation != 'UpdateAuthToken',request.operation != 'CreateAuthToken',request.operation != 'DeleteAuthToken',request.operation != 'CreateSecretKey',request.operation != 'UpdateCustomerSecretKey',request.operation != 'DeleteCustomerSecretKey',request.operation = 'UpdateUserCapabilities'}",
+    "allow group ${local.group_role_to_name_map[local.iam_role]} to manage users in tenancy where any {request.operation = 'CreateUser', request.operation = 'UpdateUser', request.operation = 'UpdateUserState', request.operation = 'DeleteUser', request.operation = 'UpdateUserCapabilities', request.operation = 'AddUserToGroup', request.operation = 'RemoveUserFromGroup'}",
     # Users should be manage users and groups permissions via IDP
     "allow group ${local.group_role_to_name_map[local.iam_role]} to inspect groups in tenancy",
     "allow group ${local.group_role_to_name_map[local.iam_role]} to read policies in tenancy",
