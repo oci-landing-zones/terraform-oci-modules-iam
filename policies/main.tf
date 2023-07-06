@@ -37,11 +37,11 @@ resource "oci_identity_policy" "these" {
       }
       precondition {
         condition = local.enable_cis_benchmark_checks ? length([for s in each.value.statements : s if can(regex(local.cis_iam13_main_final_regex,lower(s)))]) == 0 : true
-        error_message = "VALIDATION FAILURE (CIS IAM 1.3): Policy ${each.value.name} has statements that allow a group to change the Administrators group: \"${join(",",[for s in each.value.statements : s if can(regex(local.cis_iam13_main_final_regex,lower(s)))])}\""
+        error_message = "VALIDATION FAILURE (CIS IAM 1.3): Policy ${each.value.name} has statements that allow a group to change the Administrators group: \"${join(",",[for s in each.value.statements : s if can(regex(local.cis_iam13_main_final_regex,lower(s)))])}\". You can exclude Administrators group from this statement by adding \"target.group.name != 'Administrators'\" to the statement."
       }
       precondition {
         condition = local.enable_cis_benchmark_checks ? length([for s in each.value.statements : s if can(regex(local.cis_iam13_main_nonfinal_regex,lower(s))) && can(regex(local.cis_iam13_operations_regex,s)) && !can(regex(local.cis_iam13_tenancy_admin_regex,s))]) == 0 : true
-        error_message = "VALIDATION FAILURE (CIS IAM 1.3): Policy ${each.value.name} has statements that allow a group to change the Administrators group: \"${join(",",[for s in each.value.statements : s if can(regex(local.cis_iam13_main_nonfinal_regex,lower(s))) && can(regex(local.cis_iam13_operations_regex,s)) && !can(regex(local.cis_iam13_tenancy_admin_regex,s))])}\""
+        error_message = "VALIDATION FAILURE (CIS IAM 1.3): Policy ${each.value.name} has statements that allow a group to change the Administrators group: \"${join(",",[for s in each.value.statements : s if can(regex(local.cis_iam13_main_nonfinal_regex,lower(s))) && can(regex(local.cis_iam13_operations_regex,s)) && !can(regex(local.cis_iam13_tenancy_admin_regex,s))])}\". You can exclude Administrators group from this statement by adding \"target.group.name != 'Administrators'\" to the statement."
       }
     }
 }
