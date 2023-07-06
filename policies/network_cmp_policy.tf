@@ -38,7 +38,8 @@ locals {
       "allow group ${values["net-group"]} to manage alarms in compartment ${values["name"]}",
       "allow group ${values["net-group"]} to manage metrics in compartment ${values["name"]}",
       "allow group ${values["net-group"]} to manage keys in compartment ${values["name"]}",
-      "allow group ${values["net-group"]} to use key-delegate in compartment ${values["name"]}"
+      "allow group ${values["net-group"]} to use key-delegate in compartment ${values["name"]}",
+      "allow group ${values["net-group"]} to manage secret-family in compartment ${values["name"]}"
       #"allow group ${values["net-group"]} to read instance-agent-plugins in compartment ${values["name"]}"
     ] : []
   }  
