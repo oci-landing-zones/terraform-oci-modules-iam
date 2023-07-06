@@ -41,7 +41,8 @@ locals {
       #"allow group ${values["app-group"]} to read instance-agent-plugins in compartment ${values["name"]}",
       "allow group ${values["app-group"]} to use vnics in compartment ${values["name"]}",
       "allow group ${values["app-group"]} to manage keys in compartment ${values["name"]}",
-      "allow group ${values["app-group"]} to use key-delegate in compartment ${values["name"]}"
+      "allow group ${values["app-group"]} to use key-delegate in compartment ${values["name"]}",
+      "allow group ${values["app-group"]} to manage secret-family in compartment ${values["name"]}"
     ] : []
   }  
 
