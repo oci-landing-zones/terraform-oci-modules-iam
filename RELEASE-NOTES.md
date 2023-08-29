@@ -1,3 +1,12 @@
+# August 29, 2023 Release Notes - 0.1.4
+
+## Updates
+1. [Policy Module](#0-1-4-policies)
+
+### <a name="0-1-4-policies">Policy Module</a>
+1.  Policy module now supports group names that include spaces like: 'vision security adm group'. It's supported for tenancy and compartment level groups.  Please see [main.tf](./policies/examples/template-policies/main.tf) for an example..
+2.  Policy module now supports a list of groups for each role at tenancy and compartment level, like : "cislz-consumer-groups-security":"vision-security-admin-group,'vision security adm group2'".  Please see [main.tf](./policies/examples/template-policies/main.tf) for an example.
+
 # July 03, 2023 Release Notes - 0.1.3
 
 ## Updates
