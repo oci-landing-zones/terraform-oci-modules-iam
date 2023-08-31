@@ -56,7 +56,7 @@ locals {
     "allow group ${local.iam_group_names} to manage users in tenancy where all {request.operation != 'ListApiKeys',request.operation != 'ListAuthTokens',request.operation != 'ListCustomerSecretKeys',request.operation != 'UploadApiKey',request.operation != 'DeleteApiKey',request.operation != 'UpdateAuthToken',request.operation != 'CreateAuthToken',request.operation != 'DeleteAuthToken',request.operation != 'CreateSecretKey',request.operation != 'UpdateCustomerSecretKey',request.operation != 'DeleteCustomerSecretKey'}",
     "allow group ${local.iam_group_names} to inspect groups in tenancy",
     "allow group ${local.iam_group_names} to read policies in tenancy",
-    "allow group ${local.iam_group_names} to manage groups in tenancy where all {target.group.name != 'Administrators', target.group.name != ${join(",",local.iam_grants_condition)}}",
+    "allow group ${local.iam_group_names} to manage groups in tenancy where all {target.group.name != 'Administrators', ${join(",",local.iam_grants_condition)}}",
     "allow group ${local.iam_group_names} to inspect identity-providers in tenancy",
     "allow group ${local.iam_group_names} to manage identity-providers in tenancy where any {request.operation = 'AddIdpGroupMapping', request.operation = 'DeleteIdpGroupMapping'}",
     "allow group ${local.iam_group_names} to manage dynamic-groups in tenancy",
