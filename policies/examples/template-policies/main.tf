@@ -13,7 +13,7 @@ locals {
   cislz_compartments_metadata = {
     "enclosing" : {
       "cislz-cmp-type":"enclosing",
-      "cislz-consumer-groups-security":"vision-security-admin-group",
+      "cislz-consumer-groups-security":"vision-security-admin-group,'vision security adm group2'",
       "cislz-consumer-groups-application":"vision-app-admin-group",
       "cislz-consumer-groups-iam":"vision-iam-admin-group"
     },
@@ -81,6 +81,7 @@ locals {
       tenancy_level_settings : {
         groups_with_tenancy_level_roles : [
           {"name":"vision-iam-admin-group",     "roles":"iam"},
+          {"name":"'vision iam adm group'",       "roles":"iam"},
           {"name":"vision-cred-admin-group",    "roles":"cred"},
           {"name":"vision-cost-admin-group",    "roles":"cost"},
           {"name":"vision-security-admin-group","roles":"security,basic"},
