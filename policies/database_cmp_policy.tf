@@ -39,7 +39,8 @@ locals {
       "allow group ${values["db-group"]} to manage data-safe-family in compartment ${values["name"]}",
       "allow group ${values["db-group"]} to use vnics in compartment ${values["name"]}",
       "allow group ${values["db-group"]} to manage keys in compartment ${values["name"]}",
-      "allow group ${values["db-group"]} to use key-delegate in compartment ${values["name"]}"
+      "allow group ${values["db-group"]} to use key-delegate in compartment ${values["name"]}",
+      "allow group ${values["db-group"]} to manage secret-family in compartment ${values["name"]}"
     ] : []
   }  
 
@@ -74,6 +75,14 @@ locals {
     ] : []
   }
 
+  #-- Database grants on Security compartment
+  database_kms_grants_on_database_cmp_map = {
+    for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"database") && values["db-dyn-group"] != null) ? [
+      "allow dynamic-group ${values["db-dyn-group"]} to use keys in compartment ${values["name"]}",
+      "allow dynamic-group ${values["db-dyn-group"]} to use secret-family in compartment ${values["name"]}"
+    ] : []
+  }  
+
   #-- Policies for compartments marked as database compartments (values["cmp-type"] == "database").
   database_cmps_policies = {
     for k, values in local.cmp_name_to_cislz_tag_map : 
@@ -85,7 +94,7 @@ locals {
         freeform_tags    = var.policies_configuration.freeform_tags
         statements       = concat(local.database_admin_grants_on_database_cmp_map[k],local.database_read_grants_on_database_cmp_map[k],
                                   local.appdev_admin_grants_on_database_cmp_map[k],local.storage_admin_grants_on_database_cmp_map[k],
-                                  local.security_admin_grants_on_database_cmp_map[k])
+                                  local.security_admin_grants_on_database_cmp_map[k], local.database_kms_grants_on_database_cmp_map[k])
       }
     if values["cmp-type"] == "database"
   }

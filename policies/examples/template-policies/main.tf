@@ -53,7 +53,8 @@ locals {
       "cislz-consumer-groups-database":"vision-database-admin-group",
       "cislz-consumer-groups-network":"vision-network-admin-group",
       "cislz-consumer-groups-storage":"vision-storage-admin-group",
-      "cislz-consumer-groups-exainfra":"vision-exainfra-admin-group"
+      "cislz-consumer-groups-exainfra":"vision-exainfra-admin-group",
+      "cislz-consumer-groups-dyn-database-kms":"vision-database-kms-dynamic-group"
     },
     "exainfra" : {
       "cislz-cmp-type":"exainfra",

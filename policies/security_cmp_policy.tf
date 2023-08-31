@@ -81,8 +81,7 @@ locals {
   #-- Database grants on Security compartment
   database_kms_grants_on_security_cmp_map = {
     for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"security") && values["db-dyn-group"] != null) ? [
-      "allow dynamic-group ${values["db-dyn-group"]} to read vaults in compartment ${values["name"]}",
-      "allow dynamic-group ${values["db-dyn-group"]} to use keys in compartment ${values["name"]}"
+      "allow dynamic-group ${values["db-dyn-group"]} to use vaults in compartment ${values["name"]}"
     ] : []
   }  
  
