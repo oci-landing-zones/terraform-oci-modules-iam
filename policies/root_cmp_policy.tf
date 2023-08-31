@@ -25,7 +25,7 @@ locals {
   group_name_to_role_map = {for group in local.groups_with_tenancy_level_roles : group.name => split(",", lookup(group,"roles","basic"))} # this produces objects like {"group-name-1" : ["iam", "security"]}
   group_names = join(",", compact(keys(local.group_name_to_role_map))) # this produces a comma separated string of group names, like "group-name-1, group-name-2, group-name-3"
   group_name_map_transpose = transpose(local.group_name_to_role_map) # this produces objects like {"iam" : ["group-name-1"], "security" : ["group-name-1"]}
-  group_role_to_name_map = {for key, value in local.group_name_map_transpose : key => value[0]} # this is the same transposed matrix, but it takes group name string at index 0.
+  #group_role_to_name_map = {for key, value in local.group_name_map_transpose : key => value[0]} # this is the same transposed matrix, but it takes group name string at index 0.
 
   iam_group_names = join(",",local.group_name_map_transpose[local.iam_role])
   cred_group_names = join(",",local.group_name_map_transpose[local.cred_role])
@@ -40,7 +40,6 @@ locals {
 
   iam_grants_condition = [for g in split(",",local.cred_group_names) : "target.group.name != ${g}"]
 
-
   #-- Used to check if an enclosing compartment is available.
   cmp_type_list = flatten([for cmp, values in local.cmp_name_to_cislz_tag_map : split(",",values.cmp-type)])
 
@@ -51,7 +50,7 @@ locals {
     "allow group ${local.group_names} to read usage-reports in tenancy"
   ] : []
 
-  iam_admin_grants_on_root_cmp = contains(keys(local.group_role_to_name_map),local.iam_role) ? [
+  iam_admin_grants_on_root_cmp = contains(keys(local.group_name_map_transpose),local.iam_role) ? [
     "allow group ${local.iam_group_names} to inspect users in tenancy",
     # Users should be manage users and groups permissions via IDP
     "allow group ${local.iam_group_names} to inspect groups in tenancy",
@@ -73,25 +72,25 @@ locals {
   ] : []
 
   # For the case when there's no enclosing compartment defined, the grants are set in the root compartment. Analogous grants are present in enclosing_cmp_policy.tf, which are applied when an enclosing compartment is defined.
-  iam_admin_grants_on_enclosing_cmp = contains(keys(local.group_role_to_name_map),local.iam_role) && !contains(local.cmp_type_list,"enclosing") ? [
+  iam_admin_grants_on_enclosing_cmp = contains(keys(local.group_name_map_transpose),local.iam_role) && !contains(local.cmp_type_list,"enclosing") ? [
     "allow group ${local.iam_group_names} to manage policies in tenancy", 
     "allow group ${local.iam_group_names} to manage compartments in tenancy"
   ] : []
 
-  cred_admin_grants_on_root_cmp = contains(keys(local.group_role_to_name_map),local.cred_role) ? [
+  cred_admin_grants_on_root_cmp = contains(keys(local.group_name_map_transpose),local.cred_role) ? [
     "allow group ${local.cred_group_names} to inspect users in tenancy",
     "allow group ${local.cred_group_names} to inspect groups in tenancy",
     "allow group ${local.cred_group_names} to manage users in tenancy  where any {request.operation = 'ListApiKeys',request.operation = 'ListAuthTokens',request.operation = 'ListCustomerSecretKeys',request.operation = 'UploadApiKey',request.operation = 'DeleteApiKey',request.operation = 'UpdateAuthToken',request.operation = 'CreateAuthToken',request.operation = 'DeleteAuthToken',request.operation = 'CreateSecretKey',request.operation = 'UpdateCustomerSecretKey',request.operation = 'DeleteCustomerSecretKey',request.operation = 'UpdateUserCapabilities'}"
   ] : [] 
 
-  cost_admin_grants_on_root_cmp = contains(keys(local.group_role_to_name_map),local.cost_role) ? [
+  cost_admin_grants_on_root_cmp = contains(keys(local.group_name_map_transpose),local.cost_role) ? [
     "define tenancy usage-report as ocid1.tenancy.oc1..aaaaaaaaned4fkpkisbwjlr56u7cj63lf3wffbilvqknstgtvzub7vhqkggq", 
     "endorse group ${local.cost_group_names} to read objects in tenancy usage-report",
     "allow group ${local.cost_group_names} to manage usage-report in tenancy",
     "allow group ${local.cost_group_names} to manage usage-budgets in tenancy"
   ] : []
 
-  security_admin_grants_on_root_cmp = contains(keys(local.group_role_to_name_map),local.security_role) ? [
+  security_admin_grants_on_root_cmp = contains(keys(local.group_name_map_transpose),local.security_role) ? [
     "allow group ${local.security_group_names} to manage cloudevents-rules in tenancy",
     "allow group ${local.security_group_names} to manage cloud-guard-family in tenancy",
     "allow group ${local.security_group_names} to read tenancies in tenancy"
@@ -99,16 +98,16 @@ locals {
   ] : []
 
   objectstorage_read_grantees = compact(
-                                  concat(contains(keys(local.group_role_to_name_map),local.network_role) ?     [local.network_group_names]     : [],
-                                         contains(keys(local.group_role_to_name_map),local.security_role) ?    [local.security_group_names]    : [],
-                                         contains(keys(local.group_role_to_name_map),local.application_role) ? [local.application_group_names] : [],
-                                         contains(keys(local.group_role_to_name_map),local.database_role) ?    [local.database_group_names]    : [],
-                                         contains(keys(local.group_role_to_name_map),local.exainfra_role) ?    [local.exainfra_group_names]    : [])
+                                  concat(contains(keys(local.group_name_map_transpose),local.network_role) ?     [local.network_group_names]     : [],
+                                         contains(keys(local.group_name_map_transpose),local.security_role) ?    [local.security_group_names]    : [],
+                                         contains(keys(local.group_name_map_transpose),local.application_role) ? [local.application_group_names] : [],
+                                         contains(keys(local.group_name_map_transpose),local.database_role) ?    [local.database_group_names]    : [],
+                                         contains(keys(local.group_name_map_transpose),local.exainfra_role) ?    [local.exainfra_group_names]    : [])
                                 )
   objectstorage_read_on_root_cmp = coalescelist(local.objectstorage_read_grantees,[1]) != [1] ? ["allow group ${join(",",local.objectstorage_read_grantees)} to read objectstorage-namespaces in tenancy"] : []
   
   # For the case when there's no enclosing compartment defined, the grants are set in the root compartment. Analogous grants are present in enclosing_cmp_policy.tf, which are applied when an enclosing compartment is defined.
-  security_admin_grants_on_enclosing_cmp = contains(keys(local.group_role_to_name_map),local.security_role) && !contains(local.cmp_type_list,"enclosing") ? [
+  security_admin_grants_on_enclosing_cmp = contains(keys(local.group_name_map_transpose),local.security_role) && !contains(local.cmp_type_list,"enclosing") ? [
     "allow group ${local.security_group_names} to manage tag-namespaces in tenancy",
     "allow group ${local.security_group_names} to manage tag-defaults in tenancy",
     "allow group ${local.security_group_names} to manage repos in tenancy",
@@ -119,13 +118,13 @@ locals {
   ] : []  
 
   # For the case when there's no enclosing compartment defined, the grants are set in the root compartment. Analogous grants are present in enclosing_cmp_policy.tf, which are applied when an enclosing compartment is defined.
-  application_admin_grants_on_enclosing_cmp = contains(keys(local.group_role_to_name_map),local.application_role) && !contains(local.cmp_type_list,"enclosing") ? [
+  application_admin_grants_on_enclosing_cmp = contains(keys(local.group_name_map_transpose),local.application_role) && !contains(local.cmp_type_list,"enclosing") ? [
     "allow group ${local.application_group_names} to read app-catalog-listing in tenancy",
     "allow group ${local.application_group_names} to read instance-images in tenancy",
     "allow group ${local.application_group_names} to read repos in tenancy"
   ] : []  
 
-  auditor_grants = contains(keys(local.group_role_to_name_map),local.auditor_role) ? [
+  auditor_grants = contains(keys(local.group_name_map_transpose),local.auditor_role) ? [
     "allow group ${local.auditor_group_names} to inspect all-resources in tenancy",
     "allow group ${local.auditor_group_names} to read instances in tenancy",
     "allow group ${local.auditor_group_names} to read load-balancers in tenancy",
@@ -142,7 +141,7 @@ locals {
     "allow group ${local.auditor_group_names} to read data-safe-family in tenancy"
   ] : []
 
-  announcement_reader_grants = contains(keys(local.group_role_to_name_map),local.announcement_reader_role) ? [
+  announcement_reader_grants = contains(keys(local.group_name_map_transpose),local.announcement_reader_role) ? [
     "allow group ${local.announcement_reader_group_names} to read announcements in tenancy"
   ] : []
 
