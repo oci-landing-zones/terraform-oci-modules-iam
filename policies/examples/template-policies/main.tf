@@ -80,8 +80,8 @@ locals {
     template_policies : {
       tenancy_level_settings : {
         groups_with_tenancy_level_roles : [
-          {"name":"vision-iam-admin-group",     "roles":"iam"},
-          {"name":"'vision iam adm group'",       "roles":"iam"},
+          {"name":"vision-iam-admin-group",     "roles":"iam"}, # for multiple groups with the same role, add another element to the list, repeating the role, like the one right below.
+          {"name":"'vision iam adm group'",     "roles":"iam"}, # an example with a group name with spaces. Use single quotes around it.
           {"name":"vision-cred-admin-group",    "roles":"cred"},
           {"name":"vision-cost-admin-group",    "roles":"cost"},
           {"name":"vision-security-admin-group","roles":"security,basic"},
