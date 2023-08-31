@@ -29,7 +29,8 @@ locals {
       "allow group ${values["exa-group"]} to manage data-safe-family in compartment ${values["name"]}",
       "allow group ${values["exa-group"]} to use vnics in compartment ${values["name"]}",
       "allow group ${values["exa-group"]} to manage keys in compartment ${values["name"]}",
-      "allow group ${values["exa-group"]} to use key-delegate in compartment ${values["name"]}"
+      "allow group ${values["exa-group"]} to use key-delegate in compartment ${values["name"]}",
+      "allow group ${values["exa-group"]} to manage secret-family in compartment ${values["name"]}"
     ] : []
   }  
 
