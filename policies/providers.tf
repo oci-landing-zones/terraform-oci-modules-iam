@@ -7,6 +7,9 @@ terraform {
     oci = {
       source = "oracle/oci"
     }
+    /* random = {
+      source = "hashicorp/random"
+    } */
   }
   experiments = [module_variable_optional_attrs]
 }
