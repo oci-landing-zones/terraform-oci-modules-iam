@@ -43,9 +43,10 @@ variable "policies_configuration" {
           ocid = string # The compartment ocid
           cislz_metadata = map(string) # The compartment metadata. See module README.md for details.
         })))
-        policy_name_prefix = optional(string) # A prefix to compartment policy names.
+        #policy_name_prefix = optional(string) # A prefix to compartment policy names.
       }))
     }))
+    policy_name_prefix = optional(string) # A prefix to all policy names.
     policy_name_suffix = optional(string) # A suffix to all policy names.
     defined_tags = optional(map(string)) # Any defined tags to apply on the template (pre-configured) policies.
     freeform_tags = optional(map(string)) # Any freeform tags to apply on the template (pre-configured) policies.
