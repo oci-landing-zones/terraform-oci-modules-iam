@@ -43,12 +43,12 @@ compartments_configuration = {
       },
       tag_defaults = {
         COST-CENTER-TAG-DEFAULT = {
-          tag_ocid = "<REPLACE-BY-THE-COST-CENTER-TAG-OCID>"
+          tag_id = "<REPLACE-BY-THE-COST-CENTER-TAG-OCID>"
           default_value = "a1",
           is_user_required = false 
         }
         ENVIRONMENT-TAG-DEFAULT = {
-          tag_ocid = "<REPLACE-BY-THE-ENVIRONMENT-TAG-OCID>"
+          tag_id = "<REPLACE-BY-THE-ENVIRONMENT-TAG-OCID>"
           default_value = "low",
           is_user_required = true 
         }   

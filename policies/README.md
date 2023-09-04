@@ -66,14 +66,14 @@ module "policies" {
 For invoking the module remotely, set the module *source* attribute to the policies module folder in this repository, as shown:
 ```
 module "policies" {
-  source = "git@github.com:oracle-quickstart/terraform-oci-cis-landing-zone-iam.git//policies"
+  source = "github.com/oracle-quickstart/terraform-oci-cis-landing-zone-iam/policies"
   tenancy_ocid = var.tenancy_ocid
   policies_configuration = var.policies_configuration
 }
 ```
 For referring to a specific module version, append *ref=\<version\>* to the *source* attribute value, as in:
 ```
-  source = "git@github.com:oracle-quickstart/terraform-oci-cis-landing-zone-iam.git//policies?ref=v0.1.0"
+  source = "github.com/oracle-quickstart/terraform-oci-cis-landing-zone-iam//policies?ref=v0.1.0"
 ```
 ## <a name="functioning">Module Functioning</a>
 

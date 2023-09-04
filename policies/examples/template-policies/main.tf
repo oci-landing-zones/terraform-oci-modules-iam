@@ -98,12 +98,13 @@ locals {
         oci_services : {
           enable_all_policies : true
         }
-        policy_name_prefix : "vision"
+        #policy_name_prefix : "vision"
       }
       compartment_level_settings : {
         supplied_compartments : local.cmps_from_data_source
       }
     }
+    policy_name_prefix : "vision"
   } 
 }
 
