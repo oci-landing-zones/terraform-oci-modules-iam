@@ -19,7 +19,7 @@ locals {
   level_2 = flatten([
     for k1, v1 in var.compartments_configuration.compartments : [
       for k2, v2 in v1.children : {
-        key  = k2
+        key  = var.derive_keys_from_hierarchy ? format("%s-%s",k1,k2) : k2
         name = v2.name
         description = v2.description
         parent_ocid = oci_identity_compartment.these[k1].id
@@ -32,13 +32,13 @@ locals {
   ])
 
   level_3 = flatten([
-    for v1 in var.compartments_configuration.compartments : [
+    for k1, v1 in var.compartments_configuration.compartments : [
       for k2, v2 in v1.children : [
         for k3, v3 in v2.children : {
-          key  = k3
+          key  = var.derive_keys_from_hierarchy ? format("%s-%s-%s",k1,k2,k3) : k3
           name = v3.name
           description = v3.description
-          parent_ocid = oci_identity_compartment.level_2[k2].id
+          parent_ocid = var.derive_keys_from_hierarchy ? oci_identity_compartment.level_2["${k1}-${k2}"].id : oci_identity_compartment.level_2[k2].id
           defined_tags = v3.defined_tags != null ? v3.defined_tags :  var.compartments_configuration.default_defined_tags != null ?  var.compartments_configuration.default_defined_tags : null
           freeform_tags = v3.freeform_tags != null ? v3.freeform_tags : var.compartments_configuration.default_freeform_tags != null ?  var.compartments_configuration.default_freeform_tags : null
           tag_defaults = v3.tag_defaults
@@ -49,14 +49,14 @@ locals {
   ])
 
   level_4 = flatten([
-    for v1 in var.compartments_configuration.compartments : [
-      for v2 in v1.children : [
+    for k1, v1 in var.compartments_configuration.compartments : [
+      for k2, v2 in v1.children : [
         for k3, v3 in v2.children : [
           for k4, v4 in v3.children : {
-            key  = k4
+            key  = var.derive_keys_from_hierarchy ? format("%s-%s-%s-%s",k1,k2,k3,k4) : k4
             name = v4.name
             description = v4.description
-            parent_ocid = oci_identity_compartment.level_3[k3].id
+            parent_ocid = var.derive_keys_from_hierarchy ? oci_identity_compartment.level_3["${k1}-${k2}-${k3}"].id : oci_identity_compartment.level_3[k3].id
             defined_tags = v4.defined_tags != null ? v4.defined_tags :  var.compartments_configuration.default_defined_tags != null ?  var.compartments_configuration.default_defined_tags : null
             freeform_tags = v4.freeform_tags != null ? v4.freeform_tags : var.compartments_configuration.default_freeform_tags != null ?  var.compartments_configuration.default_freeform_tags : null
             tag_defaults = v4.tag_defaults
@@ -68,15 +68,15 @@ locals {
   ])
 
   level_5 = flatten([
-    for v1 in var.compartments_configuration.compartments : [
-      for v2 in v1.children : [
-        for v3 in v2.children : [
+    for k1, v1 in var.compartments_configuration.compartments : [
+      for k2, v2 in v1.children : [
+        for k3, v3 in v2.children : [
           for k4, v4 in v3.children : [
             for k5, v5 in v4.children : {
-              key  = k5
+              key  = var.derive_keys_from_hierarchy ? format("%s-%s-%s-%s-%s",k1,k2,k3,k4,k5) : k5
               name = v5.name
               description = v5.description
-              parent_ocid = oci_identity_compartment.level_4[k4].id
+              parent_ocid = var.derive_keys_from_hierarchy ? oci_identity_compartment.level_4["${k1}-${k2}-${k3}-${k4}"].id : oci_identity_compartment.level_4[k4].id
               defined_tags = v5.defined_tags != null ? v5.defined_tags :  var.compartments_configuration.default_defined_tags != null ?  var.compartments_configuration.default_defined_tags : null
               freeform_tags = v5.freeform_tags != null ? v5.freeform_tags : var.compartments_configuration.default_freeform_tags != null ?  var.compartments_configuration.default_freeform_tags : null
               tag_defaults = v5.tag_defaults
@@ -89,16 +89,16 @@ locals {
   ])
 
   level_6 = flatten([
-    for v1 in var.compartments_configuration.compartments : [
-      for v2 in v1.children : [
-        for v3 in v2.children : [
-          for v4 in v3.children : [
+    for k1, v1 in var.compartments_configuration.compartments : [
+      for k2, v2 in v1.children : [
+        for k3, v3 in v2.children : [
+          for k4, v4 in v3.children : [
             for k5, v5 in v4.children : [
               for k6, v6 in v5.children : {
-                key  = k6
+                key  = var.derive_keys_from_hierarchy ? format("%s-%s-%s-%s-%s-%s",k1,k2,k3,k4,k5,k6) : k6
                 name = v6.name
                 description = v6.description
-                parent_ocid = oci_identity_compartment.level_5[k5].id
+                parent_ocid = var.derive_keys_from_hierarchy ? oci_identity_compartment.level_5["${k1}-${k2}-${k3}-${k4}-${k5}"].id : oci_identity_compartment.level_5[k5].id
                 defined_tags = v6.defined_tags != null ? v6.defined_tags :  var.compartments_configuration.default_defined_tags != null ?  var.compartments_configuration.default_defined_tags : null
                 freeform_tags = v6.freeform_tags != null ? v6.freeform_tags : var.compartments_configuration.default_freeform_tags != null ?  var.compartments_configuration.default_freeform_tags : null
                 tag_defaults = v6.tag_defaults

@@ -18,7 +18,30 @@ It is also possible to apply tag defaults to compartments. Tag defaults are tag 
 
 Tag defaults are defined using *tag_defaults* attribute within each compartment in *compartments* attribute. You can have multiple tag defaults in a single compartment. Each tag default requires an immutable key (use an uppercase string as a convention), a tag ocid (*tag_ocid*), the default value (*default_value*) and whether or not the value is required from users when creating resources (*is_user_required*). If *is_user_required* is not provided or set to false, the default value is automatically applied upon resource creation.  
 
-**NOTE**: optional metadata added to compartments through *freeform_tags* attribute can be read by the [Policy Module](../policies/) for the automatic generation of pre-configured policies.
+## Identifying Keys
+
+Each compartment is identified by Terraform with an artificial key provided in the input variable. For example, in the snippet below, *DATABASE* (rows 4-13) identifies the *database-cmp* compartment, while *PROD* (rows 8-11) identifies its child *database-production-cmp* compartment.
+```
+1  compartments_configuration = { 
+2    default_parent_ocid = "<COMPARTMENT-OCID>"
+3    compartments = {
+4      DATABASE = { 
+5        name = "database-cmp" 
+6        description = "Database compartment"
+7        children = {
+8          PROD = {
+9            name = "database-production-cmp"
+10           description = "Database production compartment"
+11         }
+12       }      
+13     }
+14   }
+15 }    
+```
+
+These identifying keys are used in Terraform state file as resource addresses. By default, the keys are written "as-is" to the state file. As such, they must be unique across all compartment definitions. However, when defining complex hierarchies where distinct compartment subtrees has similar characteristics, it is desirable to use the same identifying key across the subtrees, as in when both *DATABASE* and *APPLICATION* compartments have PROD compartments. In use cases like this, set the variable **derive_keys_from_hierarchy** to true and the *PROD* compartments will be identified as *DATABASE-PROD* and *APPLICATION-PROD*. It works at all levels in the hierarchy, i.e., if *DATABASE*'s *PROD* had a child defined as *HR* in the variable declaration, the *HR* compartment would be identified as *DATABASE-PROD-HR* in Terraform state file.
+
+**derive_keys_from_hierarchy**: whether identifying keys should be derived from the provided compartments hierarchy. It allows for using the same identifying key in different compartment subtrees, thus removing the requirement of unique keys. Default is false.
 
 Check the [examples](./examples) folder for module usage with actual input data. 
 
@@ -80,13 +103,13 @@ module "compartments" {
 For invoking the module remotely, set the module *source* attribute to the compartments module folder in this repository, as shown:
 ```
 module "compartments" {
-  source = "git@github.com:oracle-quickstart/terraform-oci-cis-landing-zone-iam.git//compartments"
+  source = "github.com/oracle-quickstart/terraform-oci-cis-landing-zone-iam/compartments"
   compartments_configuration = var.compartments_configuration
 }
 ```
 For referring to a specific module version, append *ref=\<version\>* to the *source* attribute value, as in:
 ```
-  source = "git@github.com:oracle-quickstart/terraform-oci-cis-landing-zone-iam.git//compartments?ref=v0.1.0"
+  source = "github.com/oracle-quickstart/terraform-oci-cis-landing-zone-iam//compartments?ref=v0.1.0"
 ```
 
 ## Related Documentation
