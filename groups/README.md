@@ -60,14 +60,14 @@ module "groups" {
 For invoking the module remotely, set the module *source* attribute to the groups module folder in this repository, as shown:
 ```
 module "groups" {
-  source = "git@github.com:oracle-quickstart/terraform-oci-cis-landing-zone-iam.git//groups"
+  source = "github.com/oracle-quickstart/terraform-oci-cis-landing-zone-iam/groups"
   tenancy_id = var.tenancy_id
   groups     = var.groups
 }
 ```
 For referring to a specific module version, append *ref=\<version\>* to the *source* attribute value, as in:
 ```
-  source = "git@github.com:oracle-quickstart/terraform-oci-cis-landing-zone-iam.git//groups?ref=v0.1.0"
+  source = "github.com/oracle-quickstart/terraform-oci-cis-landing-zone-iam//groups?ref=v0.1.0"
 ```
 
 ## Related Documentation

@@ -51,6 +51,7 @@ locals {
     ca-dyn-group : length(lookup(cmp.cislz_metadata, local.compute_agent_dyn_group_tag_name,"")) > 0 ? lookup(cmp.cislz_metadata,local.compute_agent_dyn_group_tag_name,"") : null,
   }}
 
-  cmp_policy_name_prefix = local.enable_compartment_level_template_policies == true ? (var.policies_configuration.template_policies.compartment_level_settings.policy_name_prefix != null ? "${var.policies_configuration.template_policies.compartment_level_settings.policy_name_prefix}-" : "") : ""
+  #cmp_policy_name_prefix = local.enable_compartment_level_template_policies == true ? (var.policies_configuration.template_policies.compartment_level_settings.policy_name_prefix != null ? "${var.policies_configuration.template_policies.compartment_level_settings.policy_name_prefix}-" : "") : ""
+  policy_name_prefix = var.policies_configuration.policy_name_prefix != null ? "${var.policies_configuration.policy_name_prefix}-" : ""
   policy_name_suffix = var.policies_configuration.policy_name_suffix != null ? (var.policies_configuration.policy_name_suffix == "" ? "" : "-${var.policies_configuration.policy_name_suffix}") : "-policy"
 }  

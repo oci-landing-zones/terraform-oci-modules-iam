@@ -27,21 +27,18 @@ locals {
   group_name_map_transpose = transpose(local.group_name_to_role_map) # this produces objects like {"iam" : ["group-name-1"], "security" : ["group-name-1"]}
   #group_role_to_name_map = {for key, value in local.group_name_map_transpose : key => value[0]} # this is the same transposed matrix, but it takes group name string at index 0.
 
-  iam_group_names = join(",",local.group_name_map_transpose[local.iam_role])
-  cred_group_names = join(",",local.group_name_map_transpose[local.cred_role])
-  cost_group_names = join(",",local.group_name_map_transpose[local.cost_role])
-  security_group_names = join(",",local.group_name_map_transpose[local.security_role])
-  application_group_names = join(",",local.group_name_map_transpose[local.application_role])
-  network_group_names = join(",",local.group_name_map_transpose[local.network_role])
-  database_group_names = join(",",local.group_name_map_transpose[local.database_role])
-  exainfra_group_names = join(",",local.group_name_map_transpose[local.exainfra_role])
-  auditor_group_names = join(",",local.group_name_map_transpose[local.auditor_role])
-  announcement_reader_group_names = join(",",local.group_name_map_transpose[local.announcement_reader_role])
+  iam_group_names = contains(keys(local.group_name_map_transpose),local.iam_role) ? join(",",local.group_name_map_transpose[local.iam_role]) : null
+  cred_group_names = contains(keys(local.group_name_map_transpose),local.cred_role) ? join(",",local.group_name_map_transpose[local.cred_role]) : null
+  cost_group_names = contains(keys(local.group_name_map_transpose),local.cost_role) ? join(",",local.group_name_map_transpose[local.cost_role]) : null
+  security_group_names = contains(keys(local.group_name_map_transpose),local.security_role) ? join(",",local.group_name_map_transpose[local.security_role]) : null
+  application_group_names = contains(keys(local.group_name_map_transpose),local.application_role) ? join(",",local.group_name_map_transpose[local.application_role]) : null
+  network_group_names = contains(keys(local.group_name_map_transpose),local.network_role) ? join(",",local.group_name_map_transpose[local.network_role]) : null
+  database_group_names = contains(keys(local.group_name_map_transpose),local.database_role) ? join(",",local.group_name_map_transpose[local.database_role]) : null
+  exainfra_group_names = contains(keys(local.group_name_map_transpose),local.exainfra_role) ? join(",",local.group_name_map_transpose[local.exainfra_role]) : null
+  auditor_group_names = contains(keys(local.group_name_map_transpose),local.auditor_role) ? join(",",local.group_name_map_transpose[local.auditor_role]) : null
+  announcement_reader_group_names = contains(keys(local.group_name_map_transpose),local.announcement_reader_role) ? join(",",local.group_name_map_transpose[local.announcement_reader_role]) : null
 
-  #iam_grants_condition = [for g in split(",",local.cred_group_names) : "target.group.name != ${g}"]
-  #iam_grants_condition = [for g in split(",",local.cred_group_names) : startswith(g,"'") && endswith(g,"'") ? "target.group.name != ${g}" : "target.group.name != '${g}'"]
   iam_grants_condition = [for g in split(",",local.cred_group_names) : substr(g,0,1) == "'" && substr(g,length(g)-1,1) == "'" ? "target.group.name != ${g}" : "target.group.name != '${g}'"]
-
 
   #-- Used to check if an enclosing compartment is available.
   cmp_type_list = flatten([for cmp, values in local.cmp_name_to_cislz_tag_map : split(",",values.cmp-type)])
@@ -157,10 +154,11 @@ locals {
                                     local.auditor_grants,local.announcement_reader_grants, local.objectstorage_read_on_root_cmp)                               
 
   #-- Policies
-  root_policy_name_prefix = local.enable_tenancy_level_template_policies == true ? (var.policies_configuration.template_policies.tenancy_level_settings.policy_name_prefix != null ? "${var.policies_configuration.template_policies.tenancy_level_settings.policy_name_prefix}-" : "") : ""
+  #root_policy_name_prefix = local.enable_tenancy_level_template_policies == true ? (var.policies_configuration.template_policies.tenancy_level_settings.policy_name_prefix != null ? "${var.policies_configuration.template_policies.tenancy_level_settings.policy_name_prefix}-" : "") : ""
   #-- Naming
   root_cmp_admin_policy_key = "ROOT-CMP-ADMIN-POLICY"
-  root_cmp_admin_policy_name = "${local.root_policy_name_prefix}root-admin${local.policy_name_suffix}"
+  #root_cmp_admin_policy_name = "${local.root_policy_name_prefix}root-admin${local.policy_name_suffix}"
+  root_cmp_admin_policy_name = "${local.policy_name_prefix}root-admin${local.policy_name_suffix}"
     
   root_cmp_admin_policy = length(local.root_cmp_admin_grants) > 0 ? {
     (local.root_cmp_admin_policy_key) = {
@@ -175,7 +173,8 @@ locals {
 
   #-- Naming
   root_cmp_nonadmin_policy_key = "ROOT-CMP-NONADMIN-POLICY"
-  root_cmp_nonadmin_policy_name = "${local.root_policy_name_prefix}root-non-admin${local.policy_name_suffix}"
+  #root_cmp_nonadmin_policy_name = "${local.root_policy_name_prefix}root-non-admin${local.policy_name_suffix}"
+  root_cmp_nonadmin_policy_name = "${local.policy_name_prefix}root-non-admin${local.policy_name_suffix}"
   
   root_cmp_nonadmin_policy = length(local.root_cmp_nonadmin_grants) > 0 ? {
     (local.root_cmp_nonadmin_policy_key) = {
