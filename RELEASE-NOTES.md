@@ -10,6 +10,7 @@
 
 ### <a name="0-1-4-compartments">Compartments Module</a>
 1. Compartments identifying keys can now be derived from the hierarchy provided in *compartment_configuration* definition. This allow for using the same key across different compartment subtrees, a desirable feature when defining complex compartment hierarchies with similar subtree structures. For using this feature, set *derive_keys_from_hierarchy* variable to true.
+2. Compartments module can now declare dependency on externally managed tags for tag defaults.
 
 # July 03, 2023 Release Notes - 0.1.3
 
