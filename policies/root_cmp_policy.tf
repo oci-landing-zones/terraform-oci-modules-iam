@@ -38,7 +38,7 @@ locals {
   auditor_group_names = contains(keys(local.group_name_map_transpose),local.auditor_role) ? join(",",local.group_name_map_transpose[local.auditor_role]) : null
   announcement_reader_group_names = contains(keys(local.group_name_map_transpose),local.announcement_reader_role) ? join(",",local.group_name_map_transpose[local.announcement_reader_role]) : null
 
-  iam_grants_condition = [for g in split(",",local.cred_group_names) : substr(g,0,1) == "'" && substr(g,length(g)-1,1) == "'" ? "target.group.name != ${g}" : "target.group.name != '${g}'"]
+  iam_grants_condition = contains(keys(local.group_name_map_transpose),local.cred_role) ? [for g in split(",",local.cred_group_names) : substr(g,0,1) == "'" && substr(g,length(g)-1,1) == "'" ? "target.group.name != ${g}" : "target.group.name != '${g}'"] : ""
 
   #-- Used to check if an enclosing compartment is available.
   cmp_type_list = flatten([for cmp, values in local.cmp_name_to_cislz_tag_map : split(",",values.cmp-type)])
