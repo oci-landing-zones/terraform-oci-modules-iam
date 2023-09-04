@@ -118,8 +118,8 @@ locals {
   tag_defaults = flatten([
     for cmp in local.all_input_compartments : [
       for k,v in cmp.tag_defaults : {
-        key = "${k}.${v.tag_ocid}"
-        tag_definition_id = v.tag_ocid
+        key = length(regexall("^ocid1.*$", v.tag_id)) > 0 ? "${k}.${substr(v.tag_id,-22,-1)}" : "${k}.${substr(var.tags_dependency[v.tag_id].id,-22,-1)}"
+        tag_definition_id = length(regexall("^ocid1.*$", v.tag_id)) > 0 ? v.tag_id : var.tags_dependency[v.tag_id].id
         compartment_id = local.all_processed_compartments[cmp.key].id
         default_value = v.default_value
         is_user_required = v.is_user_required != null ? v.is_user_required : false

@@ -45,6 +45,12 @@ These identifying keys are used in Terraform state file as resource addresses. B
 
 Check the [examples](./examples) folder for module usage with actual input data. 
 
+## External Dependencies
+
+An optional feature, external dependencies are resources managed elsewhere that resources managed by this module may depend on. The following dependencies are supported:
+
+- **tags_dependency**: A map of objects containing the externally managed tags this module may depend on. All map objects must have the same type and must contain at least an *id* attribute with the tag OCID.
+
 ## Requirements
 ### IAM Permissions
 

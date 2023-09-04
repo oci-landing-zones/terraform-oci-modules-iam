@@ -12,6 +12,8 @@ The following modules are available:
 
 Within each module you find an *examples* folder. Each example is a fully runnable Terraform configuration that you can quickly test and put to use by modifying the input data according to your own needs.  
 
+The modules support being a passed an object containing references to OCIDs (Oracle Cloud IDs) that they may depend on. Every input attribute that expects an OCID (typically, attribute names ending in _id or _ids) can be given either a literal OCID or a reference (a key) to the OCID. While these OCIDs can be literally obtained from their sources and pasted when setting the modules input attributes, a superior approach is automatically consuming the outputs of producing modules. For instance, the [Compartments](./compartments/) module may depend on tags for applying tag defaults. It can be passed a *tags_dependency* map with objects representing tags produced by the [Tags](https://github.com/oracle-quickstart/terraform-oci-cis-landing-zone-governance/tags) module. The external dependency approach helps with the creation of loosely coupled Terraform configurations with clearly defined dependencies between them, avoiding copying and pasting OCIDs.
+
 ## CIS OCI Foundations Benchmark Modules Collection
 
 This repository is part of a broader collection of repositories containing modules that help customers align their OCI implementations with the CIS OCI Foundations Benchmark recommendations:
