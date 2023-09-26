@@ -1,11 +1,16 @@
-# August 29, 2023 Release Notes - 0.1.4
+# September 04, 2023 Release Notes - 0.1.4
 
 ## Updates
 1. [Policy Module](#0-1-4-policies)
+2. [Compartments Module](#0-1-4-compartments)
 
 ### <a name="0-1-4-policies">Policy Module</a>
-1.  Policy module now supports group names that include spaces like: 'vision security adm group'. It's supported for tenancy and compartment level groups.  Please see [main.tf](./policies/examples/template-policies/main.tf) for an example..
-2.  Policy module now supports a list of groups for each role at tenancy and compartment level, like : "cislz-consumer-groups-security":"vision-security-admin-group,'vision security adm group2'".  Please see [main.tf](./policies/examples/template-policies/main.tf) for an example.
+1.  Policy module now supports group names that include spaces like: 'vision security adm group'. It's supported for tenancy and compartment level groups.  Please see [main.tf](./policies/examples/template-policies/main.tf) for an example.
+2.  Policy module now supports a list of groups for each role at tenancy and compartment levels, like : "cislz-consumer-groups-security":"vision-security-admin-group,'vision security adm group2'".  Please see [main.tf](./policies/examples/template-policies/main.tf) for an example.
+
+### <a name="0-1-4-compartments">Compartments Module</a>
+1. Compartments identifying keys can now be derived from the hierarchy provided in *compartment_configuration* definition. This allow for using the same key across different compartment subtrees, a desirable feature when defining complex compartment hierarchies with similar subtree structures. For using this feature, set *derive_keys_from_hierarchy* variable to true.
+2. Compartments module can now declare dependency on externally managed tags for tag defaults.
 
 # July 03, 2023 Release Notes - 0.1.3
 

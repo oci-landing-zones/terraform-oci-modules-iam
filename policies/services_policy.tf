@@ -40,9 +40,10 @@ locals {
   keys_access_statements = length(local.keys_access_principals) > 0 ? ["Allow service ${local.keys_access_principals} to use keys in tenancy"] : []
   
   services_policy_key  = "SERVICES-POLICY"
-  services_policy_name = "${local.root_policy_name_prefix}services${local.policy_name_suffix}"
+  #services_policy_name = "${local.root_policy_name_prefix}services${local.policy_name_suffix}"
+  services_policy_name = "${local.policy_name_prefix}services${local.policy_name_suffix}"
 
-  services_policy = length(concat(local.cloud_guard_statements, local.vss_statements, local.os_mgmt_statements, local.keys_access_statements)) > 0 ? { 
+  services_policy = { 
     (local.services_policy_key) = {
       compartment_ocid = var.tenancy_ocid
       name             = local.services_policy_name
@@ -51,5 +52,5 @@ locals {
       defined_tags     = var.policies_configuration.defined_tags
       freeform_tags    = var.policies_configuration.freeform_tags
     }
-  } : {}     
+  }     
 }

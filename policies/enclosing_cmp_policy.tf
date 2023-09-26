@@ -68,7 +68,8 @@ locals {
   enclosing_cmps_policies = {
     for k, values in local.cmp_name_to_cislz_tag_map : 
       (upper("${k}-enclosing-policy")) => {
-        name             = values["ocid"] != var.tenancy_ocid ? "${local.cmp_policy_name_prefix}${values["name"]}-enclosing${local.policy_name_suffix}" : "${local.cmp_policy_name_prefix}${k}-enclosing${local.policy_name_suffix}"
+        #name             = values["ocid"] != var.tenancy_ocid ? "${local.cmp_policy_name_prefix}${values["name"]}-enclosing-${random_string.this.result}${local.policy_name_suffix}" : "${local.cmp_policy_name_prefix}${k}-enclosing-${random_string.this.result}${local.policy_name_suffix}"
+        name             = length(regexall("^${local.policy_name_prefix}", values["name"])) > 0 ? "${values["name"]}${local.policy_name_suffix}" : "${local.policy_name_prefix}${values["name"]}${local.policy_name_suffix}"
         compartment_ocid = values.ocid
         description      = "CIS Landing Zone policy for enclosing compartment."
         defined_tags     = var.policies_configuration.defined_tags
@@ -79,3 +80,9 @@ locals {
     if values["cmp-type"] == "enclosing"
   }
 }
+
+/* resource "random_string" "this" {
+  length  = 5
+  special = false
+  upper   = false
+} */

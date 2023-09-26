@@ -26,7 +26,7 @@ variable "compartments_configuration" {
       defined_tags  = optional(map(string))
       freeform_tags = optional(map(string))
       tag_defaults     = optional(map(object({
-        tag_ocid = string,
+        tag_id = string,
         default_value = string,
         is_user_required = optional(bool)
       })))
@@ -36,7 +36,7 @@ variable "compartments_configuration" {
         defined_tags  = optional(map(string))
         freeform_tags = optional(map(string))
         tag_defaults     = optional(map(object({
-            tag_ocid = string,
+            tag_id = string,
             default_value = string,
             is_user_required = optional(bool)
           })))
@@ -46,7 +46,7 @@ variable "compartments_configuration" {
           defined_tags  = optional(map(string))
           freeform_tags = optional(map(string))
           tag_defaults     = optional(map(object({
-            tag_ocid = string,
+            tag_id = string,
             default_value = string,
             is_user_required = optional(bool)
           })))
@@ -56,7 +56,7 @@ variable "compartments_configuration" {
             defined_tags  = optional(map(string))
             freeform_tags = optional(map(string))
             tag_defaults     = optional(map(object({
-              tag_ocid = string,
+              tag_id = string,
               default_value = string,
               is_user_required = optional(bool)
             })))
@@ -66,7 +66,7 @@ variable "compartments_configuration" {
               defined_tags  = optional(map(string))
               freeform_tags = optional(map(string))
               tag_defaults     = optional(map(object({
-                tag_ocid = string,
+                tag_id = string,
                 default_value = string,
                 is_user_required = optional(bool)
               })))
@@ -76,7 +76,7 @@ variable "compartments_configuration" {
                 defined_tags  = optional(map(string))
                 freeform_tags = optional(map(string))
                 tag_defaults     = optional(map(object({
-                  tag_ocid = string,
+                  tag_id = string,
                   default_value = string,
                   is_user_required = optional(bool)
                 })))
