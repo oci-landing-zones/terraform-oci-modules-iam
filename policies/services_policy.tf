@@ -49,8 +49,8 @@ locals {
       name             = local.services_policy_name
       description      = "CIS Landing Zone policy for OCI services."
       statements       = concat(local.cloud_guard_statements, local.vss_statements, local.os_mgmt_statements, local.keys_access_statements)
-      defined_tags     = var.policies_configuration.defined_tags
-      freeform_tags    = var.policies_configuration.freeform_tags
+      defined_tags     = var.policies_configuration != null ? var.policies_configuration.defined_tags : null
+      freeform_tags    = var.policies_configuration != null ? var.policies_configuration.freeform_tags : null
     }
   }     
 }

@@ -21,4 +21,5 @@ variable "groups_configuration" {
       freeform_tags = optional(map(string))
     }))
   })
+  default = null
 }

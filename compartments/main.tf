@@ -4,7 +4,7 @@
 locals {
 
   level_1 = [
-    for k1, v1 in var.compartments_configuration.compartments : {
+    for k1, v1 in (var.compartments_configuration != null ? var.compartments_configuration.compartments : {}) : {
       key  = k1
       name = v1.name
       description = v1.description
@@ -17,7 +17,7 @@ locals {
   ]
 
   level_2 = flatten([
-    for k1, v1 in var.compartments_configuration.compartments : [
+    for k1, v1 in (var.compartments_configuration != null ? var.compartments_configuration.compartments : {}) : [
       for k2, v2 in v1.children : {
         key  = var.derive_keys_from_hierarchy ? format("%s-%s",k1,k2) : k2
         name = v2.name
@@ -32,7 +32,7 @@ locals {
   ])
 
   level_3 = flatten([
-    for k1, v1 in var.compartments_configuration.compartments : [
+    for k1, v1 in (var.compartments_configuration != null ? var.compartments_configuration.compartments : {}) : [
       for k2, v2 in v1.children : [
         for k3, v3 in v2.children : {
           key  = var.derive_keys_from_hierarchy ? format("%s-%s-%s",k1,k2,k3) : k3
@@ -49,7 +49,7 @@ locals {
   ])
 
   level_4 = flatten([
-    for k1, v1 in var.compartments_configuration.compartments : [
+    for k1, v1 in (var.compartments_configuration != null ? var.compartments_configuration.compartments : {}) : [
       for k2, v2 in v1.children : [
         for k3, v3 in v2.children : [
           for k4, v4 in v3.children : {
@@ -68,7 +68,7 @@ locals {
   ])
 
   level_5 = flatten([
-    for k1, v1 in var.compartments_configuration.compartments : [
+    for k1, v1 in (var.compartments_configuration != null ? var.compartments_configuration.compartments : {}) : [
       for k2, v2 in v1.children : [
         for k3, v3 in v2.children : [
           for k4, v4 in v3.children : [
@@ -89,7 +89,7 @@ locals {
   ])
 
   level_6 = flatten([
-    for k1, v1 in var.compartments_configuration.compartments : [
+    for k1, v1 in (var.compartments_configuration != null ? var.compartments_configuration.compartments : {}) : [
       for k2, v2 in v1.children : [
         for k3, v3 in v2.children : [
           for k4, v4 in v3.children : [
