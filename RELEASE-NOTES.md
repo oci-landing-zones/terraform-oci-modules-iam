@@ -1,3 +1,8 @@
+# September 27, 2023 Release Notes - 0.1.5
+
+## Updates
+1. All modules now support assigning *null* value to the top level variables or not setting them at all (as they are defaulted to null). These variables are *compartments_configuration*, *dynamic_groups_configuration*, *groups_configuration* and *policies_configuration*. This facilitates the writing of clients that orchestrate the IAM modules.
+
 # September 04, 2023 Release Notes - 0.1.4
 
 ## Updates

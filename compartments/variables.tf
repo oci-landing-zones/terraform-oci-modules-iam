@@ -84,6 +84,7 @@ variable "compartments_configuration" {
       })))  
     }))
   })
+  default = null
 }
 
 variable derive_keys_from_hierarchy {

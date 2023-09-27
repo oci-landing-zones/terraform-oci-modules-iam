@@ -51,6 +51,7 @@ variable "policies_configuration" {
     defined_tags = optional(map(string)) # Any defined tags to apply on the template (pre-configured) policies.
     freeform_tags = optional(map(string)) # Any freeform tags to apply on the template (pre-configured) policies.
   })
+  default = null
 }
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
