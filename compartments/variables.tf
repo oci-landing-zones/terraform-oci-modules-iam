@@ -93,12 +93,6 @@ variable derive_keys_from_hierarchy {
   default = false
 }
 
-variable derive_keys_from_hierarchy {
-  description = "Whether identifying keys should be derived from the provided compartments hierarchy"
-  type = bool
-  default = false
-}
-
 variable module_name {
   description = "The module name."
   type = string
