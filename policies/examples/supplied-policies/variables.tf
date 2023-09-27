@@ -18,4 +18,5 @@ variable "policies_configuration" {
       statements       = list(string)
     }))
   })
+  default = null
 }

@@ -84,6 +84,13 @@ variable "compartments_configuration" {
       })))  
     }))
   })
+  default = null
+}
+
+variable derive_keys_from_hierarchy {
+  description = "Whether identifying keys should be derived from the provided compartments hierarchy"
+  type = bool
+  default = false
 }
 
 variable derive_keys_from_hierarchy {
