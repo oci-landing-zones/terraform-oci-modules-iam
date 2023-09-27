@@ -24,7 +24,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_dynamic_groups_configuration"></a> [dynamic\_groups\_configuration](#input\_dynamic\_groups\_configuration) | The dynamic groups. | <pre>object({<br>    default_defined_tags = optional(map(string)),<br>    default_freeform_tags = optional(map(string))<br>    dynamic_groups = map(object({<br>      name          = string,<br>      description   = string,<br>      matching_rule = string<br>      defined_tags  = optional(map(string)),<br>      freeform_tags = optional(map(string))<br>    }))<br>  })</pre> | n/a | yes |
+| <a name="input_dynamic_groups_configuration"></a> [dynamic\_groups\_configuration](#input\_dynamic\_groups\_configuration) | The dynamic groups. | <pre>object({<br>    default_defined_tags = optional(map(string)),<br>    default_freeform_tags = optional(map(string))<br>    dynamic_groups = map(object({<br>      name          = string,<br>      description   = string,<br>      matching_rule = string<br>      defined_tags  = optional(map(string)),<br>      freeform_tags = optional(map(string))<br>    }))<br>  })</pre> | `null` | no |
 | <a name="input_module_name"></a> [module\_name](#input\_module\_name) | The module name. | `string` | `"iam-dynamic-groups"` | no |
 | <a name="input_tenancy_ocid"></a> [tenancy\_ocid](#input\_tenancy\_ocid) | The OCID of the tenancy. | `any` | n/a | yes |
 
