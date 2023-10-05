@@ -11,11 +11,11 @@ variable "private_key_password" {default = ""}
 variable "identity_domains_configuration" {
   description = "The identity domains configuration."
   type = object({
-    default_compartment_id = optional(string),
-    default_defined_tags  = optional(map(string)),
-    default_freeform_tags = optional(map(string))
+    default_compartment_id = optional(string)
+    default_defined_tags   = optional(map(string))
+    default_freeform_tags  = optional(map(string))
     identity_domains = map(object({
-      compartment_id            = string,
+      compartment_id            = optional(string),
       display_name              = string,
       description               = string,
       home_region               = string,
@@ -27,6 +27,41 @@ variable "identity_domains_configuration" {
       is_hidden_on_login        = optional(bool),
       is_notification_bypassed  = optional(bool),
       is_primary_email_required = optional(bool),
+      defined_tags              = optional(map(string)),
+      freeform_tags             = optional(map(string))
+    }))
+  })
+  default = null
+}
+
+variable "identity_domain_groups_configuration" {
+  description = "The identity domain groups configuration."
+  type = object({
+    default_identity_domain_id  = optional(string)
+    default_defined_tags        = optional(map(string))
+    default_freeform_tags       = optional(map(string))
+    groups = map(object({
+      identity_domain_id        = optional(string),
+      name                      = string,
+      description               = optional(string),
+      requestable               = optional(bool)
+      defined_tags              = optional(map(string)),
+      freeform_tags             = optional(map(string))
+    }))
+  })
+}
+
+variable "identity_domain_dynamic_groups_configuration" {
+  description = "The identity domain dynamic groups configuration."
+  type = object({
+    default_identity_domain_id  = optional(string)
+    default_defined_tags        = optional(map(string))
+    default_freeform_tags       = optional(map(string))
+    dynamic_groups = map(object({
+      identity_domain_id        = optional(string),
+      name                      = string,
+      description               = optional(string),
+      matching_rule             = string,
       defined_tags              = optional(map(string)),
       freeform_tags             = optional(map(string))
     }))
