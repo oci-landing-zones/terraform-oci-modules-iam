@@ -5,3 +5,13 @@ output "identity_domains" {
   description = "The identity domains."
   value = oci_identity_domain.these
 }
+
+output "identity_domain_groups" {
+  description = "The identity domain groups"
+  value = oci_identity_domains_group.these
+}
+
+output "domain-users" {
+  description = "the domain users"
+  value = local.users
+}

@@ -4,8 +4,9 @@
 
 
 resource "oci_identity_domain" "these" {
-  for_each       = var.identity_domains_configuration.identity_domains
-    compartment_id  = each.value.compartment_id
+  for_each       = var.identity_domains_configuration != null ? var.identity_domains_configuration.identity_domains : {}
+    compartment_id      = each.value.compartment_id != null ? (length(regexall("^ocid1.*$", each.value.compartment_id)) > 0 ? each.value.compartment_id : var.compartments_dependency[each.value.compartment_id].id) : (length(regexall("^ocid1.*$", var.identity_domains_configuration.default_compartment_id)) > 0 ? var.identity_domains_configuration.default_compartment_id : var.compartments_dependency[var.identity_domains_configuration.default_compartment_id].id)
+
     display_name    = each.value.display_name
     description     = each.value.description
     home_region     = each.value.home_region
