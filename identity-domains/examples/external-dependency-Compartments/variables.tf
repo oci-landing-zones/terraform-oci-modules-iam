@@ -1,10 +1,12 @@
 # Copyright (c) 2023 Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 
-variable "tenancy_ocid" {
-  type = string
-  description = "The OCID of the tenancy."
-}
+variable "tenancy_ocid" {}
+variable "region" {description = "Your tenancy home region"}
+variable "user_ocid" {default = ""}
+variable "fingerprint" {default = ""}
+variable "private_key_path" {default = ""}
+variable "private_key_password" {default = ""}
 
 variable "identity_domains_configuration" {
   description = "The identity domains configuration."
@@ -42,41 +44,22 @@ variable "identity_domain_groups_configuration" {
       identity_domain_id        = optional(string),
       name                      = string,
       description               = optional(string),
-      requestable               = optional(bool),
-      members                   = optional(list(string)),
       defined_tags              = optional(map(string)),
       freeform_tags             = optional(map(string))
     }))
   })
+}
+
+variable "oci_identity_domains_dependency" {
+  type = map(object({
+    id = string
+  }))
   default = null
 }
 
-variable "identity_domain_dynamic_groups_configuration" {
-  description = "The identity domain dynamic groups configuration."
-  type = object({
-    default_identity_domain_id  = optional(string)
-    default_defined_tags        = optional(map(string))
-    default_freeform_tags       = optional(map(string))
-    dynamic_groups = map(object({
-      identity_domain_id        = optional(string),
-      name                      = string,
-      description               = optional(string),
-      matching_rule             = string,
-      defined_tags              = optional(map(string)),
-      freeform_tags             = optional(map(string))
-    }))
-  })
-  default = null
-}
-
-variable module_name {
-  description = "The module name."
-  type = string
-  default = "iam-identity-domains"
-}
-
-variable compartments_dependency {
-  description = "A map of objects containing the externally managed compartments this module may depend on. All map objects must have the same type and must contain at least an 'id' attribute (representing the compartment OCID) of string type." 
-  type = map(any)
+variable "oci_compartments_dependency" {
+  type = map(object({
+    id = string
+  }))
   default = null
 }

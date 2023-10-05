@@ -12,7 +12,7 @@ The module defines a single input variable named *identity-domains_configuration
    - **default_freeform_tags**: freeform tags to apply to all groups, unless overriden by *freeform_tags* attribute within each group object.
      **Note**: Freeform tags are limited to 10 tags per OCI resource.
 
-Check the [examples](./examples/) folder for module usage. Specifically, see [vision](./examples/vision/README.md) example to deploy two identity domains.
+Check the [examples](./examples/) folder for module usage. Specifically, see [vision](./examples/vision/README.md) example to deploy two identity domains including groups, dynamic_groups and users.
 
 ## Requirements
 ### IAM Permissions
@@ -52,7 +52,9 @@ For invoking the module locally, just set the module *source* attribute to the m
 module "identity_domains" {
   source       = "../../"
   tenancy_ocid = var.tenancy_ocid
-  identity_domains_configuration = var.identity_domains_configuration
+  identity_domains_configuration                = var.identity_domains_configuration
+  identity_domain_groups_configuration          = var.identity_domain_groups_configuration
+  identity_domain_dynamic_groups_configuration  = var.identity_domain_dynamic_groups_configuration
 }
 ```
 
@@ -60,15 +62,18 @@ For invoking the module remotely, set the module *source* attribute to the group
 ```
 module "identity_domains" {
   source = "github.com/oracle-quickstart/terraform-oci-cis-landing-zone-iam/identity-domainss"
-  tenancy_id = var.tenancy_id
-  identity_domains_configuration = var.identity_domains_configuration
+  tenancy_id                                    = var.tenancy_id
+  identity_domains_configuration                = var.identity_domains_configuration
+  identity_domain_groups_configuration          = var.identity_domain_groups_configuration
+  identity_domain_dynamic_groups_configuration  = var.identity_domain_dynamic_groups_configuration
 }
 ```
 For referring to a specific module version, append *ref=\<version\>* to the *source* attribute value, as in:
 ```
   source = "github.com/oracle-quickstart/terraform-oci-cis-landing-zone-iam/identity-domains?ref=v0.1.0"
 ```
-Note that to destroy (delete) an Identity Domain, it must first be deactivated using the OCI console or OCI CLI, as in:
+## Note: 
+To destroy (delete) an Identity Domain, it must first be deactivated.  Run terraform destroy once to first destroy contained resources (groups, dynamic groups...), then deactivate the Identity Domain(s) and finally run terraform destroy again to delete the Identity Domain.  Do deactivate and Identity Domain use the OCI console or OCI CLI, as in:
 ```
   oci iam domain deactivate --domain-id <identity domain OCID>
 ```

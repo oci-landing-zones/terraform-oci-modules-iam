@@ -6,8 +6,3 @@ output "identity-domains" {
   value       = module.vision_identity_domains.identity_domains
 }
 
-output "identity-domain-groups" {
-  description = "The identity domain groups."
-  value       = module.vision_identity_domains.identity_domain_groups
-}
-
