@@ -8,7 +8,7 @@ locals {
       key  = k1
       name = v1.name
       description = v1.description
-      parent_ocid = v1.parent_ocid != null ? v1.parent_ocid : var.compartments_configuration.default_parent_ocid != null ? var.compartments_configuration.default_parent_ocid : var.tenancy_ocid
+      parent_ocid = v1.parent_id != null ? (length(regexall("^ocid1.*$", v1.parent_id)) > 0 ? v1.parent_id : var.compartments_dependency[v1.parent_id].id) : var.compartments_configuration.default_parent_id != null ? (length(regexall("^ocid1.*$", var.compartments_configuration.default_parent_id)) > 0 ? var.compartments_configuration.default_parent_id : var.compartments_dependency[var.compartments_configuration.default_parent_id].id) : var.tenancy_ocid
       defined_tags = v1.defined_tags != null ? v1.defined_tags :  var.compartments_configuration.default_defined_tags != null ?  var.compartments_configuration.default_defined_tags : null
       freeform_tags = v1.freeform_tags != null ? v1.freeform_tags : var.compartments_configuration.default_freeform_tags != null ?  var.compartments_configuration.default_freeform_tags : null
       tag_defaults = v1.tag_defaults
