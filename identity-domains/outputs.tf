@@ -11,7 +11,8 @@ output "identity_domain_groups" {
   value = oci_identity_domains_group.these
 }
 
-output "domain-users" {
-  description = "the domain users"
-  value = local.users
+output "identity_domain_dynamic_groups" {
+  description = "The identity domain groups"
+  value = oci_identity_domains_dynamic_resource_group.these
 }
+
