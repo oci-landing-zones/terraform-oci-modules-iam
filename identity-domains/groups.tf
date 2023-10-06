@@ -2,20 +2,24 @@
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 data "oci_identity_domain" "grp_domain" {
-  for_each = (var.identity_domain_groups_configuration != null && var.identity_domains_configuration == null  ) ? (var.identity_domain_groups_configuration["groups"] != null ? var.identity_domain_groups_configuration["groups"] : {}) : {}
-    domain_id = each.value.identity_domain_id != null ? (length(regexall("^ocid1.*$",  each.value.identity_domain_id)) > 0 ? each.value.identity_domain_id : var.identity_domains_dependency[each.value.identity_domain_id].id) : (length(regexall("^ocid1.*$", var.identity_domain_groups_configuration.default_identity_domain_id)) > 0 ? var.identity_domain_groups_configuration.default_identity_domain_id : var.identity_domains_dependency[var.identity_domain_groups_configuration.default_identity_domain_id].id)
+  for_each = (var.identity_domain_groups_configuration != null ) ? (var.identity_domain_groups_configuration["groups"] != null ? var.identity_domain_groups_configuration["groups"] : {}) : {}
+    domain_id = each.value.identity_domain_id != null ? each.value.identity_domain_id : var.identity_domain_groups_configuration.default_identity_domain_id
 }
 
 data "oci_identity_domains_users" "these" {
-  for_each = (var.identity_domain_groups_configuration != null && var.identity_domains_dependency != null ) ? (var.identity_domain_groups_configuration["groups"] != null ? var.identity_domain_groups_configuration["groups"] : {}) : {}
-    idcs_endpoint = data.oci_identity_domain.grp_domain[each.key].url
+  
+  for_each = var.identity_domain_groups_configuration.groups != null ? var.identity_domain_groups_configuration.groups : {}
+     idcs_endpoint = contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_groups_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_groups_configuration.default_identity_domain_id].url : data.oci_identity_domain.grp_domain[each.key].url)
+  
+  
 }
 
 locals {
-  users = var.identity_domains_configuration == null ? { for k,g in var.identity_domain_groups_configuration["groups"] : k =>
-      { for u in data.oci_identity_domains_users.these[k].users : u.user_name => u.id}} : {}
-
+  users =  { for k,g in var.identity_domain_groups_configuration["groups"] : k =>
+      { for u in data.oci_identity_domains_users.these[k].users : u.user_name => u.id}}
 }
+
+
 
 resource "oci_identity_domains_group" "these" {
   for_each       = var.identity_domain_groups_configuration.groups != null ? var.identity_domain_groups_configuration.groups : {}
@@ -39,6 +43,7 @@ resource "oci_identity_domains_group" "these" {
         content {
           type = "User"
           value = local.users[each.key][members["value"]]
+          
         }
     }
     urnietfparamsscimschemasoracleidcsextension_oci_tags {
