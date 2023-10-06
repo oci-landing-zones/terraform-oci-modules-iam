@@ -7,23 +7,32 @@ This module manages arbitrary Identity and Access Management (IAM) compartment t
 Check [module specification](./SPEC.md) for a full description of module requirements, supported variables, managed resources and outputs.
 
 A fundamental principle in using a map of objects is the ability to quickly visualize the actual compartment structure by simply looking at the variable definition. The input variable is an object named *compartments_configuration*, with the following attributes:
-- **compartments**: the map of objects that define compartments hierarchies. Each top (first level) compartment has a *parent_ocid* attribute to identify the compartment's parent (in other words, where the particular tree descends from). It overrides *default_parent_ocid*. Each compartment object as a *children* attribute that defines its sub-compartments. The *compartments* map supports up to **six** levels of nesting, which is the maximum supported by OCI.
-- **default_parent_ocid**: determines the parent compartment for all your top (first level) compartments defined by the *compartments* attribute.
-- **enable_delete**: determines whether or not OCI should physically delete compartments when destroyed by Terraform. Default is false.
-- **default_defined_tags**: defined tags to apply to all compartments, unless overriden by *defined_tags* attribute within each compartment object.
-- **default_freeform_tags**: freeform tags to apply to all compartments, unless overriden by *freeform_tags* attribute within each compartment object.
-  **Note**: Freeform tags are limited to 10 tags per OCI resource.
+- **default_parent_id** &ndash; (Optional) determines the parent compartment for all your top (first level) compartments defined by the *compartments* attribute. This attribute is overloaded: it can be either a compartment OCID or a reference (a key) to the compartment OCID. *tenancy_ocid* is used if undefined.
+- **enable_delete** &ndash; (Optional) determines whether or not OCI should physically delete compartments when destroyed by Terraform. Default is false.
+- **default_defined_tags** &ndash; (Optional) defined tags to apply to all compartments, unless overriden by *defined_tags* attribute within each compartment object.
+- **default_freeform_tags** &ndash; (Optional) freeform tags to apply to all compartments, unless overriden by *freeform_tags* attribute within each compartment object. Freeform tags are limited to 10 tags per OCI resource.
+- **compartments** &ndash; (Optional) the map of objects that define compartments hierarchies. Each top (first level) compartment has a *parent_id* attribute to identify the compartment's parent (in other words, where the particular tree descends from). It overrides *default_parent_id*. Each compartment object has a *children* attribute that defines its sub-compartments. The *compartments* map supports up to **six** levels of nesting, which is the maximum supported by OCI.
+  - **name** &ndash; The compartment name.
+  - **description** &ndash; The compartment description.
+  - **parent_id** &ndash; (Optional) The compartment's parent compartment. Only available for first-level compartments. This attribute is overloaded: it can be either a compartment OCID or a reference (a key) to the compartment OCID. *default_parent_id* is used if undefined.
+  - **defined_tags** &ndash; (Optional) The compartment defined_tags. *default_defined_tags* is used if undefined.
+  - **freeform_tags** &ndash; (Optional) The compartment freeform_tags. *default_freeform_tags* is used if undefined.
+  - **tag_defaults** &ndash; (Optional) A map of tag defaults to apply to the compartment. Every resource created in the compartmet is tagged per this setting.
+    - **tag_id** &ndash; The tag default tag id. This attribute is overloaded: it can be either a tag OCID or a reference (a key) to the tag OCID. 
+    - **default_value** &ndash; The default value to assign to the tag.
+    - **is_user_required** &ndash; (Optional) Whether the user must provide a tag value for resources created in the compartment.
+  - **children**:  &ndash; (Optional) The map of sub-compartments. It has the same structure of the *compartments* map, except for the *parent_id* attribute.  
 
-It is also possible to apply tag defaults to compartments. Tag defaults are tag values that are automatically applied or required from users on any resources eventually created in the compartments and in their sub-compartments. Use tag defaults to enforce organization wide governance practices in your cloud infrastructure, like automatically applying the cost center identifier to specific compartments. Before using a tag default, a defined tag must be defined in OCI. For configuring tags, you can use the [Tags module in CIS OCI Landing Zone Governance repository](https://github.com/oracle-quickstart/terraform-oci-cis-landing-zone-governance/tags/).
+Note it is possible to apply tag defaults to compartments. Tag defaults are tag values that are automatically applied or required from users on any resources eventually created in the compartments and in their sub-compartments. Use tag defaults to enforce organization wide governance practices in your cloud infrastructure, like automatically applying the cost center identifier to specific compartments. Before using a tag default, a defined tag must be defined in OCI. For configuring tags, you can use the [Tags module in CIS OCI Landing Zone Governance repository](https://github.com/oracle-quickstart/terraform-oci-cis-landing-zone-governance/tags/).
 
-Tag defaults are defined using *tag_defaults* attribute within each compartment in *compartments* attribute. You can have multiple tag defaults in a single compartment. Each tag default requires an immutable key (use an uppercase string as a convention), a tag ocid (*tag_ocid*), the default value (*default_value*) and whether or not the value is required from users when creating resources (*is_user_required*). If *is_user_required* is not provided or set to false, the default value is automatically applied upon resource creation.  
+Tag defaults are defined using *tag_defaults* attribute within each compartment in *compartments* attribute. You can have multiple tag defaults in a single compartment. Each tag default requires an immutable key (use an uppercase string as a convention), a tag id (*tag_id*), the default value (*default_value*) and whether or not the value is required from users when creating resources (*is_user_required*). If *is_user_required* is not provided or set to false, the default value is automatically applied upon resource creation.  
 
 ## Identifying Keys
 
 Each compartment is identified by Terraform with an artificial key provided in the input variable. For example, in the snippet below, *DATABASE* (rows 4-13) identifies the *database-cmp* compartment, while *PROD* (rows 8-11) identifies its child *database-production-cmp* compartment.
 ```
 1  compartments_configuration = { 
-2    default_parent_ocid = "<COMPARTMENT-OCID>"
+2    default_parent_id = "<COMPARTMENT-OCID>"
 3    compartments = {
 4      DATABASE = { 
 5        name = "database-cmp" 
@@ -49,7 +58,8 @@ Check the [examples](./examples) folder for module usage with actual input data.
 
 An optional feature, external dependencies are resources managed elsewhere that resources managed by this module may depend on. The following dependencies are supported:
 
-- **tags_dependency**: A map of objects containing the externally managed tags this module may depend on. All map objects must have the same type and must contain at least an *id* attribute with the tag OCID.
+- **tags_dependency** &ndash; (Optional) A map of objects containing the externally managed tags this module may depend on. All map objects must have the same type and must contain at least an *id* attribute with the tag OCID.
+- **compartments_dependency** &ndash; (Optional) A map of objects containing the externally managed compartments this module may depend on. All map objects must have the same type and must contain at least an *id* attribute with the tag OCID. This is typically used when using separate configurations for managing compartments.
 
 ## Requirements
 ### IAM Permissions

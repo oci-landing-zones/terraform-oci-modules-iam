@@ -28,7 +28,7 @@ region               = "<your tenancy home region>" # This is your tenancy home 
 #---------------------------------------
 
 compartments_configuration = {
-  default_parent_ocid = "<REPLACE-BY-THE-PARENT-COMPARTMENT-OCID>"
+  default_parent_id = "<REPLACE-BY-THE-PARENT-COMPARTMENT-OCID>"
   #default_defined_tags = null
   #default_freeform_tags = null
   #enable_delete = false
@@ -36,7 +36,7 @@ compartments_configuration = {
     TOP-CMP = { 
       name = "vision-top-cmp", 
       description = "Vision Enclosing compartment", 
-      #parent_ocid = null,
+      #parent_id = null,
       freeform_tags = {
         "cislz"="vision",
         "cislz-cmp-type"="enclosing"

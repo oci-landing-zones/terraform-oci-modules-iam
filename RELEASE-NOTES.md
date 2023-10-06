@@ -1,3 +1,10 @@
+# October 06, 2023 Release Notes - 0.1.6
+
+## Updates
+### Compartments Module
+1. The Compartments module can now declare dependency on externally managed compartments. This is useful when managing compartments with multiple configurations.
+2. Attributes *default_parent_ocid* and *parent_ocid* renamed to *default_parent_id* and *parent_id*, respectively. Existing clients must adjust accordingly.
+
 # September 27, 2023 Release Notes - 0.1.5
 
 ## Updates
