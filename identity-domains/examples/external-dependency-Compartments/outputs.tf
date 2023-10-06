@@ -6,3 +6,4 @@ output "identity-domains" {
   value       = module.vision_identity_domains.identity_domains
 }
 
+

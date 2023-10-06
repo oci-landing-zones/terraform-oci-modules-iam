@@ -44,22 +44,36 @@ variable "identity_domain_groups_configuration" {
       identity_domain_id        = optional(string),
       name                      = string,
       description               = optional(string),
+      requestable               = optional(bool),
+      members                   = optional(list(string)),
       defined_tags              = optional(map(string)),
       freeform_tags             = optional(map(string))
     }))
   })
 }
 
-variable "oci_identity_domains_dependency" {
-  type = map(object({
-    id = string
-  }))
-  default = null
-}
+
 
 variable "oci_compartments_dependency" {
   type = map(object({
     id = string
   }))
   default = null
+}
+
+variable "identity_domain_dynamic_groups_configuration" {
+  description = "The identity domain dynamic groups configuration."
+  type = object({
+    default_identity_domain_id  = optional(string)
+    default_defined_tags        = optional(map(string))
+    default_freeform_tags       = optional(map(string))
+    dynamic_groups = map(object({
+      identity_domain_id        = optional(string),
+      name                      = string,
+      description               = optional(string),
+      matching_rule             = string,
+      defined_tags              = optional(map(string)),
+      freeform_tags             = optional(map(string))
+    }))
+  })
 }

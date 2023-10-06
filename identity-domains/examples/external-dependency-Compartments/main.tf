@@ -6,5 +6,6 @@ module "vision_identity_domains" {
   tenancy_ocid                          = var.tenancy_ocid
   identity_domains_configuration        = var.identity_domains_configuration
   identity_domain_groups_configuration  = var.identity_domain_groups_configuration
+  identity_domain_dynamic_groups_configuration = var.identity_domain_dynamic_groups_configuration
   compartments_dependency               = var.oci_compartments_dependency
 }
