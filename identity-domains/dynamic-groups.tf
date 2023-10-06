@@ -1,11 +1,14 @@
 # Copyright (c) 2023 Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
-
+data "oci_identity_domain" "dyngrp_domain" {
+  for_each = (var.identity_domain_dynamic_groups_configuration != null ) ? (var.identity_domain_dynamic_groups_configuration["dynamic_groups"] != null ? var.identity_domain_dynamic_groups_configuration["dynamic_groups"] : {}) : {}
+    domain_id = each.value.identity_domain_id != null ? each.value.identity_domain_id : var.identity_domain_dynamic_groups_configuration.default_identity_domain_id
+}
 
 resource "oci_identity_domains_dynamic_resource_group" "these" {
   for_each       = var.identity_domain_dynamic_groups_configuration.dynamic_groups != null ? var.identity_domain_dynamic_groups_configuration.dynamic_groups : {}
 
-    idcs_endpoint = contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_dynamic_groups_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_dynamic_groups_configuration.default_identity_domain_id].url : data.oci_identity_domain.grp_domain[each.key].url)
+    idcs_endpoint = contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_dynamic_groups_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_dynamic_groups_configuration.default_identity_domain_id].url : data.oci_identity_domain.dyngrp_domain[each.key].url)
   
     display_name            = each.value.name
     schemas = ["urn:ietf:params:scim:schemas:oracle:idcs:DynamicResourceGroup"]
