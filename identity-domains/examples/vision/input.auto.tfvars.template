@@ -28,44 +28,97 @@ region               = "<your tenancy home region>" # This is your tenancy home 
 #---------------------------------------
 
 identity_domains_configuration = {
-  default_compartment_id : "<default compartment_id for the identity domains>"
+  #default_compartment_id : null
+  default_compartment_id : "<REPLACE-BY-COMPARTMENT-OCID>"
   default_defined_tags : null
   default_freeform_tags : null
   identity_domains : {  
     DEV-DOMAIN  : { 
-        compartment_id  = "<compartment ocid for identity domain>"
+        compartment_id  = null
         display_name    = "VISION_DEV_Identity_Domain"
         description     = "VISION DEV Identity Domain"
         home_region     = "us-ashburn-1"
-        license_type    = "Free"
+        license_type    = "free"
 
-        admin_email         = "<email for identity domain administrator>"
-        admin_first_name    = "<First Name of identity domain administrator>"
-        admin_last_name     = "<Last Name of identity domain administrator>"
-        admin_user_name     = "<username of identity domain administrator>"
+        admin_email         = "<REPLACE-BY-ADMIN-EMAIL>"
+        admin_first_name    = "<REPLACE-BY-ADMIN-FIRST-NAME>"
+        admin_last_name     = "<REPLACE-BY-ADMIN-LAST-NAME>"
+        admin_user_name     = "<REPLACE-BY-ADMIN-USERNAME>"
 
         is_hidden_on_login          = false
         is_notification_bypassed    = false
         is_primary_email_required   = false
 
-    },
+    } 
     PROD-DOMAIN  : { 
-        compartment_id  = "<compartment ocid for identity domain>"
+        compartment_id  = "<REPLACE-BY-COMPARTMENT-OCID>"
         display_name    = "VISION_PROD_Identity_Domain"
         description     = "VISION PROD Identity Domain"
         home_region     = "us-ashburn-1"
-        license_type    = "Free"
+        license_type    = "free"
 
-        admin_email         = "<email for identity domain administrator>"
-        admin_first_name    = "<First Name of identity domain administrator>"
-        admin_last_name     = "<Last Name of identity domain administrator>"
-        admin_user_name     = "<username of identity domain administrator>"
+        admin_email         = "<REPLACE-BY-ADMIN-EMAIL>"
+        admin_first_name    = "<REPLACE-BY-ADMIN-FIRST-NAME>"
+        admin_last_name     = "<REPLACE-BY-ADMIN-LAST-NAME>"
+        admin_user_name     = "<REPLACE-BY-ADMIN-EMAIL>"
 
-        is_hidden_on_login          = true
+        is_hidden_on_login          = false
         is_notification_bypassed    = false
         is_primary_email_required   = true
 
     }
                                                                  
+  }
+
+                                                                 
+}
+
+
+identity_domain_groups_configuration = {
+    default_identity_domain_id  : "DEV-DOMAIN"
+    default_defined_tags        : null
+    default_freeform_tags       : null
+    groups : {
+      GRP1 : {
+        identity_domain_id        = null
+        name                      = "devgroup1"
+        description               = "Dev Group 1"
+        
+      }
+      GRP2 : {
+        identity_domain_id        = "PROD-DOMAIN"
+        name                      = "prodgroup1"
+        description               = "Prod Group 2"
+      }
+    }
+}
+
+identity_domain_dynamic_groups_configuration = {
+    default_identity_domain_id  : "PROD-DOMAIN"
+    default_defined_tags : null
+    default_freeform_tags : null
+
+  dynamic_groups = {  
+    SEC-FUN-DYN-GROUP : { 
+      identity_domain_id        = "DEV-DOMAIN"
+      name : "vision-sec-fun-dynamic-group",  
+      description : "Dynamic group for security functions execution.",      
+      matching_rule : "ALL {resource.type = 'fnfunc',resource.compartment.id = '<REPLACE-BY-SECURITY-COMPARTMENT-OCID>'}"
+    },
+    APPDEV-FUN-DYN-GROUP : { 
+      name : "vision-appdev-fun-dynamic-group",  
+      description : "Dynamic group for application functions execution.",      
+      matching_rule : "ALL {resource.type = 'fnfunc',resource.compartment.id = '<REPLACE-BY-APPLICATION-COMPARTMENT-OCID>'}"
+    },  
+    APPDEV-COMPUTE-AGENT-DYN-GROUP : { 
+      name : "vision-appdev-computeagent-dynamic-group",  
+      description : "Dynamic group for Compute Agent plugin execution.",      
+      matching_rule : "ALL {resource.type = 'managementagent',resource.compartment.id = '<REPLACE-BY-APPLICATION-COMPARTMENT-OCID>'}"
+    },                                        
+    DATABASE-KMS-DYN-GROUP : { 
+      name : "vision-database-kms-dynamic-group",  
+      description : "Dynamic group for databases accessing Key Management service (aka Vault service).",      
+      matching_rule : "ALL {resource.compartment.id = '<REPLACE-BY-DATABASE-COMPARTMENT-OCID>'}"
+    }
   }
 }
