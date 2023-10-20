@@ -71,7 +71,8 @@ locals {
   #-- Security admin grants on database compartment
   security_admin_grants_on_database_cmp_map = {
     for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"database") && values["sec-group"] != null) ? [
-      "allow group ${values["sec-group"]} to read keys in compartment ${values["name"]}"
+      "allow group ${values["sec-group"]} to read keys in compartment ${values["name"]}",
+      "allow group ${values["sec-group"]} to inspect all-resources in compartment ${values["name"]}"
     ] : []
   }
 
@@ -87,7 +88,7 @@ locals {
   database_cmps_policies = {
     for k, values in local.cmp_name_to_cislz_tag_map : 
       (upper("${k}-database-policy")) => {
-        name             = length(regexall("^${local.policy_name_prefix}", values["name"])) > 0 ? (length(split(",",values["cmp-type"])) > 0 ? "${values["name"]}-database${local.policy_name_suffix}" : "${values["name"]}${local.policy_name_suffix}") : (length(split(",",values["cmp-type"])) > 0 ? "${local.policy_name_prefix}${values["name"]}-database${local.policy_name_suffix}" : "${local.policy_name_prefix}${values["name"]}${local.policy_name_suffix}")
+        name             = length(regexall("^${local.policy_name_prefix}", values["name"])) > 0 ? (length(split(",",values["cmp-type"])) > 1 ? "${values["name"]}-database${local.policy_name_suffix}" : "${values["name"]}${local.policy_name_suffix}") : (length(split(",",values["cmp-type"])) > 1 ? "${local.policy_name_prefix}${values["name"]}-database${local.policy_name_suffix}" : "${local.policy_name_prefix}${values["name"]}${local.policy_name_suffix}")
         compartment_ocid = values.ocid
         description      = "CIS Landing Zone policy for Database compartment."
         defined_tags     = var.policies_configuration.defined_tags

@@ -74,7 +74,8 @@ locals {
   #-- Security admin grants on application compartment
   security_admin_grants_on_application_cmp_map = {
     for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"application") && values["sec-group"] != null) ? [
-      "allow group ${values["sec-group"]} to read keys in compartment ${values["name"]}"
+      "allow group ${values["sec-group"]} to read keys in compartment ${values["name"]}",
+      "allow group ${values["sec-group"]} to inspect all-resources in compartment ${values["name"]}"
     ] : []
   }
 
@@ -82,8 +83,7 @@ locals {
   application_cmps_policies = {
     for k, values in local.cmp_name_to_cislz_tag_map : 
       (upper("${k}-application-policy")) => {
-        #name             = "${local.cmp_policy_name_prefix}${values["name"]}-application${local.policy_name_suffix}"
-        name             = length(regexall("^${local.policy_name_prefix}", values["name"])) > 0 ? (length(split(",",values["cmp-type"])) > 0 ? "${values["name"]}-application${local.policy_name_suffix}" : "${values["name"]}${local.policy_name_suffix}") : (length(split(",",values["cmp-type"])) > 0 ? "${local.policy_name_prefix}${values["name"]}-application${local.policy_name_suffix}" : "${local.policy_name_prefix}${values["name"]}${local.policy_name_suffix}")
+        name             = length(regexall("^${local.policy_name_prefix}", values["name"])) > 0 ? (length(split(",",values["cmp-type"])) > 1 ? "${values["name"]}-application${local.policy_name_suffix}" : "${values["name"]}${local.policy_name_suffix}") : (length(split(",",values["cmp-type"])) > 1 ? "${local.policy_name_prefix}${values["name"]}-application${local.policy_name_suffix}" : "${local.policy_name_prefix}${values["name"]}${local.policy_name_suffix}")
         compartment_ocid = values.ocid
         description      = "CIS Landing Zone policy for Application compartment."
         defined_tags     = var.policies_configuration.defined_tags
