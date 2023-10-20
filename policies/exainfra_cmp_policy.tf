@@ -60,8 +60,7 @@ locals {
   exainfra_cmps_policies = {
     for k, values in local.cmp_name_to_cislz_tag_map : 
       (upper("${k}-exainfra-policy")) => {
-        #name             = "${local.cmp_policy_name_prefix}${values["name"]}-exainfra${local.policy_name_suffix}"
-        name             = length(regexall("^${local.policy_name_prefix}", values["name"])) > 0 ? "${values["name"]}${local.policy_name_suffix}" : "${local.policy_name_prefix}${values["name"]}${local.policy_name_suffix}"
+        name             = length(regexall("^${local.policy_name_prefix}", values["name"])) > 0 ? (length(split(",",values["cmp-type"])) > 0 ? "${values["name"]}-exainfra${local.policy_name_suffix}" : "${values["name"]}${local.policy_name_suffix}") : (length(split(",",values["cmp-type"])) > 0 ? "${local.policy_name_prefix}${values["name"]}-exainfra${local.policy_name_suffix}" : "${local.policy_name_prefix}${values["name"]}${local.policy_name_suffix}")
         compartment_ocid = values.ocid
         description      = "CIS Landing Zone policy for Exadata Cloud Service infrastructure compartment."
         defined_tags     = var.policies_configuration.defined_tags
@@ -71,6 +70,6 @@ locals {
                                   local.database_admin_grants_on_exainfra_cmp_map[k],
                                   local.security_admin_grants_on_exainfra_cmp_map[k])
       }
-    if values["cmp-type"] == "exainfra"
+    if contains(split(",",values["cmp-type"]),"exainfra")
   }
 }
