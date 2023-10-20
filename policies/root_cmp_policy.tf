@@ -48,7 +48,8 @@ locals {
     "allow group ${local.group_names} to use cloud-shell in tenancy",
     "allow group ${local.group_names} to read usage-budgets in tenancy",
     "allow group ${local.group_names} to read usage-reports in tenancy",
-    "allow group ${local.group_names} to read objectstorage-namespaces in tenancy"
+    "allow group ${local.group_names} to read objectstorage-namespaces in tenancy",
+    "allow group ${local.group_names} to inspect compartments in tenancy"
   ] : []
 
   iam_admin_grants_on_root_cmp = contains(keys(local.group_name_map_transpose),local.iam_role) ? [
