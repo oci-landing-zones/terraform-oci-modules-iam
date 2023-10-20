@@ -73,9 +73,10 @@ For referring to a specific module version, append *ref=\<version\>* to the *sou
   source = "github.com/oracle-quickstart/terraform-oci-cis-landing-zone-iam/identity-domains?ref=v0.1.0"
 ```
 ## Note: 
-To destroy (delete) an Identity Domain it has to be done manually.  Run terraform destroy once to destroy contained resources (groups, dynamic groups...), the error "Error: 412-PreConditionFailed, Cannot perform DELETE_DOMAIN operation on Domain with Status CREATED" is returned.  Then deactivate the Identity Domain(s).  To deactivate an Identity Domain use the OCI console or OCI CLI, as in:
+To destroy (delete) an Identity Domain it has to be done manually.  Run terraform destroy once to destroy contained resources (groups, dynamic groups...), the error "Error: 412-PreConditionFailed, Cannot perform DELETE_DOMAIN operation on Domain with Status CREATED" is returned.  Then deactivate the Identity Domain(s).  To deactivate and delete an Identity Domain you can use the OCI console or OCI CLI, as in:
 ```
   oci iam domain deactivate --domain-id <identity domain OCID>
+  oci iam domain delete --domain-id <identity domain OCID>
 ```
 
 ## Related Documentation

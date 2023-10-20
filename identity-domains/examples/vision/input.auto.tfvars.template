@@ -88,7 +88,7 @@ identity_domain_groups_configuration = {
       GRP2 : {
         identity_domain_id        = "PROD-DOMAIN"
         name                      = "prodgroup1"
-        description               = "Prod Group 2"
+        description               = "Prod Group 1"
       }
     }
 }

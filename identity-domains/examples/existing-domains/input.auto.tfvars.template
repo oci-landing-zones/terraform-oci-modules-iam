@@ -42,7 +42,7 @@ identity_domain_groups_configuration = {
       GRP2 : {
         identity_domain_id        = "<REPLACE-BY-IDENTITY-DOMAIN-OCID"
         name                      = "prodgroup1"
-        description               = "Prod Group 2"
+        description               = "Prod Group 1"
         members                   = ["<REPLACE WITH LIST OF EXISTING USERNAMES:  username1,username2..."]
       }
     }
