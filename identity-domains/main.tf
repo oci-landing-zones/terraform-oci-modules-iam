@@ -1,15 +1,29 @@
 # Copyright (c) 2023 Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 
+data "oci_identity_regions" "these" {}
+
+data "oci_identity_tenancy" "this" {
+  tenancy_id = var.tenancy_ocid
+}
+
+locals {
+  regions_map     = { for r in data.oci_identity_regions.these.regions : r.key => r.name } 
+  home_region_key = data.oci_identity_tenancy.this.home_region_key                         
+}
+
 
 
 resource "oci_identity_domain" "these" {
   for_each       = var.identity_domains_configuration != null ? var.identity_domains_configuration.identity_domains : {}
-    compartment_id      = each.value.compartment_id != null ? (length(regexall("^ocid1.*$", each.value.compartment_id)) > 0 ? each.value.compartment_id : var.compartments_dependency[each.value.compartment_id].id) : (length(regexall("^ocid1.*$", var.identity_domains_configuration.default_compartment_id)) > 0 ? var.identity_domains_configuration.default_compartment_id : var.compartments_dependency[var.identity_domains_configuration.default_compartment_id].id)
+    #compartment_id      = each.value.compartment_id != null ? (length(regexall("^ocid1.*$", each.value.compartment_id)) > 0 ? each.value.compartment_id : var.compartments_dependency[each.value.compartment_id].id) : (length(regexall("^ocid1.*$", var.identity_domains_configuration.default_compartment_id)) > 0 ? var.identity_domains_configuration.default_compartment_id : var.compartments_dependency[var.identity_domains_configuration.default_compartment_id].id)
+    compartment_id      = each.value.compartment_id != null ? (length(regexall("^ocid1.*$", each.value.compartment_id)) > 0 ? each.value.compartment_id : var.compartments_dependency[each.value.compartment_id].id) : (var.identity_domains_configuration.default_compartment_id != null ? (length(regexall("^ocid1.*$", var.identity_domains_configuration.default_compartment_id)) > 0 ? var.identity_domains_configuration.default_compartment_id : var.compartments_dependency[var.identity_domains_configuration.default_compartment_id].id) : var.tenancy_ocid)
+
 
     display_name    = each.value.display_name
     description     = each.value.description
-    home_region     = each.value.home_region
+    #home_region     = each.value.home_region
+    home_region     = each.value.home_region != null ? each.value.home_region : local.regions_map[local.home_region_key]
     license_type    = each.value.license_type
 
     admin_email         = each.value.admin_email

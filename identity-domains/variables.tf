@@ -16,7 +16,7 @@ variable "identity_domains_configuration" {
       compartment_id            = optional(string),
       display_name              = string,
       description               = string,
-      home_region               = string,
+      home_region               = optional(string),
       license_type              = string,
       admin_email               = optional(string),
       admin_first_name          = optional(string),

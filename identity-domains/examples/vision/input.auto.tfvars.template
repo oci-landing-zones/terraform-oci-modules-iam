@@ -37,7 +37,7 @@ identity_domains_configuration = {
         compartment_id  = null
         display_name    = "VISION_DEV_Identity_Domain"
         description     = "VISION DEV Identity Domain"
-        home_region     = "us-ashburn-1"
+        home_region     = "<REPLACE-BY-REGION or null>"
         license_type    = "free"
 
         admin_email         = "<REPLACE-BY-ADMIN-EMAIL>"
@@ -54,7 +54,7 @@ identity_domains_configuration = {
         compartment_id  = "<REPLACE-BY-COMPARTMENT-OCID>"
         display_name    = "VISION_PROD_Identity_Domain"
         description     = "VISION PROD Identity Domain"
-        home_region     = "us-ashburn-1"
+        home_region     = "<REPLACE-BY-REGION or null>"
         license_type    = "free"
 
         admin_email         = "<REPLACE-BY-ADMIN-EMAIL>"
