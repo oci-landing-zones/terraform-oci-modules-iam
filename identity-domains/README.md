@@ -14,14 +14,14 @@ The module defines three input variables named *identity_domains_configuration*,
   - **default_freeform_tags**: (Optional) freeform tags to apply to all resources, unless overriden by *freeform_tags* attribute within each resource.
   - **identity_domains**: (Optional) the map of objects that defines the identity domains, where each object corresponds to an identity domain resource.
     - **compartment_id**:  (Optional) The compartment for the identity domain. This attribute is overloaded: it can be either a compartment OCID or a reference (a key) to the compartment OCID. *default_compartment_id* is used if undefined.             
-    - **display_name**:  (Required) The mutable display name for the identity domain              
-    - **description**:  (Required) The description of the identity domain              
+    - **display_name**:  (Required) The mutable display name for the identity domain.              
+    - **description**:  (Required) The description of the identity domain.              
     - **home_region**:  (Required) The region name of the identity domain. The tenancy home region name is used if undefined.  Example: us-ashburn-1
-    - **license_type**: (Required) The license type of the identity domain.  Examples: free, oracle-apps-premium, premium, external-user             
-    - **admin_email**:  (Optional) The email address of the identity domain administrator               
-    - **admin_first_name**: (Optional) The first name of the identity domain administrator      
-    - **admin_last_name**: (Optional) The last name of the identity domain administrator              
-    - **admin_user_name**: (Optional) The username for the identity domain administrator             
+    - **license_type**: (Required) The license type of the identity domain.  Examples: free, oracle-apps-premium, premium, external-user.             
+    - **admin_email**:  (Optional) The email address of the identity domain administrator.               
+    - **admin_first_name**: (Optional) The first name of the identity domain administrator.      
+    - **admin_last_name**: (Optional) The last name of the identity domain administrator.              
+    - **admin_user_name**: (Optional) The username for the identity domain administrator.             
     - **is_hidden_on_login**:  (Optional) Indicates whether the identity domain is hidden on login screen or not.  Example: true   
     - **is_notification_bypassed**:  Indicates if admin user created in the Identity Domain would like to receive notification like welcome email or not. Required field only if admin information is provided, otherwise optional.  
     - **is_primary_email_required**: (Optional) Indicates whether users in the domain are required to have a primary email address or not.  Example: true
@@ -29,7 +29,7 @@ The module defines three input variables named *identity_domains_configuration*,
     - **freeform_tags**:  (Optional) free tags to apply to the identity domain. **default_freeform_tags** is used if undefined.       
 
 *identity_domain_groups_configuration*  
-  - **default_identity_domain_id**: (Optional) defines the identity domain for all groups, unless overriden by *identity_domain_id* attribute within each group.  This attribute is overloaded: it can be either an identity domain OCID or a reference (a key) to the identity domain OCID.
+  - **default_identity_domain_id**: (Optional) defines the identity domain for all groups, unless overriden by *identity_domain_id* attribute within each group.  This attribute is overloaded: it can be either an existing identity domain OCID (if provisioning the group in an existing identity domain) or the identity domain reference (key) in identity_domains map.
   - **default_defined_tags**: (Optional) defined tags to apply to all resources, unless overriden by *defined_tags* attribute within each resource.
   - **default_freeform_tags**: (Optional) freeform tags to apply to all resources, unless overriden by *freeform_tags* attribute within each resource.     
   - **groups**: (Optional) the map of objects that defines groups of users, where each object corresponds to a group resource.
@@ -46,7 +46,7 @@ The module defines three input variables named *identity_domains_configuration*,
   - **default_defined_tags**: (Optional) defined tags to apply to all resources, unless overriden by *defined_tags* attribute within each resource.
   - **default_freeform_tags**: (Optional) freeform tags to apply to all resources, unless overriden by *freeform_tags* attribute within each resource.      
   - **dynamic_groups**: (Optional) the map of objects that defines dynamic groups, where each object corresponds to a dynamic group resource.
-    - **identity_domain_id**: (Optional) The identity domain for the group. This attribute is overloaded: it can be either a compartment OCID or a reference (a key) to the compartment OCID. *default_identity_domain_id* is used if undefined.        
+    - **identity_domain_id**: (Optional) The identity domain for the group. This attribute is overloaded: it can be either an existing identity domain OCID (if provisioning the group/dynamic group in an existing identity domain) or the identity domain reference (key) in identity_domains map.    
     - **name**:  (Required) The display name of the dynamic group.                      
     - **description**: (Optional) The description of the dynamic group.               
     - **matching_rule**: (Required)  An expression that defines the principals assigned to the dynamic group resource.             
