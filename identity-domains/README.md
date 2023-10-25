@@ -33,7 +33,7 @@ The module defines three input variables named *identity_domains_configuration*,
   - **default_defined_tags**: (Optional) defined tags to apply to all resources, unless overriden by *defined_tags* attribute within each resource.
   - **default_freeform_tags**: (Optional) freeform tags to apply to all resources, unless overriden by *freeform_tags* attribute within each resource.     
   - **groups**: (Optional) the map of objects that defines groups of users, where each object corresponds to a group resource.
-    - **identity_domain_id**: (Optional) The identity domain for the group. This attribute is overloaded: it can be either a compartment OCID or a reference (a key) to the compartment OCID. *default_identity_domain_id* is used if undefined.          
+    - **identity_domain_id**: (Optional) The identity domain for the group. This attribute is overloaded: it can be either an existing identity domain OCID (if provisioning the group in an existing identity domain) or the identity domain reference (key) in identity_domains map.          
     - **name**:  (Required) The display name of the group.                     
     - **description**: (Optional) The description of the group.             
     - **requestable**: (Optional) Flag controlling whether group membership can be requested by users through self service console.  Example: true           
@@ -46,7 +46,7 @@ The module defines three input variables named *identity_domains_configuration*,
   - **default_defined_tags**: (Optional) defined tags to apply to all resources, unless overriden by *defined_tags* attribute within each resource.
   - **default_freeform_tags**: (Optional) freeform tags to apply to all resources, unless overriden by *freeform_tags* attribute within each resource.      
   - **dynamic_groups**: (Optional) the map of objects that defines dynamic groups, where each object corresponds to a dynamic group resource.
-    - **identity_domain_id**: (Optional) The identity domain for the group. This attribute is overloaded: it can be either an existing identity domain OCID (if provisioning the group/dynamic group in an existing identity domain) or the identity domain reference (key) in identity_domains map.    
+    - **identity_domain_id**: (Optional) The identity domain for the dynamic group. This attribute is overloaded: it can be either an existing identity domain OCID (if provisioning the dynamic group in an existing identity domain) or the identity domain reference (key) in identity_domains map.    
     - **name**:  (Required) The display name of the dynamic group.                      
     - **description**: (Optional) The description of the dynamic group.               
     - **matching_rule**: (Required)  An expression that defines the principals assigned to the dynamic group resource.             
