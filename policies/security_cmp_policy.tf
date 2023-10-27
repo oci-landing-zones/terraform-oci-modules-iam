@@ -43,7 +43,8 @@ locals {
       "allow group ${values["sec-group"]} to manage alarms in compartment ${values["name"]}",
       "allow group ${values["sec-group"]} to manage metrics in compartment ${values["name"]}",
       "allow group ${values["sec-group"]} to use key-delegate in compartment ${values["name"]}",
-      "allow group ${values["sec-group"]} to manage policies in compartment ${values["name"]}"
+      "allow group ${values["sec-group"]} to manage policies in compartment ${values["name"]}",
+      "allow group ${values["sec-group"]} to manage policies in compartment ${values["name"]}" # for service connector IAM policies.
     ] : []
   }
 
