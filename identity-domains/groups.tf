@@ -8,21 +8,21 @@ data "oci_identity_domain" "grp_domain" {
 
 data "oci_identity_domains_users" "these" {
   
-  for_each = var.identity_domain_groups_configuration.groups != null ? var.identity_domain_groups_configuration.groups : {}
+  for_each = var.identity_domain_groups_configuration != null ? (var.identity_domain_groups_configuration.groups != null ? var.identity_domain_groups_configuration.groups : {} ): {}
      idcs_endpoint = contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_groups_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_groups_configuration.default_identity_domain_id].url : data.oci_identity_domain.grp_domain[each.key].url)
   
   
 }
 
 locals {
-  users =  { for k,g in var.identity_domain_groups_configuration["groups"] : k =>
+  users =  { for k,g in (var.identity_domain_groups_configuration != null ? var.identity_domain_groups_configuration["groups"]: {}) : k =>
       { for u in data.oci_identity_domains_users.these[k].users : u.user_name => u.id}}
 }
 
 
 
 resource "oci_identity_domains_group" "these" {
-  for_each       = var.identity_domain_groups_configuration.groups != null ? var.identity_domain_groups_configuration.groups : {}
+  for_each       = var.identity_domain_groups_configuration != null ? var.identity_domain_groups_configuration.groups : {}
 
     idcs_endpoint = contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_groups_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_groups_configuration.default_identity_domain_id].url : data.oci_identity_domain.grp_domain[each.key].url)
   
