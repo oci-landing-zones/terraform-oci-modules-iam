@@ -6,7 +6,7 @@ data "oci_identity_users" "these" {
 }
 
 resource "oci_identity_group" "these" {
-  for_each       = var.groups_configuration.groups
+  for_each       = var.groups_configuration != null ? var.groups_configuration.groups : {}
     compartment_id = var.tenancy_ocid
     name           = each.value.name
     description    = each.value.description
@@ -24,7 +24,7 @@ locals {
   users  = { for u in data.oci_identity_users.these.users : u.name => u }
 
   group_memberships = flatten([
-    for k, v in var.groups_configuration.groups : [
+    for k, v in (var.groups_configuration != null ? var.groups_configuration.groups : {}) : [
       for name in v.members : {
         group_key  = k
         user_name  = name

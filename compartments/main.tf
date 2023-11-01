@@ -4,11 +4,11 @@
 locals {
 
   level_1 = [
-    for k1, v1 in var.compartments_configuration.compartments : {
+    for k1, v1 in (var.compartments_configuration != null ? var.compartments_configuration.compartments : {}) : {
       key  = k1
       name = v1.name
       description = v1.description
-      parent_ocid = v1.parent_ocid != null ? v1.parent_ocid : var.compartments_configuration.default_parent_ocid != null ? var.compartments_configuration.default_parent_ocid : var.tenancy_ocid
+      parent_ocid = v1.parent_id != null ? (length(regexall("^ocid1.*$", v1.parent_id)) > 0 ? v1.parent_id : var.compartments_dependency[v1.parent_id].id) : var.compartments_configuration.default_parent_id != null ? (length(regexall("^ocid1.*$", var.compartments_configuration.default_parent_id)) > 0 ? var.compartments_configuration.default_parent_id : var.compartments_dependency[var.compartments_configuration.default_parent_id].id) : var.tenancy_ocid
       defined_tags = v1.defined_tags != null ? v1.defined_tags :  var.compartments_configuration.default_defined_tags != null ?  var.compartments_configuration.default_defined_tags : null
       freeform_tags = v1.freeform_tags != null ? v1.freeform_tags : var.compartments_configuration.default_freeform_tags != null ?  var.compartments_configuration.default_freeform_tags : null
       tag_defaults = v1.tag_defaults
@@ -17,7 +17,7 @@ locals {
   ]
 
   level_2 = flatten([
-    for k1, v1 in var.compartments_configuration.compartments : [
+    for k1, v1 in (var.compartments_configuration != null ? var.compartments_configuration.compartments : {}) : [
       for k2, v2 in v1.children : {
         key  = var.derive_keys_from_hierarchy ? format("%s-%s",k1,k2) : k2
         name = v2.name
@@ -32,7 +32,7 @@ locals {
   ])
 
   level_3 = flatten([
-    for k1, v1 in var.compartments_configuration.compartments : [
+    for k1, v1 in (var.compartments_configuration != null ? var.compartments_configuration.compartments : {}) : [
       for k2, v2 in v1.children : [
         for k3, v3 in v2.children : {
           key  = var.derive_keys_from_hierarchy ? format("%s-%s-%s",k1,k2,k3) : k3
@@ -49,7 +49,7 @@ locals {
   ])
 
   level_4 = flatten([
-    for k1, v1 in var.compartments_configuration.compartments : [
+    for k1, v1 in (var.compartments_configuration != null ? var.compartments_configuration.compartments : {}) : [
       for k2, v2 in v1.children : [
         for k3, v3 in v2.children : [
           for k4, v4 in v3.children : {
@@ -68,7 +68,7 @@ locals {
   ])
 
   level_5 = flatten([
-    for k1, v1 in var.compartments_configuration.compartments : [
+    for k1, v1 in (var.compartments_configuration != null ? var.compartments_configuration.compartments : {}) : [
       for k2, v2 in v1.children : [
         for k3, v3 in v2.children : [
           for k4, v4 in v3.children : [
@@ -89,7 +89,7 @@ locals {
   ])
 
   level_6 = flatten([
-    for k1, v1 in var.compartments_configuration.compartments : [
+    for k1, v1 in (var.compartments_configuration != null ? var.compartments_configuration.compartments : {}) : [
       for k2, v2 in v1.children : [
         for k3, v3 in v2.children : [
           for k4, v4 in v3.children : [

@@ -1,0 +1,76 @@
+# Copyright (c) 2023 Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
+
+#---------------------------------------------------------------------------------------------------------------------
+# 1. Rename this file to <project-name>.auto.tfvars, where <project-name> is a name of your choice.
+# 2. Provide values for "Tenancy Connectivity Variables".
+# 3. Replace <REPLACE-BY-*> placeholders with appropriate values.
+#----------------------------------------------------------------------------------------------------------------------
+
+#---------------------------------------
+# Tenancy Connectivity Variables
+#---------------------------------------
+
+tenancy_ocid         = "<tenancy OCID>"             # Get this from OCI Console (after logging in, go to top-right-most menu item and click option "Tenancy: <your tenancy name>").
+user_ocid            = "<user OCID>"                # Get this from OCI Console (after logging in, go to top-right-most menu item and click option "My profile").
+fingerprint          = "<PEM key fingerprint>"      # The fingerprint can be gathered from your user account. In the "My profile page, click "API keys" on the menu in left hand side).
+private_key_path     = "<path to the private key>"  # This is the full path on your local system to the API signing private key.
+private_key_password = ""                           # This is the password that protects the private key, if any.
+region               = "<your tenancy home region>" # This is your tenancy home region.
+
+
+#---------------------------------------
+# Input variable
+#---------------------------------------
+
+compartments_configuration = { 
+  default_parent_id = "<REPLACE-BY-COMPARTMENT-REFERENCE>"
+  enable_delete = false
+  compartments = {
+    WORKLOAD-1-CMP = { 
+      name = "workload-1-cmp"
+      description = "Workload 1 compartment" 
+      tag_defaults = {
+        COST-CENTER-TAG-DEFAULT = {
+          tag_id = "<REPLACE-BY-TAG-REFERENCE>"
+          default_value = "a1"
+        }
+      }
+    }
+  }
+}
+
+oci_shared_config_bucket_name = "<REPLACE-BY-BUCKET-NAME>"
+
+oci_compartments_dependency = "<REPLACE-BY-OBJECT-NAME-FOR-COMPARTMENTS>"
+
+oci_tags_dependency = "<REPLACE-BY-OBJECT-NAME-FOR-TAGS>"
+
+
+###--------------------------------------------------------------
+### A real example
+###--------------------------------------------------------------
+/*
+compartments_configuration = { 
+  default_parent_id = "APP-CMP"
+  enable_delete = false
+  compartments = {
+    WORKLOAD-1-CMP = { 
+      name = "workload-1-cmp"
+      description = "Workload 1 compartment" 
+      tag_defaults = {
+        COST-CENTER-TAG-DEFAULT = {
+          tag_id = "COST-CENTER-TAG"
+          default_value = "a1"
+        }
+      }
+    }
+  }
+}
+
+oci_shared_config_bucket_name = "terraform-shared-config-bucket"
+
+oci_compartments_dependency = "compartments.json"
+
+oci_tags_dependency = "tags.json"
+*/
