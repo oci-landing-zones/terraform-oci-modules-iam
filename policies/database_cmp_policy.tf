@@ -71,8 +71,7 @@ locals {
   #-- Security admin grants on database compartment
   security_admin_grants_on_database_cmp_map = {
     for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"database") && values["sec-group"] != null) ? [
-      "allow group ${values["sec-group"]} to read keys in compartment ${values["name"]}",
-      "allow group ${values["sec-group"]} to inspect all-resources in compartment ${values["name"]}"
+      "allow group ${values["sec-group"]} to read keys in compartment ${values["name"]}"
     ] : []
   }
 

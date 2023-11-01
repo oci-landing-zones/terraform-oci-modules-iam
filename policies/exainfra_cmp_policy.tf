@@ -52,8 +52,7 @@ locals {
   #-- Security admin grants on Exainfra compartment
   security_admin_grants_on_exainfra_cmp_map = {
     for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"exainfra") && values["sec-group"] != null) ? [
-      "allow group ${values["sec-group"]} to read keys in compartment ${values["name"]}",
-      "allow group ${values["sec-group"]} to inspect all-resources in compartment ${values["name"]}"
+      "allow group ${values["sec-group"]} to read keys in compartment ${values["name"]}"
     ] : []
   }
 

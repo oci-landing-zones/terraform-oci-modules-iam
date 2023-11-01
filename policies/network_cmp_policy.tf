@@ -61,10 +61,7 @@ locals {
   #-- Security admin grants on Network compartment
   security_admin_grants_on_network_cmp_map = {
     for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"network") && values["sec-group"] != null) ? [
-      "allow group ${values["sec-group"]} to read keys in compartment ${values["name"]}",
-      "allow group ${values["sec-group"]} to inspect all-resources in compartment ${values["name"]}", # for finding logging targets
-      "allow group ${values["sec-group"]} to manage subnets in compartment  ${values["name"]} where request.permission = 'SUBNET_UPDATE'", # allows security admins to create subnet flowlogs
-      "allow group ${values["sec-group"]} to use buckets in compartment ${values["name"]}" # allows security admins to create bucket logs
+      "allow group ${values["sec-group"]} to read keys in compartment ${values["name"]}"
     ] : []
   }
 
