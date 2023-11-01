@@ -250,7 +250,7 @@ Currently supported values:
 - **exainfra**: compartment´s intent to hold *Exatada Cloud Service Infrastructure* related resources, hence this value drives the creation of *Exatada Cloud Service infrastructure* policies.
 - **enclosing**: drives the creation of policies that are scoped to more than one compartment, as a compartment tagged as *enclosing* is intended to be the parent of above compartment types.
 
-**Note**: Multiple values can be assigned to *cislz-cmp-type*, as a comma separated list.
+**Note**: Multiple values can be assigned to *cislz-cmp-type*, as a comma separated string of values.
 
 ##### cislz-consumer-groups-\<suffix\> Attribute
 
@@ -260,7 +260,7 @@ The *cislz-consumer-groups-\<suffix\>* metadata attributes define the groups tha
 
 Picture the use case where a single compartment provide network and security services. It might be the case it requires distinct administrators for network and security resources. Moreover, distinct database administrators (Dev admin and Prod admin) may need access to those resources. In this scenario, the compartment metadata would be like:
 ```
-cislz-cmp-type: "network", "security"
+cislz-cmp-type: "network,security"
 cislz-consumer-groups-network: "network-admin"
 cislz-consumer-groups-security: "security-admin"
 cislz-consumer-groups-database: "dev-database-admin", "prod-database-admin"

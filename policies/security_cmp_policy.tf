@@ -89,8 +89,7 @@ locals {
   security_cmps_policies = {
     for k, values in local.cmp_name_to_cislz_tag_map : 
       (upper("${k}-security-policy")) => {
-        #name             = "${local.cmp_policy_name_prefix}${values["name"]}-security${local.policy_name_suffix}"
-        name             = length(regexall("^${local.policy_name_prefix}", values["name"])) > 0 ? "${values["name"]}${local.policy_name_suffix}" : "${local.policy_name_prefix}${values["name"]}${local.policy_name_suffix}"
+        name             = length(regexall("^${local.policy_name_prefix}", values["name"])) > 0 ? (length(split(",",values["cmp-type"])) > 1 ? "${values["name"]}-security${local.policy_name_suffix}" : "${values["name"]}${local.policy_name_suffix}") : (length(split(",",values["cmp-type"])) > 1 ? "${local.policy_name_prefix}${values["name"]}-security${local.policy_name_suffix}" : "${local.policy_name_prefix}${values["name"]}${local.policy_name_suffix}")
         compartment_ocid : values.ocid
         description      : "CIS Landing Zone policy for Security compartment."
         defined_tags     : var.policies_configuration.defined_tags
@@ -99,6 +98,6 @@ locals {
                                   local.common_grants_on_security_cmp_map[k],
                                   local.storage_admin_grants_on_security_cmp_map[k],local.database_kms_grants_on_security_cmp_map[k])
       }
-    if values["cmp-type"] == "security"
+    if contains(split(",",values["cmp-type"]),"security")
   }
 }
