@@ -1,3 +1,12 @@
+# November 01, 2023 Release Notes - 0.1.7
+## New
+1. Identity Domains module, supporting identity domains, groups, and dynamic groups. 
+2. Groups and dynamic groups can be created in existing identity domains.
+
+## Updates
+### Policy Module
+1. Multiple intents can be declared for a specific compartment through *cislz-cmp-type* attribute. This configures the compartment (through the creation of necessary policy grants) to host resources that can be managed by different groups.
+
 # October 06, 2023 Release Notes - 0.1.6
 
 ## Updates
