@@ -9,6 +9,7 @@ The following modules are available:
 - [Policies](./policies/)
 - [Groups](./groups/)
 - [Dynamic Groups](./dynamic-groups/)
+- [Identity Domains](./identity-domains/)
 
 Within each module you find an *examples* folder. Each example is a fully runnable Terraform configuration that you can quickly test and put to use by modifying the input data according to your own needs.  
 
