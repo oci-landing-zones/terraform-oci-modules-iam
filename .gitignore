@@ -9,3 +9,4 @@
 **/terraform.tfvars
 **/input.auto.tfvars
 **/private
+**/creds
