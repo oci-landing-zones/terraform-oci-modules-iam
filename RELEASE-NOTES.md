@@ -1,3 +1,8 @@
+# December 08, 2023 Release Notes - 0.1.8
+## Updates
+### Policy Module
+1. Grants added for supporting OKE deployments with NPN (Native Pod Networking) and in a split compartment topology, where OKE networking and OKE clusters are deployed in different compartments.
+
 # November 01, 2023 Release Notes - 0.1.7
 ## New
 1. Identity Domains module, supporting identity domains, groups, and dynamic groups. 
