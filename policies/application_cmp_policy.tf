@@ -78,6 +78,12 @@ locals {
     ] : []
   }
 
+  oke_cluster_grants_on_application_cmp_map = {
+    for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"application")) && local.enable_oke_service_policies ? [
+      "allow any-user to manage instances in compartment ${values["name"]} where all { request.principal.type = 'cluster', request.principal.compartment.id = '${values["ocid"]}' }"
+    ] : []
+  }
+
   #-- Policies for compartments marked as application compartments (values["cmp-type"] == "application").
   application_cmps_policies = {
     for k, values in local.cmp_name_to_cislz_tag_map : 
@@ -89,7 +95,7 @@ locals {
         freeform_tags    = var.policies_configuration.freeform_tags
         statements       = concat(local.application_admin_grants_on_application_cmp_map[k],local.application_read_grants_on_application_cmp_map[k],
                                   local.storage_admin_grants_on_application_cmp_map[k],local.security_admin_grants_on_application_cmp_map[k],
-                                  local.compute_agent_grants_on_application_cmp_map[k])
+                                  local.compute_agent_grants_on_application_cmp_map[k],local.oke_cluster_grants_on_application_cmp_map[k])
       }
     if contains(split(",",values["cmp-type"]),"application")
   }

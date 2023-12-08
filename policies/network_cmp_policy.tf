@@ -88,6 +88,16 @@ locals {
     ] : [] 
   }  
 
+  application_compartment_id = local.enable_oke_service_policies ? (distinct(compact(concat([for k, values in local.cmp_name_to_cislz_tag_map : (contains(split(",",values["cmp-type"]),"application")) ? values["ocid"] : ""])))[0]) : null
+
+  oke_cluster_grants_on_network_cmp_map = {
+    for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"network")) && local.enable_oke_service_policies && local.application_compartment_id != null ? [
+      "allow any-user to use private-ips in compartment ${values["name"]} where all { request.principal.type = 'cluster', request.principal.compartment.id = '${local.application_compartment_id}' }",
+      "allow any-user to use network-security-groups in compartment ${values["name"]} where all { request.principal.type = 'cluster', request.principal.compartment.id = '${local.application_compartment_id}' }",
+      "allow any-user to use subnets in compartment ${values["name"]} where all { request.principal.type = 'cluster', request.principal.compartment.id = '${local.application_compartment_id}' }"
+    ] : []
+  }
+
   #-- Policies for compartments marked as network compartments (values["cmp-type"] == "network").
   network_cmps_policies = {
     for k, values in local.cmp_name_to_cislz_tag_map : 
@@ -100,7 +110,8 @@ locals {
         statements       = concat(local.network_admin_grants_on_network_cmp_map[k],local.network_read_grants_on_network_cmp_map[k],
                                   local.security_admin_grants_on_network_cmp_map[k],local.appdev_admin_grants_on_network_cmp_map[k],
                                   #local.database_admin_grants_on_network_cmp_map[k],local.exainfra_admin_grants_on_network_cmp_map[k],
-                                  local.common_admin_grants_on_network_cmp_map[k], local.storage_admin_grants_on_network_cmp_map[k])
+                                  local.common_admin_grants_on_network_cmp_map[k], local.storage_admin_grants_on_network_cmp_map[k],
+                                  local.oke_cluster_grants_on_network_cmp_map[k])
       }
     if contains(split(",",values["cmp-type"]),"network")
   }                           
