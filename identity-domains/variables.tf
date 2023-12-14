@@ -69,6 +69,31 @@ variable "identity_domain_dynamic_groups_configuration" {
   default = null
 }
 
+variable "identity_domain_identity_providers_configuration" {
+  description = "The identity domain identity providers configuration."
+  type = object({
+    default_identity_domain_id  = optional(string)
+    #default_defined_tags        = optional(map(string))
+    #default_freeform_tags       = optional(map(string))
+    identity_providers = map(object({
+      identity_domain_id        = optional(string),
+      name                      = string,
+      description               = optional(string),
+      enabled                   = bool,
+      idp_metadata_file         = string,
+      signature_hash_algorithm  = optional(string),
+      send_signing_certificate  = optional(bool),
+      name_id_format            = optional(string),
+      user_mapping_method       = string,
+      user_mapping_store_attribute = string  
+      assertion_attribute          = optional(string)  #deprecated
+      #defined_tags              = optional(map(string)),
+      #freeform_tags             = optional(map(string))
+    }))
+  })
+  default = null
+}
+
 variable module_name {
   description = "The module name."
   type = string
