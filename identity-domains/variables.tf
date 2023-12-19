@@ -85,8 +85,8 @@ variable "identity_domain_identity_providers_configuration" {
       send_signing_certificate  = optional(bool),
       name_id_format            = optional(string),
       user_mapping_method       = string,
-      user_mapping_store_attribute = string  
-      assertion_attribute          = optional(string)  #deprecated
+      user_mapping_store_attribute = string,
+      assertion_attribute          = optional(string)
       #defined_tags              = optional(map(string)),
       #freeform_tags             = optional(map(string))
     }))
