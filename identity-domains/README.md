@@ -2,7 +2,7 @@
 
 ![Landing Zone logo](../landing_zone_300.png)
 
-This module manages Identity and Access Management (IAM) Identity Domains, Identity Domain Groups and Identity Domain Dynamic Groups in Oracle Cloud Infrastructure (OCI) based on maps of objects. Identity Domains are a fundamental construct in OCI IAM, they represent a user a group population and its associated configurations and security settings (such as Federation, MFA).
+This module manages Identity and Access Management (IAM) Identity Domains, Identity Domain Groups, Identity Domain Dynamic Groups, and SAML Identity Providers in Oracle Cloud Infrastructure (OCI) based on maps of objects. Identity Domains are a fundamental construct in OCI IAM, they represent a user a group population and its associated configurations and security settings (such as Federation, MFA).
 
 Check [module specification](./SPEC.md) for a full description of module requirements, supported variables, managed resources and outputs.
 
@@ -54,9 +54,10 @@ For invoking the module locally, just set the module *source* attribute to the m
 module "identity_domains" {
   source       = "../../"
   tenancy_ocid = var.tenancy_ocid
-  identity_domains_configuration                = var.identity_domains_configuration
-  identity_domain_groups_configuration          = var.identity_domain_groups_configuration
-  identity_domain_dynamic_groups_configuration  = var.identity_domain_dynamic_groups_configuration
+  identity_domains_configuration                   = var.identity_domains_configuration
+  identity_domain_groups_configuration             = var.identity_domain_groups_configuration
+  identity_domain_dynamic_groups_configuration     = var.identity_domain_dynamic_groups_configuration
+  identity_domain_identity_providers_configuration = var.identity_domain_identity_providers_configuration
 }
 ```
 
@@ -64,10 +65,11 @@ For invoking the module remotely, set the module *source* attribute to the group
 ```
 module "identity_domains" {
   source = "github.com/oracle-quickstart/terraform-oci-cis-landing-zone-iam/identity-domains"
-  tenancy_id                                    = var.tenancy_id
-  identity_domains_configuration                = var.identity_domains_configuration
-  identity_domain_groups_configuration          = var.identity_domain_groups_configuration
-  identity_domain_dynamic_groups_configuration  = var.identity_domain_dynamic_groups_configuration
+  tenancy_id                                       = var.tenancy_id
+  identity_domains_configuration                   = var.identity_domains_configuration
+  identity_domain_groups_configuration             = var.identity_domain_groups_configuration
+  identity_domain_dynamic_groups_configuration     = var.identity_domain_dynamic_groups_configuration
+  identity_domain_identity_providers_configuration = var.identity_domain_identity_providers_configuration
 }
 ```
 For referring to a specific module version, append *ref=\<version\>* to the *source* attribute value, as in:
@@ -77,7 +79,7 @@ For referring to a specific module version, append *ref=\<version\>* to the *sou
 
 ## <a name="functioning">Module Functioning</a>
 
-The module defines three top-level input variables named *identity_domains_configuration*, *identity_domain_groups_configuration*, and *identity_domain_dynamic_groups_configuration*, for identity domains related attributes. A fourth top-level input variable, *compartments_dependency*, is used for bringing in externally managed compartments into identity domains configuration. See [External Dependencies](#extdep) section.
+The module defines four top-level input variables named *identity_domains_configuration*, *identity_domain_groups_configuration*, *identity_domain_dynamic_groups_configuration*, and *identity_domain_identity_providers_configuration* for identity domains related attributes. A fourth top-level input variable, *compartments_dependency*, is used for bringing in externally managed compartments into identity domains configuration. See [External Dependencies](#extdep) section.
 
 ## Defining Identity Domains
 Use *identity_domains_configuration* attribute. It supports the following attributes:
@@ -128,7 +130,27 @@ Use *identity_domain_dynamic_groups_configuration* attribute. It supports the fo
     - **description**: (Optional) The description of the dynamic group.               
     - **matching_rule**: (Required)  An expression that defines the principals assigned to the dynamic group resource.             
     - **defined_tags**:  (Optional) defined tags to apply to the group. *default_defined_tags* is used if undefined.              
-    - **freeform_tags**: (Optional) free tags to apply to the group. *default_freeform_tags* is used if undefined.             
+    - **freeform_tags**: (Optional) free tags to apply to the group. *default_freeform_tags* is used if undefined.   
+
+## Defining Identity Domain Identity Providers
+Use *identity_domain_identity_providers_configuration* attribute. It supports the following attributes:
+
+  - **default_identity_domain_id**: (Optional) defines the identity domain for all identity proviers, unless overriden by *identity_domain_id* attribute within each identity provider.  This attribute is overloaded: it can be either an identity domain OCID or a reference (a key) to the identity domain OCID.    
+  - **identity_providers**: (Optional) the map of objects that defines identity providers, where each object corresponds to an identity provider resource.
+    - **identity_domain_id**: (Optional) The identity domain for the identity provider. This attribute is overloaded: it can be either an existing identity domain OCID (if provisioning the identity provider in an existing identity domain) or the identity domain reference (key) in identity_domains map.    
+    - **name**:  (Required) The display name of the identity provider.                      
+    - **description**: (Optional) The description of the identity provider.               
+    - **enabled**: (Required)  Flag controlling whether the identiy provider is enabled or disabled.
+    - **idp_metadata_file**: (Required)  Full path in the local system to the xml file with the Identity Provider metadata.
+    - **signature_hash_algorithm**: (Optional) The signature has algorithm of the identity provider, either *SHA-256* (Default) or *SHA-1*.
+    - **send_signing_certificate**: (Optional) Flag controlling whether to send signing certificate with SAML message.  Default is *false*.
+    - **name_id_format**: (Optional) The requested Name ID format.  Possible values:  *saml-emailaddress*, *saml-x509*, *saml-kerberos*, *saml-persistent*, *saml-transient*, *saml-unspecified*, *saml-windowsnamequalifier*.  Default is *saml-none*.
+    - **user_mapping_method**: (Optional)  The user identity mapping network for the identity provier.  Possible values: *NameIDToUserAttribute* or *AssertionAttributeToUserAttribute*.
+    - **user_mapping_store_attribute**: (Optional)  The identity domain user mapping attribute, e.g. *userName*.
+    - **assertion_attribute**: (Optional) The assertion attribute name from the IDP when using *user_mapping_method = AssertionAttributeToUserAttribute*.
+    
+
+          
 
 Check the [examples](./examples/) folder for module usage. Specifically, see [vision](./examples/vision/README.md) example to deploy two identity domains including groups and dynamic_groups.
 
@@ -143,7 +165,7 @@ An optional feature, external dependencies are resources managed elsewhere that 
 - [Identity Domains in Terraform OCI Provider](https://registry.terraform.io/providers/oracle/oci/latest/docs/resources/identity_domain)
 
 ## <a name="issues">Known Issues</a>
-1. Terraform will not destroy identity domains. In order do destroy an identity domain, first run ```terraform destroy``` to destroy contained resources (groups, dynamic groups...). The error ```"Error: 412-PreConditionFailed, Cannot perform DELETE_DOMAIN operation on Domain with Status CREATED"``` is returned.  Then deactivate and delete the identity domain(s) using the OCI console or OCI CLI, as in:
+1. Terraform will not destroy identity domains. In order do destroy an identity domain, first run ```terraform destroy``` to destroy contained resources (groups, dynamic groups, identity providers...). The error ```"Error: 412-PreConditionFailed, Cannot perform DELETE_DOMAIN operation on Domain with Status CREATED"``` is returned.  Then deactivate and delete the identity domain(s) using the OCI console or OCI CLI, as in:
 ```
   oci iam domain deactivate --domain-id <identity domain OCID>
   oci iam domain delete --domain-id <identity domain OCID>
