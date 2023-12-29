@@ -28,7 +28,7 @@ policies_configuration = {
     "SAMPLE-POLICY" : {
       name : "sample-policy"
       description : "Sample policy with random statements."
-      compartment_ocid : "<REPLACE-BY-COMPARTMENT-OCID>"
+      compartment_id : "<REPLACE-BY-COMPARTMENT-OCID>"
       #-- The "not ok" statements below are flagged by the policy module per CIS recommendations.
       statements : [
         #"allow group-a to manage all-resources in tenancy", # not ok

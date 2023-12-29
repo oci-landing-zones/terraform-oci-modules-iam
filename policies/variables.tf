@@ -13,7 +13,7 @@ variable "policies_configuration" {
     supplied_policies = optional(map(object({ # A map of directly supplied policies. Use this to suplement or override the template policies.
       name             = string
       description      = string
-      compartment_ocid = string
+      compartment_id   = string
       statements       = list(string)
       defined_tags     = optional(map(string))
       freeform_tags    = optional(map(string))
@@ -40,7 +40,7 @@ variable "policies_configuration" {
       compartment_level_settings = optional(object({ # Settings for compartment (non Root) level policies generation.
         supplied_compartments = optional(map(object({ # List of compartments that are policy targets.
           name = string # The compartment name
-          ocid = string # The compartment ocid
+          id   = string # The compartment id
           cislz_metadata = map(string) # The compartment metadata. See module README.md for details.
         })))
         #policy_name_prefix = optional(string) # A prefix to compartment policy names.
@@ -91,4 +91,10 @@ variable module_name {
   description = "The module name."
   type = string
   default = "iam-policies"
+}
+
+variable compartments_dependency {
+  description = "A map of objects containing the externally managed compartments this module may depend on. All map objects must have the same type and must contain at least an 'id' attribute (representing the compartment OCID) of string type." 
+  type = map(any)
+  default = null
 }

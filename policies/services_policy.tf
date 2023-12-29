@@ -45,7 +45,7 @@ locals {
 
   services_policy = { 
     (local.services_policy_key) = {
-      compartment_ocid = var.tenancy_ocid
+      compartment_id   = var.tenancy_ocid
       name             = local.services_policy_name
       description      = "CIS Landing Zone policy for OCI services."
       statements       = concat(local.cloud_guard_statements, local.vss_statements, local.os_mgmt_statements, local.keys_access_statements)

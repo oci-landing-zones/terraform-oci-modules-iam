@@ -220,7 +220,7 @@ At the compartment level, compartment metadata attributes drive policy creation.
  
  The compartments to which policies are applied must be provided to the module using *supplied_compartments* attribute within *compartment_level_settings* attribute. *supplied_compartments* is a map of objects, where each object is composed of the following attributes:
  - **name** : the compartment name, determining the target compartment in each policy statement.
- - **ocid** : the compartment ocid, determining the compartment where the policy is attached to.
+ - **id** : the compartment where the policy is attached to. This attribute is overloaded, i.e., it can be either a literal compartment OCID, or a reference (a key) to an OCID. See [External Dependencies](#ext-dep) for more information.
  - **cislz_metadata** : the metadata attributes, determining the policy statements for each compartment policy.
 
 The module supports the following metadata attributes (*cislz_metadata*):
@@ -303,7 +303,7 @@ You can tweak policy names by changing *policy_name_prefix* and *policy_name_suf
 
 ##### Policy Attachment
 
-The *ocid* in *supplied_compartments* attribute defines the compartment to which the policy is attached. 
+The *id* attribute within *supplied_compartments* attribute defines the compartment to which the policy is attached. 
 
 ##### Putting it Together - An Example
 
@@ -365,6 +365,12 @@ allow group vision-storage-admin-group to manage file-family in compartment visi
 ```
 
 A fully functional example is provided in [Template policies example](./examples/template-policies/).
+
+### <a name="extdep">External Dependencies</a>
+
+An optional feature, external dependencies are resources managed elsewhere that resources managed by this module may depend on. The following dependencies are supported:
+
+- **compartments_dependency**: A map of objects containing the externally managed compartments this module may depend on. All map objects must have the same type and must contain at least an *id* attribute with the compartment OCID. This mechanism allows for the usage of referring keys (instead of OCIDs) when referring to compartments (within *supplied_policies* and *supplied_compartments* attributes). The module replaces the keys by the OCIDs provided within *compartments_dependency* map. Contents of *compartments_dependency* is typically the output of a [Compartments module](../compartments/) client.
 
 ## <a name="related">Related Documentation</a>
 - [Getting Started with OCI Policies](https://docs.oracle.com/en-us/iaas/Content/Identity/Concepts/policygetstarted.htm)

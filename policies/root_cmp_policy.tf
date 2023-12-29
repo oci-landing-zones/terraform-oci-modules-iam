@@ -163,7 +163,7 @@ locals {
   root_cmp_admin_policy = length(local.root_cmp_admin_grants) > 0 ? {
     (local.root_cmp_admin_policy_key) = {
       name           = local.root_cmp_admin_policy_name
-      compartment_ocid = var.tenancy_ocid
+      compartment_id = var.tenancy_ocid
       description    = "CIS Landing Zone root policy for admin groups."
       defined_tags   = var.policies_configuration.defined_tags
       freeform_tags  = var.policies_configuration.freeform_tags
@@ -179,7 +179,7 @@ locals {
   root_cmp_nonadmin_policy = length(local.root_cmp_nonadmin_grants) > 0 ? {
     (local.root_cmp_nonadmin_policy_key) = {
       name             = local.root_cmp_nonadmin_policy_name
-      compartment_ocid = var.tenancy_ocid
+      compartment_id   = var.tenancy_ocid
       description      = "CIS Landing Zone root policy for non-admin groups."
       defined_tags     = var.policies_configuration.defined_tags
       freeform_tags    = var.policies_configuration.freeform_tags
