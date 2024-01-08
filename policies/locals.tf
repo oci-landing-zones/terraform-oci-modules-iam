@@ -37,7 +37,7 @@ locals {
   #-- Map derived from compartments input variable.
   cmp_name_to_cislz_tag_map = {for k, cmp in local.supplied_compartments : k => {
     name         : cmp.name
-    ocid         : cmp.ocid
+    ocid         : length(regexall("^ocid1.*$", cmp.id)) > 0 ? cmp.id : var.compartments_dependency[cmp.id].id
     cmp-type     : lookup(cmp.cislz_metadata, local.cmp_type_tag_name,""),
     iam-group    : length(lookup(cmp.cislz_metadata, local.iam_group_tag_name,"")) > 0 ? lookup(cmp.cislz_metadata, local.iam_group_tag_name,"") : null,
     sec-group    : length(lookup(cmp.cislz_metadata, local.security_group_tag_name,"")) > 0 ? lookup(cmp.cislz_metadata, local.security_group_tag_name,"") : null,

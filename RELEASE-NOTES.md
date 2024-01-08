@@ -1,3 +1,16 @@
+# January 08, 2024 Release Notes - 0.1.9
+## Updates
+### Policy Module
+1. Policy module can now declare dependencies on externally managed compartments. The dependencies are used to resolve compartment OCIDs within *supplied_policies* and *supplied_compartments* attributes.
+2. The following attributes had their names changed. Make sure to update any existing input variables.
+    - *compartment_ocid* to *compartment_id* in *supplied_policies* attribute.
+    - *ocid* to *id* in *supplied_compartments* attribute.
+
+# December 08, 2023 Release Notes - 0.1.8
+## Updates
+### Policy Module
+1. Grants added for supporting OKE deployments with NPN (Native Pod Networking) and in a split compartment topology, where OKE networking and OKE clusters are deployed in different compartments.
+
 # November 01, 2023 Release Notes - 0.1.7
 ## New
 1. Identity Domains module, supporting identity domains, groups, and dynamic groups. 

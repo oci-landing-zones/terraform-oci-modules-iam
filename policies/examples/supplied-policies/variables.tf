@@ -14,7 +14,7 @@ variable "policies_configuration" {
     supplied_policies = map(object({
       name             = string
       description      = string
-      compartment_ocid = string
+      compartment_id   = string
       statements       = list(string)
     }))
   })

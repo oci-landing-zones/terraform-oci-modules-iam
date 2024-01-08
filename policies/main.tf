@@ -23,7 +23,7 @@ resource "oci_identity_policy" "these" {
   for_each = local.policies
     name           = each.value.name
     description    = each.value.description
-    compartment_id = each.value.compartment_ocid
+    compartment_id = length(regexall("^ocid1.*$", each.value.compartment_id)) > 0 ? each.value.compartment_id : var.compartments_dependency[each.value.compartment_id].id
     statements     = each.value.statements
     defined_tags   = each.value.defined_tags
     freeform_tags  = merge(local.cislz_module_tag, each.value.freeform_tags)
