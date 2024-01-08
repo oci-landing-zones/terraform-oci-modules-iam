@@ -72,7 +72,7 @@ locals {
     for cmp in data.oci_identity_compartments.all_cmps.compartments : cmp.name => 
       { 
         name : cmp.name, 
-        ocid : cmp.id, 
+        id : cmp.id, 
         cislz_metadata : local.cislz_compartments_metadata[cmp.freeform_tags["cislz-cmp-type"]] #-- This example expects compartments to be freeform tagged with "cislz-cmp-type", so it can figure out the compartments intent and associate it with the appropriate metadata.
       } 
     if lookup(cmp.freeform_tags, "cislz","") == "vision" #-- The compartments we are interested are freeform tagged as {"cislz" : "vision"} but you could identify the compartments through some other attributes that makes sense to your deployment.
