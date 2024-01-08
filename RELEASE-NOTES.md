@@ -1,3 +1,8 @@
+# January 08, 2024 Release Notes - 0.1.9
+## Updates
+### Policy Module
+1. Policy module can now declare dependencies on externally managed compartments. The dependencies are used to resolve compartment OCIDs within *supplied_policies* and *supplied_compartments* attributes.
+
 # December 08, 2023 Release Notes - 0.1.8
 ## Updates
 ### Policy Module
