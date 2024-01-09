@@ -34,10 +34,10 @@ identity_domain_identity_providers_configuration = {
   identity_providers = {  
     ENTRAID1 : { 
       identity_domain_id = "DEV_DOMAIN"
-      name : "ENTRAIDP",  
+      name : "IDP1",  
       description : "ENTRA ID Identity Provider.",      
       enabled                   = false,
-      idp_metadata_file         = "OCIENTRAID.xml",
+      idp_metadata_file         = "OCIIDP1.xml",
       name_id_format            = "saml-emailaddress",
       user_mapping_method       = "NameIDToUserAttribute",
       user_mapping_store_attribute = "username"  
