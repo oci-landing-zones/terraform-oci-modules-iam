@@ -6,7 +6,7 @@
 
 
 output "identity-domain-identity-providers" {
-  description = "The identity domain groups."
+  description = "The identity domain identity providers."
   value       = module.vision_identity_domains.identity_domain_identity_providers
 }
 
