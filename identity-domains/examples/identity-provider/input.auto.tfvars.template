@@ -35,7 +35,7 @@ identity_domain_identity_providers_configuration = {
     ENTRAID1 : { 
       identity_domain_id = "DEV_DOMAIN"
       name : "IDP1",  
-      description : "ENTRA ID Identity Provider.",      
+      description : "Identity Provider 1",      
       enabled                   = false,
       idp_metadata_file         = "OCIIDP1.xml",
       name_id_format            = "saml-emailaddress",
