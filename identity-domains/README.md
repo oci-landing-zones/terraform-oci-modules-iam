@@ -145,7 +145,7 @@ Use *identity_domain_identity_providers_configuration* attribute. It supports th
     - **signature_hash_algorithm**: (Optional) The signature has algorithm of the identity provider, either *SHA-256* (Default) or *SHA-1*.
     - **send_signing_certificate**: (Optional) Flag controlling whether to send signing certificate with SAML message.  Default is *false*.
     - **name_id_format**: (Optional) The requested Name ID format.  Possible values:  *saml-emailaddress*, *saml-x509*, *saml-kerberos*, *saml-persistent*, *saml-transient*, *saml-unspecified*, *saml-windowsnamequalifier*.  Default is *saml-none*.
-    - **user_mapping_method**: (Optional)  The user identity mapping network for the identity provider.  Possible values: *NameIDToUserAttribute* or *AssertionAttributeToUserAttribute*.
+    - **user_mapping_method**: (Optional)  The user identity mapping network for the identity provider.  Possible values: *NameIDToUserAttribute*, *AssertionAttributeToUserAttribute*, or *CorrelationPolicyRule*. 
     - **user_mapping_store_attribute**: (Optional)  The identity domain user mapping attribute, e.g. *userName*.
     - **assertion_attribute**: (Optional) The assertion attribute name from the IDP when using *user_mapping_method = AssertionAttributeToUserAttribute*.
     
