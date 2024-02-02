@@ -19,14 +19,27 @@ variable "identity_domain_identity_providers_configuration" {
       identity_domain_id        = optional(string),
       name                      = string,
       description               = optional(string),
+      icon_file                 = optional(string),
       enabled                   = bool,
-      idp_metadata_file         = string,
-      signature_hash_algorithm  = optional(string),
-      send_signing_certificate  = optional(bool),
       name_id_format            = optional(string),
       user_mapping_method       = string,
-      user_mapping_store_attribute = string  
-      assertion_attribute          = optional(string)  #deprecated
+      user_mapping_store_attribute = string,
+      assertion_attribute          = optional(string),
+
+      idp_metadata_file         = optional(string),
+
+      idp_issuer_uri            = optional(string),
+      sso_service_url           = optional(string),
+      sso_service_binding       = optional(string),
+      idp_signing_certificate   = optional(string),
+      idp_encryption_certificate = optional(string),
+      enable_global_logout      = optional(bool),
+      idp_logout_request_url    = optional(string),
+      idp_logout_response_url   = optional(string),
+      idp_logout_binding        = optional(string),
+
+      signature_hash_algorithm  = optional(string),
+      send_signing_certificate  = optional(bool),
       #defined_tags              = optional(map(string)),
       #freeform_tags             = optional(map(string))
     }))

@@ -10,3 +10,6 @@ output "identity-domain-identity-providers" {
   value       = module.vision_identity_domains.identity_domain_identity_providers
 }
 
+/*output "identity-domain-metadata" {
+  value = module.vision_identity_domains.identity_domain_saml_metadata
+}*/

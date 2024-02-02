@@ -28,19 +28,38 @@ region               = "<your tenancy home region>" # This is your tenancy home 
 #---------------------------------------
 
 identity_domain_identity_providers_configuration = {
-    default_identity_domain_id  : "DEV_DOMAIN"
+    default_identity_domain_id  : "<REPLACE-BY-DOMAIN-OCID>"
 
 
   identity_providers = {  
-    ENTRAID1 : { 
-      identity_domain_id = "DEV_DOMAIN"
-      name : "IDP1",  
+    IDP1 : {   #IDP Configuration using IDP SAM Metadata file
+      identity_domain_id = "<REPLACE-BY-DOMAIN-OCID>"
+      name : "ID_Provider_1",  
       description : "Identity Provider 1",      
       enabled                   = false,
-      idp_metadata_file         = "OCIIDP1.xml",
+      idp_metadata_file         = "MetadataIDP1.xml",      #Obtain this file from the IDP Configuration
       name_id_format            = "saml-emailaddress",
       user_mapping_method       = "NameIDToUserAttribute",
       user_mapping_store_attribute = "username"  
+    }
+    IDP2 : {      # IDP configuration using parameters instead of IDP SAML Metadata.
+      identity_domain_id = "<REPLACE-BY-DOMAIN-OCID>"
+      name : "ID_Provicer_2", 
+      description : "Identity Provider 2",
+      enabled                   = false,
+
+      idp_issuer_uri		                  = "<REPLACE-BY-IDP-ENTITY-ID>",
+      sso_service_url                     = "<REPLACE-BY-IDP-SSO-URL>",  
+      sso_service_binding                 = "<REPLACE-BY-IDP-SERVICE-BINDING>",   #Post or Redirect
+      idp_signing_certificate             = "<REPLACE-BY-IDP-SIGNING-CERTIFICATE>",    # Without the BEGIN CERTIFICATE and END CERTIFICATE lines
+      enable_global_logout                = true,
+      idp_logout_request_url              = "<REPLACE-BY-IDP-LOGOUT-REQUEST-URL>",
+      idp_logout_response_url             = "<REPLACE-BY-IDP-LOGOUT-RESPONSE-URL>",
+      idp_logout_binding 			            = "<REPLACE-BY-IDP-LOGOUT-BINDING>",    #Post or Redirect
+ 
+      name_id_format                      = "saml-emailaddress",
+      user_mapping_method                 = "NameIDToUserAttribute",
+      user_mapping_store_attribute        = "username"    
     }
   }
 }
