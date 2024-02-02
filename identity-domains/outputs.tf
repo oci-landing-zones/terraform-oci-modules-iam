@@ -21,3 +21,6 @@ output "identity_domain_identity_providers" {
   value = oci_identity_domains_identity_provider.these
 }
 
+output "identity_domain_saml_metadata" {
+  value = { for k,v in data.http.saml_metadata : k=> v.response_body }
+}
