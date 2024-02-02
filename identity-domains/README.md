@@ -133,7 +133,7 @@ Use *identity_domain_dynamic_groups_configuration* attribute. It supports the fo
     - **freeform_tags**: (Optional) free tags to apply to the group. *default_freeform_tags* is used if undefined.   
 
 ## Defining Identity Domain Identity Providers
-Use *identity_domain_identity_providers_configuration* attribute. It supports the following attributes:
+Use *identity_domain_identity_providers_configuration* attribute. It supports SAML Identity Providers which can be configured either by importing the IDP SAML Metadata (XML file) or by directly specifying the IDP parameters.  It supports the following attributes:
 
   - **default_identity_domain_id**: (Optional) defines the identity domain for all identity proviers, unless overriden by *identity_domain_id* attribute within each identity provider.  This attribute is overloaded: it can be either an identity domain OCID or a reference (a key) to the identity domain OCID.    
   - **identity_providers**: (Optional) the map of objects that defines identity providers, where each object corresponds to an identity provider resource.
@@ -141,18 +141,26 @@ Use *identity_domain_identity_providers_configuration* attribute. It supports th
     - **name**:  (Required) The display name of the identity provider.                      
     - **description**: (Optional) The description of the identity provider.               
     - **enabled**: (Required)  Flag controlling whether the identiy provider is enabled or disabled.
-    - **idp_metadata_file**: (Required)  Full path in the local system to the xml file with the Identity Provider metadata.
-    - **signature_hash_algorithm**: (Optional) The signature has algorithm of the identity provider, either *SHA-256* (Default) or *SHA-1*.
-    - **send_signing_certificate**: (Optional) Flag controlling whether to send signing certificate with SAML message.  Default is *false*.
     - **name_id_format**: (Optional) The requested Name ID format.  Possible values:  *saml-emailaddress*, *saml-x509*, *saml-kerberos*, *saml-persistent*, *saml-transient*, *saml-unspecified*, *saml-windowsnamequalifier*.  Default is *saml-none*.
     - **user_mapping_method**: (Optional)  The user identity mapping network for the identity provider.  Possible values: *NameIDToUserAttribute*, *AssertionAttributeToUserAttribute*, or *CorrelationPolicyRule*. 
     - **user_mapping_store_attribute**: (Optional)  The identity domain user mapping attribute, e.g. *userName*.
     - **assertion_attribute**: (Optional) The assertion attribute name from the IDP when using *user_mapping_method = AssertionAttributeToUserAttribute*.
-    
+    - **signature_hash_algorithm**: (Optional) The signature has algorithm of the identity provider, either *SHA-256* (Default) or *SHA-1*.
+    - **send_signing_certificate**: (Optional) Flag controlling whether to send signing certificate with SAML message.  Default is *false*.
+    - **idp_metadata_file**: (Optional)  Full path in the local system to the xml file with the Identity Provider SAML metadata.  If this parameter is null then the following parameters are used to configure the identity provider entry: *idp_issuer_uri*, *sso_service_url*, *sso_service_binding*, *idp_signing_certificate*, *enable_global_logout*, *idp_logout_request_url*, *idp_logout_response_url*, *idp_logout_binding*.
+    - **idp_issuer_uri**: The unique identifier of the IdP, also called its Entity ID or Provider ID. This will be the value of the Issuer field in SAML messages sent by this IdP.  This parameter is ignored if *idp_metadata_file* is used. 
+    - **sso_service_url**: The service endpoint URL at the Identity provider to which identity domain service will send SAML authentication requests.  This parameter is ignored if *idp_metadata_file* is used. 
+    - **sso_service_binding**:  Specify either "Post" or "Redirect" whether the identity domain will send SAML authentication requests to the IdP using the HTTP Redirect or HTTP POST method. This must agree with the methods supported by the IdP for the configured IdP SSO service URL.  This parameter is ignored if *idp_metadata_file* is used. 
+    - **idp_signing_certificate**:  The public key certificate that will be used to verify the signature on SAML messages sent by this IdP. This should be the text containing the base-64-encoded bytes of the certificate, also known as PEM format without the BEGIN CERTIFICATE and END CERTIFICATE lines.  This parameter is ignored if *idp_metadata_file* is used. 
+    - **enable_global_logout**:  If true (Default value), identity domain will send a SAML logout request to the IdP when the user logs out. If false, no SAML logout request will be sent.  This parameter is ignored if *idp_metadata_file* is used. 
+    - **idp_logout_request_url**: The service endpoint URL at the Identity provider to which the identity domain will send SAML logout requests when the user logs out.  This parameter is ignored if *idp_metadata_file* is used. 
+    - **idp_logout_response_url**:  The service endpoint URL at the Identity provider to which identity domain will send SAML logout responses, when the IdP initiates SAML logout.  This parameter is ignored if *idp_metadata_file* is used. 
+    - **idp_logout_binding**:  Specify either "Post" or "Redirect" whether the identity domain will send SAML logout requests and responses to the IdP using the HTTP Redirect or HTTP POST method. This must agree with the method supported by the IdP for the configured IdP Logout Request and Response URLs.  This parameter is ignored if *idp_metadata_file* is used. 
 
           
 
 Check the [examples](./examples/) folder for module usage. Specifically, see [vision](./examples/vision/README.md) example to deploy two identity domains including groups and dynamic_groups.
+
 
 ### <a name="extdep">External Dependencies</a>
 
@@ -163,6 +171,10 @@ An optional feature, external dependencies are resources managed elsewhere that 
 ## <a name="related">Related Documentation</a>
 - [Managing Identity Domains](https://docs.oracle.com/en-us/iaas/Content/Identity/domains/overview.htm)
 - [Identity Domains in Terraform OCI Provider](https://registry.terraform.io/providers/oracle/oci/latest/docs/resources/identity_domain)
+- [Federating with Identity Providers](https://docs.oracle.com/en-us/iaas/Content/Identity/federating/federating_section.htm)
+- [SSO Between OCI and Microsoft Azure](https://docs.oracle.com/en-us/iaas/Content/Identity/tutorials/azure_ad/sso_azure/azure_sso.htm)
+- [SSO With OCI and Okta](https://docs.oracle.com/en-us/iaas/Content/Identity/tutorials/okta/sso_okta/sso_okta.htm)
+
 
 ## <a name="issues">Known Issues</a>
 1. Terraform will not destroy identity domains. In order do destroy an identity domain, first run ```terraform destroy``` to destroy contained resources (groups, dynamic groups, identity providers...). The error ```"Error: 412-PreConditionFailed, Cannot perform DELETE_DOMAIN operation on Domain with Status CREATED"``` is returned.  Then deactivate and delete the identity domain(s) using the OCI console or OCI CLI, as in:
