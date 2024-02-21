@@ -8,5 +8,5 @@ module "vision_identity_domains" {
   #identity_domain_groups_configuration          = var.identity_domain_groups_configuration
   #identity_domain_dynamic_groups_configuration  = var.identity_domain_dynamic_groups_configuration
   identity_domain_identity_providers_configuration = var.identity_domain_identity_providers_configuration
-
+  identity_domain_policies_configuration = var.identity_domain_policies_configuration
 }
