@@ -24,3 +24,17 @@ output "identity_domain_identity_providers" {
 output "identity_domain_saml_metadata" {
   value = { for k,v in data.http.saml_metadata : k=> v.response_body }
 }
+
+output "identity_domain_policies" {
+  description = "The identity domain policies"
+  value = oci_identity_domains_policy.these
+}
+
+output "identity_domain_policy_rules" {
+  description = "The identity domain policy rules"
+  value = oci_identity_domains_rule.these
+}
+
+output "rules" {
+  value = local.rules
+}
