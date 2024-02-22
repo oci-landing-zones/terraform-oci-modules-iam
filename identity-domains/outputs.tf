@@ -16,3 +16,8 @@ output "identity_domain_dynamic_groups" {
   value = oci_identity_domains_dynamic_resource_group.these
 }
 
+output "identity_domain_applications" {
+  description = "The identity domain applications"
+  value = oci_identity_domains_app.these
+}
+
