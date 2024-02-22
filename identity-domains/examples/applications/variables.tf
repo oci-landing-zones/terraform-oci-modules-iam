@@ -34,7 +34,7 @@ variable "identity_domain_applications_configuration" {
       #autn and authz
       enforce_grants_as_authorization     = optional(bool),
       #Client Configuration
-      allowed_grant_types                 = optional(map(string)),
+      allowed_grant_types                 = optional(list(string)),
       allow_non_https_urls                = optional(bool),
       redirect_urls                       = optional(map(string)),
       post_logout_redirect_urls           = optional(map(string)),

@@ -5,6 +5,7 @@ data "oci_identity_domain" "apps_domain" {
     domain_id = each.value.identity_domain_id != null ? each.value.identity_domain_id : var.identity_domain_applications_configuration.default_identity_domain_id
 }
 
+
 resource "oci_identity_domains_app" "these" {
   for_each       = var.identity_domain_applications_configuration != null ? var.identity_domain_applications_configuration.applications : {}
 
@@ -17,11 +18,15 @@ resource "oci_identity_domains_app" "these" {
             value = each.value.type == "Confidential" ? "CustomWebAppTemplateId" : (each.value.type == "SAML" ? "CustomSAMLAppTemplateId" : (each.value.type == "Enterprise" ? "CustomEnterpriseAppTemplateId" : (each.value.type == "Mobile" ? "CustomBrowserMobileTemplateId" : null)))
     }
     landing_page_url = each.value.app_url
+
+
     #client_type = each.value.type == "Mobile" ? "public" : "confidential"   #VERIFY
     is_enterprise_app = each.value.type == "Enterprise" ? true : false
     #is_mobile_target = each.value.type == "Mobile" ? true : false
-    #is_oauth_client = each.value.type == "SAML" ? false : true
+    is_oauth_client = each.value.type == "SAML" ? false : true
+    client_type = "confidential"
     #is_oauth_resource = each.value.type == "Confidential" ? true : false
+    allowed_grants = [for grant in each.value.allowed_grant_types : grant=="jwt_assertion" ? "urn:ietf:params:oauth:grant-type:jwt-bearer" :(grant == "saml2_assertion" ? "urn:ietf:params:oauth:grant-type:saml2-bearer":(grant == "resource_owner") ? "password": (grant == "device_code" ? "urn:ietf:params:oauth:grant-type:device_code" : grant))]
 
 
 
