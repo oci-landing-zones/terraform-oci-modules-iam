@@ -34,25 +34,29 @@ variable "identity_domain_applications_configuration" {
       #autn and authz
       enforce_grants_as_authorization     = optional(bool),
       #Client Configuration
-      allowed_grant_types                 = optional(list(string)),
+      configure_as_oauth_client           = optional(bool),
+      allowed_grant_types                 = optional(list(string)),  # device_code, refresh_token, jwt_assertion (jwt-bearer), client_credentials, resource_owner (password), authorization_code, implicit, saml2_assertion(saml2-bearer), tls_client_auth
       allow_non_https_urls                = optional(bool),
-      redirect_urls                       = optional(map(string)),
-      post_logout_redirect_urls           = optional(map(string)),
+      redirect_urls                       = optional(list(string)),
+      post_logout_redirect_urls           = optional(list(string)),
       logout_url                          = optional(string),
+      client_type                         = optional(string),    #trusted, confidential
       certificate                         = optional(string),
       allow_instrospect_operation         = optional(bool),
       allow_on_behalf_of_operation        = optional(bool),
       id_token_encryption_algorithm       = optional(string),  #default None
       bypass_consent                      = optional(bool),
-      client_ip_address                   = optional(map(string)),
-      resources                           = optional(map(string)),
-      app_roles                           = optional(map(string)),
+      client_ip_address                   = optional(list(string)),
+      authorized_resources                = optional(string),    # Same as trust-scope:  All(Account), Specific(Explicit)
+      resources                           = optional(list(string)),
+      app_roles                           = optional(list(string)),
       #Resource Server Configuration
+      configure_as_oauth_resource_server  = optional(bool),
       access_token_expiration             = optional(string),
       allow_token_refresh                 = optional(bool),
       refresh_token_expiration            = optional(string),
       primary_audience                    = optional(string),
-      secondary_audiences                 = optional(map(string)),
+      secondary_audiences                 = optional(list(string)),
       scopes = optional(map(object({
                   scope                       = optional(string),
                   display_name                = optional(string),

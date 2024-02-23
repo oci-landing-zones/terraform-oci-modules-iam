@@ -5,12 +5,33 @@ data "oci_identity_domain" "apps_domain" {
     domain_id = each.value.identity_domain_id != null ? each.value.identity_domain_id : var.identity_domain_applications_configuration.default_identity_domain_id
 }
 
+locals {
+  grant_types       = ["authorization_code", "client_credentials", "resource_owner", "refresh_token", "implicit", "tls_client_auth", "jwt_assertion", "saml2_assertion", "device_code"]
+  application_types = ["SAML", "Mobile", "Confidential", "Enterprise"]
+}
 
 resource "oci_identity_domains_app" "these" {
   for_each       = var.identity_domain_applications_configuration != null ? var.identity_domain_applications_configuration.applications : {}
+    lifecycle {
+      ## Check 1: Valid grant types.
+      precondition {
+        condition = each.value.allowed_grant_types != null ? length(setsubtract(each.value.allowed_grant_types,local.grant_types)) == 0 : true
+        error_message = "VALIDATION FAILURE in application \"${each.key}\": invalid value for \"allowed_grant_types\" attribute. Valid values are ${join(",",local.grant_types)}."
+      }
+      ## Check 2: Verify not null for redirec url.
+      precondition {
+        condition = each.value.redirect_urls == null ? !(contains(local.grant_types, "implicit")||contains(local.grant_types, "authorization_code"))  : true
+        error_message = "VALIDATION FAILURE in application \"${each.key}\": invalid value for \"redirect_urls\" attribute. A valid value must be provided if \"allowed_grant_types\" is \"implicit\" or \"authorization_code\""
+      }
+      # Check 3: Verify application type value.
+      precondition {
+        condition = each.value.type != null ? contains(local.application_types, each.value.type)  : true
+        error_message = "VALIDATION FAILURE in application \"${each.key}\": invalid value for \"type\" attribute. Valid values are ${join(",",local.application_types)}."
+      }
 
+
+    } 
     idcs_endpoint = contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_applications_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_applications_configuration.default_identity_domain_id].url : data.oci_identity_domain.apps_domain[each.key].url)
-  
     display_name            = each.value.display_name
     description  = each.value.description
     schemas = ["urn:ietf:params:scim:schemas:oracle:idcs:App"]
@@ -23,11 +44,11 @@ resource "oci_identity_domains_app" "these" {
     #client_type = each.value.type == "Mobile" ? "public" : "confidential"   #VERIFY
     is_enterprise_app = each.value.type == "Enterprise" ? true : false
     #is_mobile_target = each.value.type == "Mobile" ? true : false
-    is_oauth_client = each.value.type == "SAML" ? false : true
+    is_oauth_client = each.value.configure_as_oauth_client
     client_type = "confidential"
     #is_oauth_resource = each.value.type == "Confidential" ? true : false
     allowed_grants = [for grant in each.value.allowed_grant_types : grant=="jwt_assertion" ? "urn:ietf:params:oauth:grant-type:jwt-bearer" :(grant == "saml2_assertion" ? "urn:ietf:params:oauth:grant-type:saml2-bearer":(grant == "resource_owner") ? "password": (grant == "device_code" ? "urn:ietf:params:oauth:grant-type:device_code" : grant))]
-
+    redirect_uris = each.value.redirect_urls
 
 
 
