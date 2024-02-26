@@ -1,4 +1,4 @@
-# OCI Identity Domains Module Usage Example - Vision identity domains
+# OCI Identity Domains Module Usage Example - Identity Providers
 ## Introduction
 
 This example shows how to configure identity providers for an existing Identity Domain in Oracle Cloud Infrastructure (OCI) using the [Identity Domains module](../../).
