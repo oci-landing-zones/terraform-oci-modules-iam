@@ -4,8 +4,8 @@
 #---------------------------------------------------------------------------------------------------------------------
 # 1. Rename this file to <project-name>.auto.tfvars, where <project-name> is any name of your choice.
 # 2. Provide values for "Tenancy Connectivity Variables".
-
-# Each object in the *identity_domains* map is indexed by an uppercase string, like DEV-DOMAIN, QA-DOMAIN, etc. 
+# 3. Replace <REPLACE-BY-DOMAIN-OCID> placeholder by the identity domain OCID.
+# Each object in the *identity_domains* map is indexed by an uppercase string, like IDP1, IDP2, etc. 
 # These strings are used by Terraform as keys to the actual managed resources. 
 # They can actually be any random strings, but once defined they MUST NOT BE CHANGED, 
 # or Terraform will try to destroy and recreate the identity domains.
@@ -17,49 +17,78 @@
 
 tenancy_ocid         = "<tenancy OCID>"             # Get this from OCI Console (after logging in, go to top-right-most menu item and click option "Tenancy: <your tenancy name>").
 user_ocid            = "<user OCID>"                # Get this from OCI Console (after logging in, go to top-right-most menu item and click option "My profile").
-fingerprint          = "<PEM key fingerprint>"      # The fingerprint can be gathered from your user account. In the "My profile page, click "API keys" on the menu in left hand side).
+fingerprint          = "<PEM key fingerprint>"      # The fingerprint can be gathered from your user account. In the "My profile page, click "API keys" on the menu in left hand side.
 private_key_path     = "<path to the private key>"  # This is the full path on your local system to the API signing private key.
 private_key_password = ""                           # This is the password that protects the private key, if any.
 region               = "<your tenancy home region>" # This is your tenancy home region.
-
 
 #---------------------------------------
 # Input variable
 #---------------------------------------
 
 identity_domain_identity_providers_configuration = {
-    default_identity_domain_id  : "<REPLACE-BY-DOMAIN-OCID>"
-
+  default_identity_domain_id = "<REPLACE-BY-DOMAIN-OCID>"
 
   identity_providers = {  
-    IDP1 : {   #IDP Configuration using IDP SAM Metadata file
-      identity_domain_id = "<REPLACE-BY-DOMAIN-OCID>"
-      name : "ID_Provider_1",  
-      description : "Identity Provider 1",      
-      enabled                   = false,
-      idp_metadata_file         = "MetadataIDP1.xml",      #Obtain this file from the IDP Configuration
-      name_id_format            = "saml-emailaddress",
-      user_mapping_method       = "NameIDToUserAttribute",
-      user_mapping_store_attribute = "username"  
+    IDP1 = {   # IDP configuration using SAML metadata file
+      name              = "ID_Provider_1",  
+      description       = "Identity Provider 1",      
+      enabled           = false,
+      idp_metadata_file = "MetadataIDP1.xml", # Obtain this file from the IDP Configuration 
+      # The following three entries are defaulted by the module, shown here for awareness.
+      # name_id_format               = "saml-emailaddress",
+      # user_mapping_method          = "NameIDToUserAttribute",
+      # user_mapping_store_attribute = "username"  
     }
-    IDP2 : {      # IDP configuration using parameters instead of IDP SAML Metadata.
-      identity_domain_id = "<REPLACE-BY-DOMAIN-OCID>"
-      name : "ID_Provicer_2", 
-      description : "Identity Provider 2",
-      enabled                   = false,
-
-      idp_issuer_uri		                  = "<REPLACE-BY-IDP-ENTITY-ID>",
-      sso_service_url                     = "<REPLACE-BY-IDP-SSO-URL>",  
-      sso_service_binding                 = "<REPLACE-BY-IDP-SERVICE-BINDING>",   #Post or Redirect
-      idp_signing_certificate             = "<REPLACE-BY-IDP-SIGNING-CERTIFICATE>",    # Without the BEGIN CERTIFICATE and END CERTIFICATE lines
-      enable_global_logout                = true,
-      idp_logout_request_url              = "<REPLACE-BY-IDP-LOGOUT-REQUEST-URL>",
-      idp_logout_response_url             = "<REPLACE-BY-IDP-LOGOUT-RESPONSE-URL>",
-      idp_logout_binding 			            = "<REPLACE-BY-IDP-LOGOUT-BINDING>",    #Post or Redirect
- 
-      name_id_format                      = "saml-emailaddress",
-      user_mapping_method                 = "NameIDToUserAttribute",
-      user_mapping_store_attribute        = "username"    
+    IDP2 = {  # IDP configuration using parameters instead of SAML metadata file.
+      identity_domain_id      = "<REPLACE-BY-DOMAIN-OCID>"
+      name                    = "ID_Provider_2", 
+      description             = "Identity Provider 2",
+      enabled                 = false,
+      idp_issuer_uri		      = "<REPLACE-BY-IDP-ENTITY-ID>",
+      sso_service_url         = "<REPLACE-BY-IDP-SSO-URL>",  
+      sso_service_binding     = "<REPLACE-BY-IDP-SERVICE-BINDING>", # Post or Redirect
+      idp_signing_certificate = "<REPLACE-BY-IDP-SIGNING-CERTIFICATE>", # Actual file contents Without the BEGIN CERTIFICATE and END CERTIFICATE lines
+      enable_global_logout    = true,
+      idp_logout_request_url  = "<REPLACE-BY-IDP-LOGOUT-REQUEST-URL>",
+      idp_logout_response_url = "<REPLACE-BY-IDP-LOGOUT-RESPONSE-URL>",
+      idp_logout_binding 			= "<REPLACE-BY-IDP-LOGOUT-BINDING>", # Post or Redirect  
     }
   }
 }
+
+########################################################################################################################
+# Below a real example. Three identity providers are managed, two with a metadata file and one with metadata values:
+########################################################################################################################
+
+# identity_domain_identity_providers_configuration = {
+#  default_identity_domain_id  : "ocid1.domain.oc1..aaaaaa...hxa"
+
+#  identity_providers = {  
+#    ENTRA = {   
+#      name              = "Microsoft Entra (Former Azure AD)",  
+#      description       = "Managed by Identity Domain Terraform module.",      
+#      enabled           = true,
+#      idp_metadata_file = "entra-saml-metadata.xml"  
+#    }
+#    OKTA = {   
+#      name              = "Okta dev-AABBCC", 
+#      description       = "Managed by Identity Domain Terraform module.",     
+#      enabled           = true,
+#      idp_metadata_file = "okta-saml-metadata.xml",
+#    },
+#    OKTA-2 = {
+#      name                    = "Okta dev-AABBCC 2", 
+#      description             = "Managed by Identity Domain Terraform module. Parameters manually provided.",
+#      enabled                 = true,
+#      idp_issuer_uri		       = "http://www.okta.com/exk9999999999999358", # Value obtained from Okta
+#      sso_service_url         = "https://dev-AABBCC.okta.com/app/dev-AABBCC_cislzteamdefaultidentitydomain2_1/exk9999999999999358/sso/saml", # Value obtained from Okta
+#      sso_service_binding     = "Post",
+#      idp_signing_certificate = "MIIDpDCCAoygAwIBAgIGAY3mEPSGMA0GCSqGSIb3DQEBCwUAMIGSMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxEzARBgNVBAMMCmRldi05NjA5NjMxHDAaBgkqhkiG9w0BCQEWDWluZm9Ab2t0YS5jb20wHhcNMjQwMjI2MTUzNzA3WhcNMzQwMjI2MTUzODA3WjCBkjELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xDTALBgNVBAoMBE9rdGExFDASBgNVBAsMC1NTT1Byb3ZpZGVyMRMwEQYDVQQDDApkZXYtOTYwOTYzMRwwGgYJKoZIhvcNAQkBFg1pbmZvQG9rdGEuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1XyYdHIybc6ELvJVvgZpVRlQ+AB6ra2gKyYDj7TSCUb5PKZ1B8rbYYK6FnxXwmjdvezv3n/vDCgoRhQVnhKatl9L89EVb//y5q4WUhauwIuR6YL0E1JNqoiZRt4I2UD+cpcgKeg5I2t9nYOjBEh+WBpnqKLhYNbdd5Iu0lwHePPo+VvhESYXh7UiJImdviL0V2N2NsSeSBJ4AOsCqu84GZR6149PgIp6n9QXJzwt6ftvc0kdDm/8wVfR499XsRiDBPl6EKyxj6KM7BLkbPZW/YG5umJNM8lIwSyrOy73c277bcD73CwMYN4+HpCRLVrmYxryztwRZSlyCBIflKD7XwIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQCFzhTndNVseCiadHpknmJwOQ6cTBsyNarJuHLmdZvNzRgSGw7hOBMjVrArLpvUE/f1fjCnfuX6F4/2vylPgX3jeRMVbDjcwL4vgXnqIbv6+Q/WRe0aeVa/HZAg78wjVExGyOyrHy87ktnCgl+bl9XOvLQKzgpFJ49rzyxRC3O13OXlIUtiqCBo/E+AEpQ3Xy1C3lsldlUYCZkKJVdnSu3V1G/9/0vN6mwahSsseQSHrdLwuTp/wQd+3MYuDQe+KoNknZp9I+esVSYDuhasvGk1ofmdPsJug0KV/OzY3ncr3DypOz+7slhsMuC4q//YFuAxSZfjLIZ4SqYIslHUHRar" # Value obtained from Okta
+#      enable_global_logout    = true,
+#      idp_logout_request_url  = "https://dev-AABBCC.okta.com/app/dev-AABBCC_cislzteamdefaultidentitydomain_1/exk9999999999999358/slo/saml", # Value obtained from Okta
+#      idp_logout_response_url = "https://dev-AABBCC-admin.okta.com/admin/dashboard", # Value obtained from Okta
+#      idp_logout_binding 			= "Post",
+#    }
+#  }
+#}

@@ -22,8 +22,8 @@ variable "identity_domain_identity_providers_configuration" {
       icon_file                 = optional(string),
       enabled                   = bool,
       name_id_format            = optional(string),
-      user_mapping_method       = string,
-      user_mapping_store_attribute = string,
+      user_mapping_method       = optional(string),
+      user_mapping_store_attribute = optional(string),
       assertion_attribute          = optional(string),
 
       idp_metadata_file         = optional(string),

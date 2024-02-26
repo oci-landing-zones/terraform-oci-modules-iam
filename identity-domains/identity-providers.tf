@@ -17,8 +17,6 @@ locals {
   binding_values = ["Redirect","Post"]
   idp_parameter_list = ["idp_issuer_uri","sso_service_url","sso_service_binding","idp_signing_certificate","idp_logout_request_url","idp_logout_response_url"]
   metadata_uri = "/fed/v1/metadata"
-
-
 }
 
 resource "oci_identity_domains_identity_provider" "these" {
@@ -54,7 +52,6 @@ resource "oci_identity_domains_identity_provider" "these" {
         condition = each.value.idp_metadata_file == null ? ( (each.value.idp_issuer_uri !=null && each.value.sso_service_url !=null && each.value.idp_signing_certificate !=null && each.value.idp_logout_request_url !=null && each.value.idp_logout_response_url !=null && each.value.sso_service_binding !=null) ? true : false) : true
         error_message = "VALIDATION FAILURE in identity provider \"${each.key}\": when not using \"idp_metadata_file\" attribute, at least the following parameters should be provided: ${join(",",local.idp_parameter_list)}"     
       }
-
     } 
 
     idcs_endpoint = contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_identity_providers_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_identity_providers_configuration.default_identity_domain_id].url : data.oci_identity_domain.idp_domain[each.key].url)
@@ -64,9 +61,9 @@ resource "oci_identity_domains_identity_provider" "these" {
     schemas                             = ["urn:ietf:params:scim:schemas:oracle:idcs:IdentityProvider"]
     description                         = each.value.description
     icon_url                            = each.value.icon_file != null ? file(each.value.icon_file) : null
-    name_id_format                      = each.value.name_id_format
-    user_mapping_method                 = each.value.user_mapping_method
-    user_mapping_store_attribute        = each.value.user_mapping_store_attribute
+    name_id_format                      = coalesce(each.value.name_id_format,"saml-emailaddress")
+    user_mapping_method                 = coalesce(each.value.user_mapping_method, "NameIDToUserAttribute")
+    user_mapping_store_attribute        = coalesce(each.value.user_mapping_store_attribute, "username")
 
     metadata                            = each.value.idp_metadata_file != null ? file(each.value.idp_metadata_file) : null
     
@@ -80,7 +77,6 @@ resource "oci_identity_domains_identity_provider" "these" {
     logout_response_url                 = each.value.idp_metadata_file != null ? null : each.value.idp_logout_response_url
     logout_binding                      = each.value.idp_metadata_file != null ? null : each.value.idp_logout_binding
     
-
     signature_hash_algorithm            = each.value.signature_hash_algorithm
     include_signing_cert_in_signature   = each.value.send_signing_certificate
    #OCI Tags not supported

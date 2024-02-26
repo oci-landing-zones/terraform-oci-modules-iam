@@ -9,3 +9,6 @@
 **/terraform.tfvars
 **/input.auto.tfvars
 **/private
+**/*.xml
+**/*.cert
+**/*.ini

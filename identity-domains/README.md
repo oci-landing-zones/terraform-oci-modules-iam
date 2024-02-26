@@ -133,17 +133,17 @@ Use *identity_domain_dynamic_groups_configuration* attribute. It supports the fo
     - **freeform_tags**: (Optional) free tags to apply to the group. *default_freeform_tags* is used if undefined.   
 
 ## Defining Identity Domain Identity Providers
-Use *identity_domain_identity_providers_configuration* attribute. It supports SAML Identity Providers which can be configured either by importing the IDP SAML Metadata (XML file) or by directly specifying the IDP parameters.  It supports the following attributes:
+Use *identity_domain_identity_providers_configuration* attribute. It supports SAML Identity Providers which can be configured either by importing the IDP SAML Metadata (XML file) or by directly specifying the identity provider parameters.  It supports the following attributes:
 
-  - **default_identity_domain_id**: (Optional) defines the identity domain for all identity proviers, unless overriden by *identity_domain_id* attribute within each identity provider.  This attribute is overloaded: it can be either an identity domain OCID or a reference (a key) to the identity domain OCID.    
+  - **default_identity_domain_id**: (Optional) defines the identity domain for all identity providers, unless overriden by *identity_domain_id* attribute within each identity provider.  This attribute is overloaded: it can be either an identity domain OCID or a reference (a key) to the identity domain OCID.    
   - **identity_providers**: (Optional) the map of objects that defines identity providers, where each object corresponds to an identity provider resource.
     - **identity_domain_id**: (Optional) The identity domain for the identity provider. This attribute is overloaded: it can be either an existing identity domain OCID (if provisioning the identity provider in an existing identity domain) or the identity domain reference (key) in identity_domains map.    
     - **name**:  (Required) The display name of the identity provider.                      
     - **description**: (Optional) The description of the identity provider.               
-    - **enabled**: (Required)  Flag controlling whether the identiy provider is enabled or disabled.
-    - **name_id_format**: (Optional) The requested Name ID format.  Possible values:  *saml-emailaddress*, *saml-x509*, *saml-kerberos*, *saml-persistent*, *saml-transient*, *saml-unspecified*, *saml-windowsnamequalifier*.  Default is *saml-none*.
-    - **user_mapping_method**: (Optional)  The user identity mapping network for the identity provider.  Possible values: *NameIDToUserAttribute*, *AssertionAttributeToUserAttribute*, or *CorrelationPolicyRule*. 
-    - **user_mapping_store_attribute**: (Optional)  The identity domain user mapping attribute, e.g. *userName*.
+    - **enabled**: (Required)  Flag controlling whether the identity provider is enabled or disabled.
+    - **name_id_format**: (Optional) The requested Name ID format.  Possible values:  *saml-emailaddress*, *saml-x509*, *saml-kerberos*, *saml-persistent*, *saml-transient*, *saml-unspecified*, *saml-windowsnamequalifier*.  Default is *saml-emailaddress*.
+    - **user_mapping_method**: (Optional)  The user identity mapping network for the identity provider.  Possible values: *NameIDToUserAttribute*, *AssertionAttributeToUserAttribute*, or *CorrelationPolicyRule*. Default is *NameIDToUserAttribute*.
+    - **user_mapping_store_attribute**: (Optional)  The identity domain user mapping attribute. Default is *username*.
     - **assertion_attribute**: (Optional) The assertion attribute name from the IDP when using *user_mapping_method = AssertionAttributeToUserAttribute*.
     - **signature_hash_algorithm**: (Optional) The signature has algorithm of the identity provider, either *SHA-256* (Default) or *SHA-1*.
     - **send_signing_certificate**: (Optional) Flag controlling whether to send signing certificate with SAML message.  Default is *false*.
@@ -157,10 +157,28 @@ Use *identity_domain_identity_providers_configuration* attribute. It supports SA
     - **idp_logout_response_url**:  The service endpoint URL at the Identity provider to which identity domain will send SAML logout responses, when the IdP initiates SAML logout.  This parameter is ignored if *idp_metadata_file* is used. 
     - **idp_logout_binding**:  Specify either "Post" or "Redirect" whether the identity domain will send SAML logout requests and responses to the IdP using the HTTP Redirect or HTTP POST method. This must agree with the method supported by the IdP for the configured IdP Logout Request and Response URLs.  This parameter is ignored if *idp_metadata_file* is used. 
 
-          
+### Obtaining Identity Domain Metadata
 
-Check the [examples](./examples/) folder for module usage. Specifically, see [vision](./examples/vision/README.md) example to deploy two identity domains including groups and dynamic_groups.
+The SAML configuration requires that the OCI identity domain is also configured in the identity provider side. Generally, like OCI identity domains, identity providers can ingest an XML file containing the partner SAML metadata that sets up the basic configuration. Some identity providers may not support a metadata file, taking in individual metadata values instead. Regardless, OCI identity domain metadata can be easily obtained:
 
+- **Identity domain metadata file**: https://\<identity-domain-instance\>.identity.oraclecloud.com/fed/v1/metadata. If the identity provider is ADFS, use this URL instead: https://\<identity-domain-instance\>/fed/v1/metadata?adfsmode=true. Note however, that the metadata file in publicly available only if allowed by an administrator in identity domain settings. Make sure the "Configure client access" option is enabled, as shown:
+
+![Identity Domain Settings](./images/identity-domain-settings.png)
+
+- **Identity domain metadata values**: while the metadata values are all available in the metadata file, they can be visualized and obtained quite easily from the identity domain in OCI Console. Typically, these values are the *Provider ID*, *Assertion Consumer Service URL*, *Logout Service Endpoint URL*, *Logout Service Return URL*, *Signing Certificate* and *Encryption Certificate*. In OCI Console, navigate to the identity domain of choice -> Security -> Identity Providers and click the "Export SAML metadata" button, as shown:
+
+![Export SAML Metadata](./images/export-saml-metadata.png)
+
+Then, select the "Manual export" tab:
+
+![SAML Manual Export](./images/saml-metadata-manual-export.png)
+
+Note that you can also obtain the metadata URL by clicking in the "Metadata" URL tab and making sure the "Access metadata URL or signing certificate" toggle is on. This is technically equivalent as enabling "Configure client access" in the identity domain settings, as shown previously.
+
+![SAML Metadata URL](./images//saml-metadata-url.png)
+
+
+Check the [examples](./examples/) folder for module usage. See [vision](./examples/vision/README.md) example to deploy two identity domains including groups and dynamic_groups. See [identity-providers](./examples/identity-provider/) example to deploy identity providers.
 
 ### <a name="extdep">External Dependencies</a>
 
