@@ -1,3 +1,8 @@
+# February 26, 2024 Release Notes
+## Updates
+### Identity Domains Module
+1. The Identity Domains module now supports creating SAML Identity Providers through a new configuration variable.  The variable *identity_domain_identity_providers_configuration* includes parameters to add an idp using either a saml_metadata file or by manually providing required values.
+
 # November 01, 2023 Release Notes - 0.1.7
 ## New
 1. Identity Domains module, supporting identity domains, groups, and dynamic groups. 
