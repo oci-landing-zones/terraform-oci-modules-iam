@@ -1,7 +1,7 @@
 # OCI Identity Domains Module Usage Example - Identity Providers
 ## Introduction
 
-This example shows how to configure identity providers for an existing Identity Domain in Oracle Cloud Infrastructure (OCI) using the [Identity Domains module](../../).
+This example shows how to configure identity providers for an existing Identity Domain in Oracle Cloud Infrastructure (OCI) using the [Identity Domains module](../../README.md).
 
 It creates the following resources in one preexisting identity domain:
 
