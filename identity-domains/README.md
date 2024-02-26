@@ -175,10 +175,10 @@ Then, select the "Manual export" tab:
 
 Note that you can also obtain the metadata URL by clicking in the "Metadata" URL tab and making sure the "Access metadata URL or signing certificate" toggle is on. This is technically equivalent as enabling "Configure client access" in the identity domain settings, as shown previously.
 
-![SAML Metadata URL](./images//saml-metadata-url.png)
+![SAML Metadata URL](./images/saml-metadata-url.png)
 
 
-Check the [examples](./examples/) folder for module usage. See [vision](./examples/vision/README.md) example to deploy two identity domains including groups and dynamic_groups. See [identity-providers](./examples/identity-provider/) example to deploy identity providers.
+Check the [examples](./examples/) folder for overall module usage. See [vision](./examples/vision/README.md) example to deploy two identity domains including groups and dynamic_groups. See [identity-providers](./examples/identity-provider/) example to deploy identity providers.
 
 ### <a name="extdep">External Dependencies</a>
 
