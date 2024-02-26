@@ -25,7 +25,6 @@ variable "identity_domain_identity_providers_configuration" {
       user_mapping_method       = string,
       user_mapping_store_attribute = string,
       assertion_attribute          = optional(string),
-      add_to_default_idp_policy = bool,
 
       idp_metadata_file         = optional(string),
 
@@ -41,34 +40,6 @@ variable "identity_domain_identity_providers_configuration" {
 
       signature_hash_algorithm  = optional(string),
       send_signing_certificate  = optional(bool),
-      #defined_tags              = optional(map(string)),
-      #freeform_tags             = optional(map(string))
-    }))
-  })
-}
-
-variable "identity_domain_policies_configuration" {
-  description = "The identity domain policies configuration."
-  type = object({
-    default_identity_domain_id  = optional(string)
-    #default_defined_tags        = optional(map(string))
-    #default_freeform_tags       = optional(map(string))
-    policies = map(object({
-      identity_domain_id        = optional(string)
-      name                      = string
-      description               = optional(string)
-      active                    = optional(bool)
-      policy_rules                     = optional(map(object({
-          name                      = string
-          description               = optional(string)
-          assign_idps               = optional(list(string))
-          user_name_expression          = optional(string)
-          starts_with_expression        = optional(bool)
-          exclude_users                 = optional(list(string))
-          group_membership              = optional(list(string))
-          filter_by_network_perimeter   = optional(list(string))
-      })))
-
       #defined_tags              = optional(map(string)),
       #freeform_tags             = optional(map(string))
     }))
