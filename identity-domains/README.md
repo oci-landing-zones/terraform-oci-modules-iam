@@ -161,11 +161,11 @@ Use *identity_domain_identity_providers_configuration* attribute. It supports SA
 
 The SAML configuration requires that the OCI identity domain is also configured in the identity provider side. Generally, like OCI identity domains, identity providers can ingest an XML file containing the partner SAML metadata that sets up the basic configuration. Some identity providers may not support a metadata file, taking in individual metadata values instead. Regardless, OCI identity domain metadata can be easily obtained:
 
-- **Identity domain metadata file**: https://\<identity-domain-instance\>.identity.oraclecloud.com/fed/v1/metadata. If the identity provider is ADFS, use this URL instead: https://\<identity-domain-instance\>/fed/v1/metadata?adfsmode=true. Note however, that the metadata file in publicly available only if allowed by an administrator in identity domain settings. Make sure the "Configure client access" option is enabled, as shown:
+- **Identity domain metadata file**: https://\<identity-domain-instance\>.identity.oraclecloud.com/fed/v1/metadata. If the identity provider is ADFS, use this URL instead: https://\<identity-domain-instance\>/fed/v1/metadata?adfsmode=true. Note however, that the metadata file is publicly available only if allowed by an administrator in identity domain settings. In OCI Console, navigate to the *identity domain of choice -> settings* and make sure the "Configure client access" option is enabled, as shown:
 
 ![Identity Domain Settings](./images/identity-domain-settings.png)
 
-- **Identity domain metadata values**: while the metadata values are all available in the metadata file, they can be visualized and obtained quite easily from the identity domain in OCI Console. Typically, these values are the *Provider ID*, *Assertion Consumer Service URL*, *Logout Service Endpoint URL*, *Logout Service Return URL*, *Signing Certificate* and *Encryption Certificate*. In OCI Console, navigate to the identity domain of choice -> Security -> Identity Providers and click the "Export SAML metadata" button, as shown:
+- **Identity domain metadata values**: while the metadata values are all available in the metadata file, they can be visualized and obtained quite easily from the identity domain in OCI Console. Typically, these values are the *Provider ID*, *Assertion Consumer Service URL*, *Logout Service Endpoint URL*, *Logout Service Return URL*, *Signing Certificate* and *Encryption Certificate*. In OCI Console, navigate to the *identity domain of choice -> Security -> Identity Providers* and click the "Export SAML metadata" button, as shown:
 
 ![Export SAML Metadata](./images/export-saml-metadata.png)
 
