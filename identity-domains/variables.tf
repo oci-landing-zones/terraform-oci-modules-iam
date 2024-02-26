@@ -89,7 +89,7 @@ variable "identity_domain_applications_configuration" {
       custom_error_url                    = optional(string),
       custom_social_linking_callback_url  = optional(string),
       #display settings
-      display_in_myapps                   = optional(bool),
+      display_in_my_apps                   = optional(bool),
       user_can_request_access             = optional(bool),
       #autn and authz
       enforce_grants_as_authorization     = optional(bool),
@@ -107,7 +107,7 @@ variable "identity_domain_applications_configuration" {
       id_token_encryption_algorithm       = optional(string),  #default None
       bypass_consent                      = optional(bool),
       client_ip_address                   = optional(list(string)),
-      authorized_resources                = optional(string),    # Same as trust-scope:  All(Account), Specific(Explicit)
+      authorized_resources                = optional(string),    # Same as trust_scope:  All(Account), Specific(Explicit)
       resources                           = optional(list(string)),
       app_roles                           = optional(list(string)),
       #Resource Server Configuration
