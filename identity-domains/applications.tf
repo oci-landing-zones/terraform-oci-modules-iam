@@ -31,24 +31,44 @@ resource "oci_identity_domains_app" "these" {
 
 
     } 
-    idcs_endpoint = contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_applications_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_applications_configuration.default_identity_domain_id].url : data.oci_identity_domain.apps_domain[each.key].url)
-    display_name            = each.value.display_name
-    description  = each.value.description
-    schemas = ["urn:ietf:params:scim:schemas:oracle:idcs:App"]
+    idcs_endpoint             = contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_applications_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_applications_configuration.default_identity_domain_id].url : data.oci_identity_domain.apps_domain[each.key].url)
+    display_name              = each.value.display_name
+    description               = each.value.description
+    schemas                   = ["urn:ietf:params:scim:schemas:oracle:idcs:App"]
     based_on_template {
             value = each.value.type == "Confidential" ? "CustomWebAppTemplateId" : (each.value.type == "SAML" ? "CustomSAMLAppTemplateId" : (each.value.type == "Enterprise" ? "CustomEnterpriseAppTemplateId" : (each.value.type == "Mobile" ? "CustomBrowserMobileTemplateId" : null)))
     }
-    landing_page_url = each.value.app_url
+    # URLS
+    landing_page_url          = each.value.app_url
+    login_page_url            = each.value.custom_signin_url
+    logout_page_url           = each.value.custom_signout_url
+    error_page_url            = each.value.custom_error_url
+    linking_callback_url      = each.value.custom_social_linking_callback_url
+    # Display Settings
+    show_in_my_apps           = each.value.display_in_my_apps
+    #   user_can_request_access???????
+
+    # Authentication and Authorization
+    allow_access_control      = each.value.enforce_grants_as_authorization
+    
+    #OAUTH Configuration
+    is_oauth_client           = each.value.configure_as_oauth_client
+    allowed_grants            = [for grant in each.value.allowed_grant_types : grant=="jwt_assertion" ? "urn:ietf:params:oauth:grant-type:jwt-bearer" :(grant == "saml2_assertion" ? "urn:ietf:params:oauth:grant-type:saml2-bearer":(grant == "resource_owner") ? "password": (grant == "device_code" ? "urn:ietf:params:oauth:grant-type:device_code" : grant))]
+    all_url_schemes_allowed   = each.value.allow_non_https_urls
+    redirect_uris             = each.value.redirect_urls
+    post_logout_redirect_uris = each.value.post_logout_redirect_urls
+    logout_uri                = each.value.logout_url
+    client_type               = each.value.client_type
 
 
-    #client_type = each.value.type == "Mobile" ? "public" : "confidential"   #VERIFY
+
+
     is_enterprise_app = each.value.type == "Enterprise" ? true : false
     #is_mobile_target = each.value.type == "Mobile" ? true : false
-    is_oauth_client = each.value.configure_as_oauth_client
-    client_type = "confidential"
+    
+
     #is_oauth_resource = each.value.type == "Confidential" ? true : false
-    allowed_grants = [for grant in each.value.allowed_grant_types : grant=="jwt_assertion" ? "urn:ietf:params:oauth:grant-type:jwt-bearer" :(grant == "saml2_assertion" ? "urn:ietf:params:oauth:grant-type:saml2-bearer":(grant == "resource_owner") ? "password": (grant == "device_code" ? "urn:ietf:params:oauth:grant-type:device_code" : grant))]
-    redirect_uris = each.value.redirect_urls
+
 
 
 
