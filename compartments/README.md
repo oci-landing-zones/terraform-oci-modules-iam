@@ -7,17 +7,17 @@ This module manages arbitrary Identity and Access Management (IAM) compartment t
 Check [module specification](./SPEC.md) for a full description of module requirements, supported variables, managed resources and outputs.
 
 A fundamental principle in using a map of objects is the ability to quickly visualize the actual compartment structure by simply looking at the variable definition. The input variable is an object named *compartments_configuration*, with the following attributes:
-- **default_parent_id** &ndash; (Optional) determines the parent compartment for all your top (first level) compartments defined by the *compartments* attribute. This attribute is overloaded: it can be either a compartment OCID or a reference (a key) to the compartment OCID. *tenancy_ocid* is used if undefined.
+- **default_parent_id** &ndash; (Optional) determines the parent compartment for all your top (first level) compartments defined by the *compartments* attribute. This attribute is overloaded: it can be either a compartment OCID or a reference (a key) to the compartment OCID. For referring to the *tenancy_ocid*, leave it unassigned or use the reserved key "TENANCY-ROOT".
 - **enable_delete** &ndash; (Optional) determines whether or not OCI should physically delete compartments when destroyed by Terraform. Default is false.
-- **default_defined_tags** &ndash; (Optional) defined tags to apply to all compartments, unless overriden by *defined_tags* attribute within each compartment object.
-- **default_freeform_tags** &ndash; (Optional) freeform tags to apply to all compartments, unless overriden by *freeform_tags* attribute within each compartment object. Freeform tags are limited to 10 tags per OCI resource.
+- **default_defined_tags** &ndash; (Optional) defined tags to apply to all compartments, unless overridden by *defined_tags* attribute within each compartment object.
+- **default_freeform_tags** &ndash; (Optional) freeform tags to apply to all compartments, unless overridden by *freeform_tags* attribute within each compartment object. Freeform tags are limited to 10 tags per OCI resource.
 - **compartments** &ndash; (Optional) the map of objects that define compartments hierarchies. Each top (first level) compartment has a *parent_id* attribute to identify the compartment's parent (in other words, where the particular tree descends from). It overrides *default_parent_id*. Each compartment object has a *children* attribute that defines its sub-compartments. The *compartments* map supports up to **six** levels of nesting, which is the maximum supported by OCI.
   - **name** &ndash; The compartment name.
   - **description** &ndash; The compartment description.
-  - **parent_id** &ndash; (Optional) The compartment's parent compartment. Only available for first-level compartments. This attribute is overloaded: it can be either a compartment OCID or a reference (a key) to the compartment OCID. *default_parent_id* is used if undefined.
+  - **parent_id** &ndash; (Optional) The compartment's parent compartment. Only available for first-level compartments. This attribute is overloaded: it can be either a compartment OCID or a reference (a key) to the compartment OCID. *default_parent_id* is used if undefined. For referring to the *tenancy_ocid*, use the reserved key "TENANCY-ROOT".
   - **defined_tags** &ndash; (Optional) The compartment defined_tags. *default_defined_tags* is used if undefined.
   - **freeform_tags** &ndash; (Optional) The compartment freeform_tags. *default_freeform_tags* is used if undefined.
-  - **tag_defaults** &ndash; (Optional) A map of tag defaults to apply to the compartment. Every resource created in the compartmet is tagged per this setting.
+  - **tag_defaults** &ndash; (Optional) A map of tag defaults to apply to the compartment. Every resource created in the compartment is tagged per this setting.
     - **tag_id** &ndash; The tag default tag id. This attribute is overloaded: it can be either a tag OCID or a reference (a key) to the tag OCID. 
     - **default_value** &ndash; The default value to assign to the tag.
     - **is_user_required** &ndash; (Optional) Whether the user must provide a tag value for resources created in the compartment.

@@ -5,7 +5,7 @@ This example shows how to deploy Identity and Access Management (IAM) identity d
 
 It creates the following resources:
 
-*Identity Domains*: "VISION_DEV_Identity_Domain" and "VISION_PROD_Identity_Domain".  Each in a different compartment specified by their OCID   
+*Identity Domains*: "VISION_DEV_Identity_Domain" and "VISION_PROD_Identity_Domain".  Each in a different compartment specified by their OCID.   
 
 *Groups*:  "Dev Group 1" and "Prod Group 1".  One on each identity domain.
 
