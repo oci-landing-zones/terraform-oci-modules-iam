@@ -12,7 +12,7 @@ Check the [module documentation](../../README.md) for details.
 1. Rename *input.auto.tfvars.template* to *\<project-name\>.auto.tfvars*, where *\<project-name\>* is any name of your choice.
 
 2. Within *\<project-name\>.auto.tfvars*, provide tenancy connectivity information and adjust the *policies_configuration* input variable, by making the appropriate substitutions:
-   - Replace *\<REPLACE-BY-COMPARTMENT-OCID\>* placeholder by a compartment OCID. This determines the compartment that sample *supplied_policies* get attached to. 
+   - Replace *\<REPLACE-BY-COMPARTMENT-OCID\>* placeholder by a compartment OCID. This determines the compartment the sample policy gets attached to. Alternatively, instead of an OCID, you can replace the placeholder by the string "TENANCY-ROOT" for attaching the policy to the Root compartment.
    
 Refer to [README.md](../../README.md) for overall module functioning and to [SPEC.md](../../SPEC.md) for attributes usage.
 

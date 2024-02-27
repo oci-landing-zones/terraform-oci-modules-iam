@@ -6,6 +6,7 @@
 # 2. Provide values for "Tenancy Connectivity Variables".
 # 3. Replace <REPLACE-BY-THE-PARENT-COMPARTMENT-OCID> placeholder by a compartment OCID. 
 #    This determines the compartment that TOP-CMP compartment gets attached to.
+#    For referring to the tenancy_ocid, use the reserved key "TENANCY-ROOT".
 # 4. Replace <REPLACE-BY-THE-COST-CENTER-TAG-OCID> placeholder in TOP-CMP with the actual cost center tag ocid.
 # 5. Replace <REPLACE-BY-THE-ENVIRONMENT-TAG-OCID> placeholder in TOP-CMP with the actual environment tag ocid.
 # Notice that tag defaults are optional and you can simply remove TOP-CMP's tag_defaults attribute altogether.
@@ -28,7 +29,7 @@ region               = "<your tenancy home region>" # This is your tenancy home 
 #---------------------------------------
 
 compartments_configuration = {
-  default_parent_id = "<REPLACE-BY-THE-PARENT-COMPARTMENT-OCID>"
+  default_parent_id = "<REPLACE-BY-THE-PARENT-COMPARTMENT-OCID>" # For referring to the tenancy_ocid, use the reserved key "TENANCY-ROOT".
   #default_defined_tags = null
   #default_freeform_tags = null
   #enable_delete = false
