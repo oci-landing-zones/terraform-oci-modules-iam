@@ -24,7 +24,7 @@ region               = "<your tenancy home region>" # This is your tenancy home 
 #---------------------------------------
 
 compartments_configuration = { 
-  default_parent_id = "<REPLACE-BY-COMPARTMENT-REFERENCE>"
+  default_parent_id = "<REPLACE-BY-COMPARTMENT-REFERENCE>" # For referring to the tenancy_ocid, use the reserved key "TENANCY-ROOT".
   enable_delete = false
   compartments = {
     WORKLOAD-1-CMP = { 

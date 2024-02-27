@@ -1,12 +1,12 @@
 # Copyright (c) 2023 Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 
-#------------------------------------------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------------------------------------------------------------------
 # 1. Rename this file to <project-name>.auto.tfvars, where <project-name> is any name of your choice.
 # 2. Provide values for "Tenancy Connectivity Variables".
-# 3. Replace <REPLACE-BY-COMPARTMENT-OCID> placeholder by a compartment OCID. 
-#    This determines the compartment that sample *supplied_policies* get attached to. 
-#-------------------------------------------------------------------------------------------------------------------------------------
+# 3. Replace <REPLACE-BY-COMPARTMENT-OCID> placeholder by a compartment OCID or use "TENANCY-ROOT" for attaching the policy to the Root compartment. 
+#    This determines the compartment that "SAMPLE-POLICY" gets attached to. 
+#------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #---------------------------------------
 # Tenancy Connectivity Variables
@@ -28,7 +28,7 @@ policies_configuration = {
     "SAMPLE-POLICY" : {
       name : "sample-policy"
       description : "Sample policy with random statements."
-      compartment_ocid : "<REPLACE-BY-COMPARTMENT-OCID>"
+      compartment_id : "<REPLACE-BY-COMPARTMENT-OCID>" # Instead of an OCID, you can replace it with the string "TENANCY-ROOT" for attaching the policy to the Root compartment.
       #-- The "not ok" statements below are flagged by the policy module per CIS recommendations.
       statements : [
         #"allow group-a to manage all-resources in tenancy", # not ok

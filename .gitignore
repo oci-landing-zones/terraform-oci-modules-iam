@@ -12,3 +12,4 @@
 **/*.xml
 **/*.cert
 **/*.ini
+**/creds
