@@ -1,7 +1,11 @@
-# February 26, 2024 Release Notes
+# February 27, 2024 Release Notes
 ## Updates
 ### Identity Domains Module
-1. The Identity Domains module now supports creating SAML Identity Providers through a new configuration variable.  The variable *identity_domain_identity_providers_configuration* includes parameters to add an idp using either a saml_metadata file or by manually providing required values.
+1. The Identity Domains module now supports creating SAML Identity Providers through a new configuration variable. The variable *identity_domain_identity_providers_configuration* includes parameters to manage identity providers using either a SAML metadata file or individual metadata parameter values.
+### Compartments Module
+1. The reserved key "TENANCY-ROOT" has been introduced. It is used for referring to the root compartment OCID. It can be assigned to *default_parent_id* and *parent_id* attributes.
+### Policy Module
+1. The reserved key "TENANCY-ROOT" has been introduced. It is used for referring to the root compartment OCID. It can be assigned to *compartment_id* attribute within *supplied_policies* attribute.
 
 # January 08, 2024 Release Notes - 0.1.9
 ## Updates
