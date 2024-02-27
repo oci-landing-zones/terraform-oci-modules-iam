@@ -14,7 +14,7 @@ The same structure as shown by OCI Console:
 1. Rename *input.auto.tfvars.template* to *\<project-name\>.auto.tfvars*, where *\<project-name\>* is any name of your choice.
 
 2. Within *\<project-name\>.auto.tfvars*, provide tenancy connectivity information and adjust the *compartments_configuration* input variable, by making the appropriate substitutions:
-   - Replace *\<REPLACE-BY-THE-PARENT-COMPARTMENT-OCID\>* placeholder by a compartment OCID. This determines the compartment that *TOP-CMP* compartment gets attached to.
+   - Replace *\<REPLACE-BY-THE-PARENT-COMPARTMENT-OCID\>* placeholder by a compartment OCID. This determines the compartment that *TOP-CMP* compartment gets attached to. For referring to the *tenancy_ocid*, use the reserved key "TENANCY-ROOT".
    - Replace *\<REPLACE-BY-THE-COST-CENTER-TAG-OCID\>* placeholder in *TOP-CMP* with the actual cost center tag ocid.
    - Replace *\<REPLACE-BY-THE-ENVIRONMENT-TAG-OCID\>* placeholder in *TOP-CMP* with the actual environment tag ocid.
    - Note that tag defaults are optional and you can simply remove *TOP-CMP*'s *tag_defaults* attribute altogether.
