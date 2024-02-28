@@ -29,7 +29,7 @@ variable "identity_domain_applications_configuration" {
       custom_error_url                    = optional(string),
       custom_social_linking_callback_url  = optional(string),
       #display settings
-      display_in_myapps                   = optional(bool),
+      display_in_my_apps                   = optional(bool),
       user_can_request_access             = optional(bool),
       #autn and authz
       enforce_grants_as_authorization     = optional(bool),
@@ -41,15 +41,18 @@ variable "identity_domain_applications_configuration" {
       post_logout_redirect_urls           = optional(list(string)),
       logout_url                          = optional(string),
       client_type                         = optional(string),    #trusted, confidential
-      certificate                         = optional(string),
-      allow_instrospect_operation         = optional(bool),
+      app_client_certificate              = optional(object({
+                    alias                 = string,
+                    base64certificate     = string
+      })),
+      allow_introspect_operation          = optional(bool),
       allow_on_behalf_of_operation        = optional(bool),
-      id_token_encryption_algorithm       = optional(string),  #default None
+      id_token_encryption_algorithm       = optional(string),    # "A128CBC-HS256","A192CBC-HS384","A256CBC-HS512","A128GCM","A192GCM","A256GCM"
       bypass_consent                      = optional(bool),
       client_ip_address                   = optional(list(string)),
-      authorized_resources                = optional(string),    # Same as trust-scope:  All(Account), Specific(Explicit)
+      authorized_resources                = optional(string),    # Same as trust_scope:  All(Account), Specific(Explicit)
       resources                           = optional(list(string)),
-      app_roles                           = optional(list(string)),
+      application_roles                   = optional(list(string)),
       #Resource Server Configuration
       configure_as_oauth_resource_server  = optional(bool),
       access_token_expiration             = optional(string),
