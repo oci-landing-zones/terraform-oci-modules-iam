@@ -21,3 +21,4 @@ output "identity_domain_applications" {
   value = oci_identity_domains_app.these
 }
 
+

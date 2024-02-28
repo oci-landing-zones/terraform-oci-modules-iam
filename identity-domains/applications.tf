@@ -5,9 +5,71 @@ data "oci_identity_domain" "apps_domain" {
     domain_id = each.value.identity_domain_id != null ? each.value.identity_domain_id : var.identity_domain_applications_configuration.default_identity_domain_id
 }
 
+/*data "oci_identity_domains_app_roles" "client_app_roles" {
+    for_each       = var.identity_domain_applications_configuration != null ? var.identity_domain_applications_configuration.applications : null
+      idcs_endpoint = contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_applications_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_applications_configuration.default_identity_domain_id].url : data.oci_identity_domain.apps_domain[each.key].url)
+
+      app_role_filter = "displayname eq \"${each.value.application_roles[0]}\" and app.value eq \"IDCSAppId\""  
+      #app_role_filter  = join(" or ",[for role in each.value.application_roles : "displayname eq ${role} and app.value eq \"IDCSAppId\""])
+}*/
+data "oci_identity_domains_app_roles" "client_app_roles" {
+    for_each  =  tomap({
+      for role in local.app_roles : role.role_name => role
+  })
+      idcs_endpoint = contains(keys(oci_identity_domain.these),coalesce(each.value.app.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.app.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_applications_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_applications_configuration.default_identity_domain_id].url : data.oci_identity_domain.apps_domain[each.value.app_key].url)
+
+      app_role_filter = "displayname eq \"${each.value.role_name}\" and app.value eq \"IDCSAppId\""  
+      #app_role_filter  = join(" or ",[for role in each.value.application_roles : "displayname eq ${role} and app.value eq \"IDCSAppId\""])
+}
+
 locals {
-  grant_types       = ["authorization_code", "client_credentials", "resource_owner", "refresh_token", "implicit", "tls_client_auth", "jwt_assertion", "saml2_assertion", "device_code"]
-  application_types = ["SAML", "Mobile", "Confidential", "Enterprise"]
+  grant_types               = ["authorization_code", "client_credentials", "resource_owner", "refresh_token", "implicit", "tls_client_auth", "jwt_assertion", "saml2_assertion", "device_code"]
+  application_types         = ["SAML", "Mobile", "Confidential", "Enterprise"]
+  allowed_operations        = ["introspect","onBehalfOfUser"]
+  encryption_algorithms     = ["A128CBC-HS256","A192CBC-HS384","A256CBC-HS512","A128GCM","A192GCM","A256GCM"]
+  authorized_resources      = ["All","Specific"]
+  app_roles                 = flatten([
+      for app_key,app in var.identity_domain_applications_configuration.applications :[
+          for role_key,role in app.application_roles : {
+            app_key = app_key
+            app     = app
+            role_key = role_key
+            role_name = role
+          }
+      ]])
+}
+
+resource "oci_identity_domains_oauth_client_certificate" "app_client_cert" {
+  for_each       = var.identity_domain_applications_configuration != null ? {for k,v in var.identity_domain_applications_configuration.applications : k => v if v.app_client_certificate != null} : {}
+    #Required
+    certificate_alias = each.value.app_client_certificate.alias
+    idcs_endpoint = contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_applications_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_applications_configuration.default_identity_domain_id].url : data.oci_identity_domain.apps_domain[each.key].url)
+    schemas = ["urn:ietf:params:scim:schemas:oracle:idcs:OAuthClientCertificate"]
+    x509base64certificate = each.value.app_client_certificate.base64certificate
+}
+
+resource "oci_identity_domains_grant" "app_roles_grant" {
+  #for_each       = var.identity_domain_applications_configuration != null ? var.identity_domain_applications_configuration.applications : {}
+  for_each  =  tomap({
+      for role in local.app_roles : "${role.app_key}.${role.role_key}" => role
+  })
+
+    grant_mechanism = "ADMINISTRATOR_TO_APP"
+    grantee {
+          type = "App"
+          value = oci_identity_domains_app.these[each.value.app_key].id
+    }
+    idcs_endpoint = contains(keys(oci_identity_domain.these),coalesce(each.value.app.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_applications_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_applications_configuration.default_identity_domain_id].url : data.oci_identity_domain.apps_domain[each.value.app_key].url)
+    schemas = ["urn:ietf:params:scim:schemas:oracle:idcs:Grant"]
+    app {
+        value = "IDCSAppId"
+    }
+    entitlement {
+      attribute_name = "appRoles"
+      #attribute_value = data.oci_identity_domains_app_roles.client_app_roles[each.value.app_key].app_roles.0.id
+      attribute_value = data.oci_identity_domains_app_roles.client_app_roles[each.value.role_name].app_roles.0.id
+        
+    }
 }
 
 resource "oci_identity_domains_app" "these" {
@@ -27,6 +89,21 @@ resource "oci_identity_domains_app" "these" {
       precondition {
         condition = each.value.type != null ? contains(local.application_types, each.value.type)  : true
         error_message = "VALIDATION FAILURE in application \"${each.key}\": invalid value for \"type\" attribute. Valid values are ${join(",",local.application_types)}."
+      }
+      # Check 4: Verify certificate alias is provided when using Trusted client type.
+      precondition {
+        condition = each.value.client_type != null ? !(each.value.client_type == "trusted" && each.value.app_client_certificate == null) || each.value.client_type != "trusted" : true
+        error_message = "VALIDATION FAILURE in application \"${each.key}\": invalid value for \"app_client_certificate\" attribute. Provide a signing certificate when Client Type is trusted"
+      }
+      # Check 5: Verify id token encryption algorithm value.
+      precondition {
+        condition = each.value.id_token_encryption_algorithm != null ? contains(local.encryption_algorithms,each.value.id_token_encryption_algorithm) : true
+        error_message = "VALIDATION FAILURE in application \"${each.key}\": invalid value for \"id_token_encryption_algorithm\" attribute. Valid values are ${join(",",local.encryption_algorithms)}."
+      }
+      # Check 6: Verify id token encryption algorithm value.
+      precondition {
+        condition = each.value.id_token_encryption_algorithm != null ? contains(local.encryption_algorithms,each.value.id_token_encryption_algorithm) : true
+        error_message = "VALIDATION FAILURE in application \"${each.key}\": invalid value for \"authorized_resources\" attribute. Valid values are ${join(",",local.authorized_resources)}."
       }
 
 
@@ -58,22 +135,29 @@ resource "oci_identity_domains_app" "these" {
     redirect_uris             = each.value.redirect_urls
     post_logout_redirect_uris = each.value.post_logout_redirect_urls
     logout_uri                = each.value.logout_url
-    client_type               = each.value.client_type
-
-
-
-
+    client_type               = coalesce(each.value.client_type,"confidential")
+    allowed_operations        = compact(concat([coalesce(each.value.allow_introspect_operation,false) ? "introspect" : ""],[coalesce(each.value.allow_on_behalf_of_operation,false) ? "onBehalfOfUser" : ""]))
+    dynamic "certificates" {
+      for_each = each.value.app_client_certificate != null ? [each.value.app_client_certificate["alias"]] : []
+      content {
+        cert_alias = oci_identity_domains_oauth_client_certificate.app_client_cert[each.key].certificate_alias
+      }        
+    }
+    id_token_enc_algo         = each.value.id_token_encryption_algorithm
+    bypass_consent            = coalesce(each.value.bypass_consent,false)
+    trust_scope               = each.value.authorized_resources != null ? (each.value.authorized_resources=="All" ? "Account" : "Explicit") : "Explicit"
+    dynamic allowed_scopes {
+      for_each = each.value.resources != null ? each.value.resources : []
+        content {
+            fqs = allowed_scopes.value
+        }
+    }
+  
     is_enterprise_app = each.value.type == "Enterprise" ? true : false
     #is_mobile_target = each.value.type == "Mobile" ? true : false
     
 
     #is_oauth_resource = each.value.type == "Confidential" ? true : false
-
-
-
-
-
-
 
     urnietfparamsscimschemasoracleidcsextension_oci_tags {
 
@@ -96,3 +180,4 @@ resource "oci_identity_domains_app" "these" {
 
     }
 }
+
