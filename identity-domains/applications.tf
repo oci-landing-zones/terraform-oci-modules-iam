@@ -24,7 +24,7 @@ locals {
   application_roles         = ["Me","Cloud Gate","Kerberos Administrator","DB Administrator","MFA Client","Authenticator Client","Posix Viewer","Me Password Validator","Identity Domain Administrator","Security Administrator","User Administrator","User Manager","Help Desk Administrator","Application Administrator","Audit Administrator","Change Password","Reset Password","Self Registration","Forgot Password","Verify Email"]
   app_roles                 = flatten([
       for app_key,app in var.identity_domain_applications_configuration.applications :[
-          for role_key,role in app.application_roles : {
+          for role_key,role in app.application_roles != null ? app.application_roles : [] : {
             app_key = app_key
             app     = app
             role_key = role_key
@@ -76,7 +76,7 @@ resource "oci_identity_domains_app" "these" {
       }
       ## Check 2: Verify not null for redirect url.
       precondition {
-        condition = each.value.redirect_urls == null ? !(contains(local.grant_types, "implicit")||contains(local.grant_types, "authorization_code"))  : true
+        condition = each.value.redirect_urls == null && each.value.type != "SAML" ? !(contains(local.grant_types, "implicit")||contains(local.grant_types, "authorization_code"))  : true
         error_message = "VALIDATION FAILURE in application \"${each.key}\": invalid value for \"redirect_urls\" attribute. A valid value must be provided if \"allowed_grant_types\" is \"implicit\" or \"authorization_code\""
       }
       # Check 3: Verify application type value.
@@ -134,12 +134,12 @@ resource "oci_identity_domains_app" "these" {
     
     #OAUTH Configuration
     is_oauth_client           = coalesce(each.value.configure_as_oauth_client,false)
-    allowed_grants            = [for grant in each.value.allowed_grant_types : grant=="jwt_assertion" ? "urn:ietf:params:oauth:grant-type:jwt-bearer" :(grant == "saml2_assertion" ? "urn:ietf:params:oauth:grant-type:saml2-bearer":(grant == "resource_owner") ? "password": (grant == "device_code" ? "urn:ietf:params:oauth:grant-type:device_code" : grant))]
+    allowed_grants            = [for grant in each.value.allowed_grant_types != null ? each.value.allowed_grant_types : [] : grant=="jwt_assertion" ? "urn:ietf:params:oauth:grant-type:jwt-bearer" :(grant == "saml2_assertion" ? "urn:ietf:params:oauth:grant-type:saml2-bearer":(grant == "resource_owner") ? "password": (grant == "device_code" ? "urn:ietf:params:oauth:grant-type:device_code" : grant))]
     all_url_schemes_allowed   = each.value.allow_non_https_urls
     redirect_uris             = each.value.redirect_urls
     post_logout_redirect_uris = each.value.post_logout_redirect_urls
     logout_uri                = each.value.logout_url
-    client_type               = coalesce(each.value.client_type,"confidential")
+    client_type               = each.value.client_type
     allowed_operations        = compact(concat([coalesce(each.value.allow_introspect_operation,false) ? "introspect" : ""],[coalesce(each.value.allow_on_behalf_of_operation,false) ? "onBehalfOfUser" : ""]))
     dynamic "certificates" {
       for_each = each.value.app_client_certificate != null ? [each.value.app_client_certificate["alias"]] : []
@@ -171,6 +171,21 @@ resource "oci_identity_domains_app" "these" {
           requires_consent    = coalesce(scopes.requires_user_consent,false)
       }
     }
+    # SAML SSO Configuration
+   urnietfparamsscimschemasoracleidcsextensionsaml_service_provider_app {
+        ### App Links TBA
+      partner_provider_id     = each.value.entity_id
+      assertion_consumer_url  = each.value.assertion_consumer_url
+      name_id_format          = coalesce(each.value.name_id_format,"saml-emailaddress")
+      name_id_userstore_attribute = coalesce(each.value.name_id_value,"emails.primary.value")
+      sign_response_or_assertion  = coalesce(each.value.signed_sso,"Assertion")
+      logout_enabled          = coalesce(each.value.enable_single_logout,false)
+      logout_binding          = coalesce(each.value.logout_binding,"Redirect")
+      logout_request_url      = each.value.single_logout_url
+      logout_response_url     = each.value.logout_response_url
+         ### Encrypted Assertion TBA
+         ### Atrribute Configuration TBA
+    } 
 
   
     is_enterprise_app = each.value.type == "Enterprise" ? true : false

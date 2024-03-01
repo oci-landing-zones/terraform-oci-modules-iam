@@ -126,6 +126,25 @@ variable "identity_domain_applications_configuration" {
                   description                 = optional(string),
                   requires_user_consent       = optional(bool)
       }))),
+      # SAML SSO
+        ### App Links TBA
+      entity_id                           = optional(string),
+      assertion_consumer_url              = optional(string),
+      name_id_format                      = optional(string),
+      name_id_value                       = optional(string),
+      signing_certificate                 = optional(string),
+      signed_sso                          = optional(string),
+      include_signing_certificate         = optional(bool),
+      signature_hash_algorithm            = optional(string),
+      enable_single_logout                = optional(bool),
+      logout_binding                      = optional(string),
+      single_logout_url                   = optional(string),
+      logout_response_url                 = optional(string),
+         ### Encrypted Assertion TBA
+         ### Atrribute Configuration TBA
+
+
+
       #Web Tier Policy
       web_tier_policy_json                = optional(string)
 
