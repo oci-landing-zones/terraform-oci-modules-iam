@@ -5,13 +5,6 @@ data "oci_identity_domain" "apps_domain" {
     domain_id = each.value.identity_domain_id != null ? each.value.identity_domain_id : var.identity_domain_applications_configuration.default_identity_domain_id
 }
 
-/*data "oci_identity_domains_app_roles" "client_app_roles" {
-    for_each       = var.identity_domain_applications_configuration != null ? var.identity_domain_applications_configuration.applications : null
-      idcs_endpoint = contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_applications_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_applications_configuration.default_identity_domain_id].url : data.oci_identity_domain.apps_domain[each.key].url)
-
-      app_role_filter = "displayname eq \"${each.value.application_roles[0]}\" and app.value eq \"IDCSAppId\""  
-      #app_role_filter  = join(" or ",[for role in each.value.application_roles : "displayname eq ${role} and app.value eq \"IDCSAppId\""])
-}*/
 data "oci_identity_domains_app_roles" "client_app_roles" {
     for_each  =  tomap({
       for role in local.app_roles : role.role_name => role
@@ -28,6 +21,7 @@ locals {
   allowed_operations        = ["introspect","onBehalfOfUser"]
   encryption_algorithms     = ["A128CBC-HS256","A192CBC-HS384","A256CBC-HS512","A128GCM","A192GCM","A256GCM"]
   authorized_resources      = ["All","Specific"]
+  application_roles         = ["Me","Cloud Gate","Kerberos Administrator","DB Administrator","MFA Client","Authenticator Client","Posix Viewer","Me Password Validator","Identity Domain Administrator","Security Administrator","User Administrator","User Manager","Help Desk Administrator","Application Administrator","Audit Administrator","Change Password","Reset Password","Self Registration","Forgot Password","Verify Email"]
   app_roles                 = flatten([
       for app_key,app in var.identity_domain_applications_configuration.applications :[
           for role_key,role in app.application_roles : {
@@ -80,7 +74,7 @@ resource "oci_identity_domains_app" "these" {
         condition = each.value.allowed_grant_types != null ? length(setsubtract(each.value.allowed_grant_types,local.grant_types)) == 0 : true
         error_message = "VALIDATION FAILURE in application \"${each.key}\": invalid value for \"allowed_grant_types\" attribute. Valid values are ${join(",",local.grant_types)}."
       }
-      ## Check 2: Verify not null for redirec url.
+      ## Check 2: Verify not null for redirect url.
       precondition {
         condition = each.value.redirect_urls == null ? !(contains(local.grant_types, "implicit")||contains(local.grant_types, "authorization_code"))  : true
         error_message = "VALIDATION FAILURE in application \"${each.key}\": invalid value for \"redirect_urls\" attribute. A valid value must be provided if \"allowed_grant_types\" is \"implicit\" or \"authorization_code\""
@@ -104,6 +98,16 @@ resource "oci_identity_domains_app" "these" {
       precondition {
         condition = each.value.id_token_encryption_algorithm != null ? contains(local.encryption_algorithms,each.value.id_token_encryption_algorithm) : true
         error_message = "VALIDATION FAILURE in application \"${each.key}\": invalid value for \"authorized_resources\" attribute. Valid values are ${join(",",local.authorized_resources)}."
+      }
+      # Check 7: Verify primary audience is provided for a Resource Server app.
+      precondition {
+        condition = coalesce(each.value.configure_as_oauth_resource_server,false) ? each.value.primary_audience != null : true
+        error_message = "VALIDATION FAILURE in application \"${each.key}\": invalid value for \"primary_audience\" attribute. Provide a Primary Audience when configuring OAuth Resource Server."
+      }
+      # Check 8: Verfiy valid Application Roles.
+      precondition {
+        condition = each.value.application_roles !=null ? contains([for role in each.value.application_roles: (contains(local.application_roles,role) ? true : false)],false)? false : true : true
+        error_message = "VALIDATION FAILURE in application \"${each.key}\": invalid value for \"application_roles\" attribute. Valid values are ${join(",",local.application_roles)}."
       }
 
 
@@ -129,7 +133,7 @@ resource "oci_identity_domains_app" "these" {
     allow_access_control      = each.value.enforce_grants_as_authorization
     
     #OAUTH Configuration
-    is_oauth_client           = each.value.configure_as_oauth_client
+    is_oauth_client           = coalesce(each.value.configure_as_oauth_client,false)
     allowed_grants            = [for grant in each.value.allowed_grant_types : grant=="jwt_assertion" ? "urn:ietf:params:oauth:grant-type:jwt-bearer" :(grant == "saml2_assertion" ? "urn:ietf:params:oauth:grant-type:saml2-bearer":(grant == "resource_owner") ? "password": (grant == "device_code" ? "urn:ietf:params:oauth:grant-type:device_code" : grant))]
     all_url_schemes_allowed   = each.value.allow_non_https_urls
     redirect_uris             = each.value.redirect_urls
@@ -148,10 +152,26 @@ resource "oci_identity_domains_app" "these" {
     trust_scope               = each.value.authorized_resources != null ? (each.value.authorized_resources=="All" ? "Account" : "Explicit") : "Explicit"
     dynamic allowed_scopes {
       for_each = each.value.resources != null ? each.value.resources : []
-        content {
-            fqs = allowed_scopes.value
+      content {
+          fqs                 = allowed_scopes.value
         }
     }
+    #Resource Server Configuration
+    is_oauth_resource         = coalesce(each.value.configure_as_oauth_resource_server,false)
+    access_token_expiry       = coalesce(each.value.access_token_expiration, 3600)
+    refresh_token_expiry      = coalesce(each.value.allow_token_refresh,false) ? coalesce(each.value.refresh_token_expiration, 604800) : null
+    audience                  = each.value.primary_audience
+    secondary_audiences       = each.value.secondary_audiences
+    dynamic scopes {
+      for_each = each.value.scopes != null ? each.value.scopes : {}
+      content {
+          value               = scopes.value
+          display_name        = scopes.display_name
+          description         = scopes.description
+          requires_consent    = coalesce(scopes.requires_user_consent,false)
+      }
+    }
+
   
     is_enterprise_app = each.value.type == "Enterprise" ? true : false
     #is_mobile_target = each.value.type == "Mobile" ? true : false
