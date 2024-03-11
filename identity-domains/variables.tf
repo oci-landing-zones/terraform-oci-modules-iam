@@ -100,17 +100,17 @@ variable "identity_domain_applications_configuration" {
       redirect_urls                       = optional(list(string)),
       post_logout_redirect_urls           = optional(list(string)),
       logout_url                          = optional(string),
-      client_type                         = optional(string),    #trusted, confidential
+      client_type                         = optional(string),          # trusted, confidential
       app_client_certificate              = optional(object({
                     alias                 = string,
                     base64certificate     = string
       })),
       allow_introspect_operation          = optional(bool),
       allow_on_behalf_of_operation        = optional(bool),
-      id_token_encryption_algorithm       = optional(string),    # "A128CBC-HS256","A192CBC-HS384","A256CBC-HS512","A128GCM","A192GCM","A256GCM"
+      id_token_encryption_algorithm       = optional(string),          # "A128CBC-HS256","A192CBC-HS384","A256CBC-HS512","A128GCM","A192GCM","A256GCM"
       bypass_consent                      = optional(bool),
       client_ip_address                   = optional(list(string)),
-      authorized_resources                = optional(string),    # Same as trust_scope:  All(Account), Specific(Explicit)
+      authorized_resources                = optional(string),          # Same as trust_scope:  All(Account), Specific(Explicit)
       resources                           = optional(list(string)),    #resources listed must match scopes defined by an app
       application_roles                   = optional(list(string)),
       #Resource Server Configuration
@@ -143,12 +143,22 @@ variable "identity_domain_applications_configuration" {
          ### Encrypted Assertion TBA
          ### Atrribute Configuration TBA
 
-
-
       #Web Tier Policy
       web_tier_policy_json                = optional(string)
 
-
+      # Catalog Apps: Oracle Identity Domain (SCIM)
+      enable_provisioning                 = optional(bool)
+         #Connectivity
+      target_app_id                       = optional(string)
+      host_name                           = optional(string)
+      client_id                           = optional(string)
+      client_secret                       = optional(string)
+      scope                               = optional(string)
+      authentication_server_url           = optional(string)
+      authoritative_sync                  = optional(bool)
+      enable_synchronization              = optional(bool)    
+      admin_consent_granted               = optional(bool) 
+      
       defined_tags              = optional(map(string)),
       freeform_tags             = optional(map(string))
     }))
