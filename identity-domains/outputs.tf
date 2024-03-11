@@ -22,3 +22,4 @@ output "identity_domain_applications" {
 }
 
 
+
