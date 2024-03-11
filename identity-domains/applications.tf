@@ -230,9 +230,6 @@ resource "oci_identity_domains_app" "these" {
     #is_oauth_resource = each.value.type == "Confidential" ? true : false
 
     # Identity Domain Catalog App
- 
-    
-    
     dynamic urnietfparamsscimschemasoracleidcsextensionmanagedapp_app {
       for_each = each.value.type == "SCIM" ? ["yes"] : []
         content {
