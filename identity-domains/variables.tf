@@ -88,6 +88,7 @@ variable "identity_domain_identity_providers_configuration" {
 
       idp_metadata_file         = optional(string),
 
+      identity_domain_idp_id    = optional(string),
       idp_issuer_uri            = optional(string),
       sso_service_url           = optional(string),
       sso_service_binding       = optional(string),
@@ -100,6 +101,7 @@ variable "identity_domain_identity_providers_configuration" {
 
       signature_hash_algorithm  = optional(string),
       send_signing_certificate  = optional(bool),
+      add_to_default_idp_policy = bool,
       #defined_tags              = optional(map(string)),
       #freeform_tags             = optional(map(string))
     }))
@@ -120,6 +122,7 @@ variable "identity_domain_applications_configuration" {
       description                         = optional(string),
       type                                = string,    # SAML, Mobile (public), Confidential, Enterprise
       active                              = optional(bool),
+      application_group_ids               = optional(list(string)),
       #urls
       app_url                             = optional(string),
       custom_signin_url                   = optional(string),
@@ -166,6 +169,7 @@ variable "identity_domain_applications_configuration" {
       }))),
       # SAML SSO
         ### App Links TBA
+      identity_domain_sp_id               = optional(string),
       entity_id                           = optional(string),
       assertion_consumer_url              = optional(string),
       name_id_format                      = optional(string),

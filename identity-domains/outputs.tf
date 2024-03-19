@@ -31,3 +31,11 @@ output "identity_domain_identity_providers" {
 output "identity_domain_saml_metadata" {
   value = { for k,v in data.http.saml_metadata : k=> v.response_body }
 }
+
+output "test_output" {
+  #value = "${oci_identity_domains_identity_provider.these["IDP"].id}${jsonencode(local.current_saml_idps["IDP"])}"
+  #value = concat(split(",",trim(local.current_saml_idps["IDP"][0],"[]")),tolist(split(",",oci_identity_domains_identity_provider.these["IDP"].id)))
+  value = [trim(local.current_saml_idps["IDP"][0],"[]\"\\"),oci_identity_domains_identity_provider.these["IDP"].id]
+  # value = local.current_saml_idps
+
+}

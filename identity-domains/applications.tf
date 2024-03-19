@@ -5,6 +5,16 @@ data "oci_identity_domain" "apps_domain" {
     domain_id = each.value.identity_domain_id != null ? each.value.identity_domain_id : var.identity_domain_applications_configuration.default_identity_domain_id
 }
 
+data "oci_identity_domain" "service_provider_domain" {
+  for_each = local.target_sps
+    domain_id = each.value
+}
+
+data "http" "sp_signing_cert" {
+  for_each = local.target_sps
+      url = join("",[data.oci_identity_domain.service_provider_domain[each.key].url,local.sign_cert_uri])
+}
+
 #  data "oci_identity_domains_app" "target_app" {
 #   for_each = (var.identity_domain_applications_configuration != null ) ? (var.identity_domain_applications_configuration["applications"] != null ? var.identity_domain_applications_configuration["applications"] : {}) : {}
 #     app_id = each.value.
@@ -31,12 +41,22 @@ locals {
   app_roles                 = flatten([
       for app_key,app in var.identity_domain_applications_configuration != null ? var.identity_domain_applications_configuration.applications : {} :[
           for role_key,role in app.application_roles != null ? app.application_roles : [] : {
-            app_key = app_key
-            app     = app
-            role_key = role_key
+            app_key   = app_key
+            app       = app
+            role_key  = role_key
             role_name = role
           }
       ]])
+  app_groups                 = flatten([
+      for app_key,app in var.identity_domain_applications_configuration != null ? var.identity_domain_applications_configuration.applications : {} :[
+          for grp_key,group in app.application_group_ids != null ? app.application_group_ids : [] : {
+            app_key   = app_key
+            app       = app
+            group_key = grp_key
+            group_id  = group
+          }
+      ]])
+  sign_cert_uri = "/admin/v1/SigningCert/jwk"
   authn_server_op           =  { for k,v in var.identity_domain_applications_configuration != null ? var.identity_domain_applications_configuration.applications : {} :  k => 
                   "{\"op\": \"${v.authentication_server_url == null ? "remove" : "replace"}\",\"path\": \"urn:ietf:params:scim:schemas:oracle:idcs:extension:managedapp:App:bundleConfigurationProperties[name eq \\\"authenticationServerUrl\\\"].value\",\"value\": [\"${v.authentication_server_url == null ? "nothing" : v.authentication_server_url}\"]}"
                  if v.type == "SCIM"
@@ -44,6 +64,9 @@ locals {
   provisioning_op           =  { for k,v in var.identity_domain_applications_configuration != null ? var.identity_domain_applications_configuration.applications : {} :  k => 
                   "{\"op\": \"replace\",\"path\": \"urn:ietf:params:scim:schemas:oracle:idcs:extension:managedapp:App:bundleConfigurationProperties[name eq \\\"clientid\\\"].value\",\"value\": [\"${v.target_app_id != null ? oci_identity_domains_app.these[v.target_app_id].name : v.client_id}\"]},{\"op\": \"replace\",\"path\": \"urn:ietf:params:scim:schemas:oracle:idcs:extension:managedapp:App:bundleConfigurationProperties[name eq \\\"clientSecret\\\"].value\",\"value\": [\"${v.target_app_id != null ? oci_identity_domains_app.these[v.target_app_id].client_secret : v.client_secret}\"]},{\"op\": \"replace\",\"path\": \"urn:ietf:params:scim:schemas:oracle:idcs:extension:managedapp:App:bundleConfigurationProperties[name eq \\\"host\\\"].value\",\"value\": [\"${v.target_app_id != null ? trimsuffix(trimprefix(oci_identity_domains_app.these[v.target_app_id].idcs_endpoint,"https://"),":443") : v.host_name}\"]}"
                  if v.type == "SCIM"
+                 }
+  target_sps    =  { for k,v in var.identity_domain_applications_configuration != null ? var.identity_domain_applications_configuration.applications : {} :  k => v.identity_domain_sp_id
+                 if v.identity_domain_sp_id != null
                  }
   
   
@@ -81,6 +104,24 @@ resource "oci_identity_domains_grant" "app_roles_grant" {
       attribute_value = data.oci_identity_domains_app_roles.client_app_roles[each.value.role_name].app_roles.0.id
         
     }
+}
+
+resource "oci_identity_domains_grant" "app_groups_grant" {
+  for_each  =  tomap({
+      for group in local.app_groups : "${group.app_key}.${group.group_key}" => group
+  })
+
+    grant_mechanism = "ADMINISTRATOR_TO_GROUP"
+    grantee {
+          type = "Group"
+          value = oci_identity_domains_group.these[each.value.group_id].id
+    }
+    idcs_endpoint = contains(keys(oci_identity_domain.these),coalesce(each.value.app.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_applications_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_applications_configuration.default_identity_domain_id].url : data.oci_identity_domain.apps_domain[each.value.app_key].url)
+    schemas = ["urn:ietf:params:scim:schemas:oracle:idcs:Grant"]
+    app {
+        value = oci_identity_domains_app.these[each.value.app_key].id
+    }
+
 }
 
 resource "oci_identity_domains_app" "these" {
@@ -155,7 +196,7 @@ resource "oci_identity_domains_app" "these" {
     linking_callback_url      = each.value.custom_social_linking_callback_url
 
     active                    = coalesce(each.value.active,false)
-    
+   
     # Display Settings
     show_in_my_apps           = each.value.display_in_my_apps
     #   user_can_request_access???????
@@ -208,15 +249,20 @@ resource "oci_identity_domains_app" "these" {
         for_each = each.value.type == "SAML" ? ["yes"] : []
         ### App Links TBA
       content {     
-        partner_provider_id     = each.value.entity_id
-        assertion_consumer_url  = each.value.assertion_consumer_url
+        #partner_provider_id     = each.value.identity_domain_sp_id == null ? each.value.entity_id : "${data.oci_identity_domain.service_provider_domain[each.key].url}/fed"
+        partner_provider_id     = each.value.identity_domain_sp_id == null ? each.value.entity_id : contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_sp_id,"None")) ? "${oci_identity_domain.these[each.value.identity_domain_sp_id].url}/fed" : "${data.oci_identity_domain.service_provider_domain[each.key].url}/fed"
+        #assertion_consumer_url  = each.value.identity_domain_sp_id == null ? each.value.assertion_consumer_url : "${data.oci_identity_domain.service_provider_domain[each.key].url}/fed/v1/sp/sso"
+        assertion_consumer_url  = each.value.identity_domain_sp_id == null ? each.value.assertion_consumer_url : contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_sp_id,"None")) ? "${oci_identity_domain.these[each.value.identity_domain_sp_id].url}/fed/v1/sp/sso" : "${data.oci_identity_domain.service_provider_domain[each.key].url}/fed/v1/sp/sso"
+        signing_certificate     = each.value.identity_domain_sp_id == null ? each.value.signing_certificate : jsondecode(data.http.sp_signing_cert[each.key].response_body).keys[0].x5c[0] 
         name_id_format          = coalesce(each.value.name_id_format,"saml-emailaddress")
         name_id_userstore_attribute = coalesce(each.value.name_id_value,"emails.primary.value")
         sign_response_or_assertion  = coalesce(each.value.signed_sso,"Assertion")
         logout_enabled          = coalesce(each.value.enable_single_logout,false)
         logout_binding          = coalesce(each.value.logout_binding,"Redirect")
-        logout_request_url      = each.value.single_logout_url
-        logout_response_url     = each.value.logout_response_url
+        #logout_request_url      = each.value.identity_domain_sp_id == null ? each.value.single_logout_url : "${data.oci_identity_domain.service_provider_domain[each.key].url}/fed/v1/sp/slo"
+        logout_request_url      = each.value.identity_domain_sp_id == null ? each.value.single_logout_url : contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_sp_id,"None")) ? "${oci_identity_domain.these[each.value.identity_domain_sp_id].url}/fed/v1/sp/slo" : "${data.oci_identity_domain.service_provider_domain[each.key].url}/fed/v1/sp/slo"
+        #logout_response_url     = each.value.identity_domain_sp_id == null ? each.value.logout_response_url : "${data.oci_identity_domain.service_provider_domain[each.key].url}/fed/v1/sp/slo"
+        logout_response_url     = each.value.identity_domain_sp_id == null ? each.value.logout_response_url : contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_sp_id,"None")) ? "${oci_identity_domain.these[each.value.identity_domain_sp_id].url}/fed/v1/sp/slo" : "${data.oci_identity_domain.service_provider_domain[each.key].url}/fed/v1/sp/slo"
          ### Encrypted Assertion TBA
          ### Atrribute Configuration TBA
         }
@@ -273,4 +319,7 @@ resource "null_resource" "app_patch" {
     }
 
 }
+
+
+
 
