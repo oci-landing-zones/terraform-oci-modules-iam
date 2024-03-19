@@ -11,3 +11,6 @@ output "identity-domain-apps" {
   value       = module.vision_identity_domains.identity_domain_applications
 }
 
+output "test" {
+  value = module.vision_identity_domains.test_output
+}
