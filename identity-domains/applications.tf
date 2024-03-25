@@ -12,14 +12,12 @@ data "oci_identity_domain" "service_provider_domain" {
 
 data "http" "sp_signing_cert" {
   for_each = local.target_sps
-      url = join("",[data.oci_identity_domain.service_provider_domain[each.key].url,local.sign_cert_uri])
+     # url = join("",[data.oci_identity_domain.service_provider_domain[each.key].url,local.sign_cert_uri])
+     url = join("",contains(keys(oci_identity_domain.these),coalesce(each.value,"None")) ? [oci_identity_domain.these[each.value].url] : [data.oci_identity_domain.service_provider_domain[each.key].url],[local.sign_cert_uri])
+  depends_on = [
+      oci_identity_domains_setting.cert_public_access_setting
+  ]
 }
-
-#  data "oci_identity_domains_app" "target_app" {
-#   for_each = (var.identity_domain_applications_configuration != null ) ? (var.identity_domain_applications_configuration["applications"] != null ? var.identity_domain_applications_configuration["applications"] : {}) : {}
-#     app_id = each.value.
-#     idcs_endpoint = each.value.identity_domain_id != null ? each.value.identity_domain_id : var.identity_domain_applications_configuration.default_identity_domain_id
-# }
 
 data "oci_identity_domains_app_roles" "client_app_roles" {
     for_each  =  tomap({
@@ -29,6 +27,14 @@ data "oci_identity_domains_app_roles" "client_app_roles" {
 
       app_role_filter = "displayname eq \"${each.value.role_name}\" and app.value eq \"IDCSAppId\""  
       #app_role_filter  = join(" or ",[for role in each.value.application_roles : "displayname eq ${role} and app.value eq \"IDCSAppId\""])
+}
+
+data "oci_identity_domains_group" "granted_app_group" {
+  for_each = tomap({
+    for group in local.app_groups : group.app_key => group
+  })
+    idcs_endpoint = contains(keys(oci_identity_domain.these),coalesce(each.value.app.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.app.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_applications_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_applications_configuration.default_identity_domain_id].url : data.oci_identity_domain.apps_domain[each.value.app_key].url)
+    group_id = each.value.group_id
 }
 
 locals {
@@ -48,15 +54,16 @@ locals {
           }
       ]])
   app_groups                 = flatten([
-      for app_key,app in var.identity_domain_applications_configuration != null ? var.identity_domain_applications_configuration.applications : {} :[
+      for app_key,app in var.identity_domain_applications_configuration != null ? var.identity_domain_applications_configuration.applications : {} : [
           for grp_key,group in app.application_group_ids != null ? app.application_group_ids : [] : {
             app_key   = app_key
             app       = app
             group_key = grp_key
+            #group_id = (length(regexall("^ocid1.*$", group)) > 0 ?  var.compartments_dependency[group].id) : oci_identity_domains_group.these[group].id
             group_id  = group
           }
       ]])
-  sign_cert_uri = "/admin/v1/SigningCert/jwk"
+  sign_cert_uri             = "/admin/v1/SigningCert/jwk"
   authn_server_op           =  { for k,v in var.identity_domain_applications_configuration != null ? var.identity_domain_applications_configuration.applications : {} :  k => 
                   "{\"op\": \"${v.authentication_server_url == null ? "remove" : "replace"}\",\"path\": \"urn:ietf:params:scim:schemas:oracle:idcs:extension:managedapp:App:bundleConfigurationProperties[name eq \\\"authenticationServerUrl\\\"].value\",\"value\": [\"${v.authentication_server_url == null ? "nothing" : v.authentication_server_url}\"]}"
                  if v.type == "SCIM"
@@ -65,7 +72,7 @@ locals {
                   "{\"op\": \"replace\",\"path\": \"urn:ietf:params:scim:schemas:oracle:idcs:extension:managedapp:App:bundleConfigurationProperties[name eq \\\"clientid\\\"].value\",\"value\": [\"${v.target_app_id != null ? oci_identity_domains_app.these[v.target_app_id].name : v.client_id}\"]},{\"op\": \"replace\",\"path\": \"urn:ietf:params:scim:schemas:oracle:idcs:extension:managedapp:App:bundleConfigurationProperties[name eq \\\"clientSecret\\\"].value\",\"value\": [\"${v.target_app_id != null ? oci_identity_domains_app.these[v.target_app_id].client_secret : v.client_secret}\"]},{\"op\": \"replace\",\"path\": \"urn:ietf:params:scim:schemas:oracle:idcs:extension:managedapp:App:bundleConfigurationProperties[name eq \\\"host\\\"].value\",\"value\": [\"${v.target_app_id != null ? trimsuffix(trimprefix(oci_identity_domains_app.these[v.target_app_id].idcs_endpoint,"https://"),":443") : v.host_name}\"]}"
                  if v.type == "SCIM"
                  }
-  target_sps    =  { for k,v in var.identity_domain_applications_configuration != null ? var.identity_domain_applications_configuration.applications : {} :  k => v.identity_domain_sp_id
+  target_sps                =  { for k,v in var.identity_domain_applications_configuration != null ? var.identity_domain_applications_configuration.applications : {} :  k => v.identity_domain_sp_id
                  if v.identity_domain_sp_id != null
                  }
   
@@ -93,7 +100,7 @@ resource "oci_identity_domains_grant" "app_roles_grant" {
           type = "App"
           value = oci_identity_domains_app.these[each.value.app_key].id
     }
-    idcs_endpoint = contains(keys(oci_identity_domain.these),coalesce(each.value.app.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_applications_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_applications_configuration.default_identity_domain_id].url : data.oci_identity_domain.apps_domain[each.value.app_key].url)
+    idcs_endpoint = contains(keys(oci_identity_domain.these),coalesce(each.value.app.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.app.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_applications_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_applications_configuration.default_identity_domain_id].url : data.oci_identity_domain.apps_domain[each.value.app_key].url)
     schemas = ["urn:ietf:params:scim:schemas:oracle:idcs:Grant"]
     app {
         value = "IDCSAppId"
@@ -114,14 +121,27 @@ resource "oci_identity_domains_grant" "app_groups_grant" {
     grant_mechanism = "ADMINISTRATOR_TO_GROUP"
     grantee {
           type = "Group"
-          value = oci_identity_domains_group.these[each.value.group_id].id
+          value = length(regexall("^ocid1.*$", each.value.group_id)) > 0 ? data.oci_identity_domains_group.granted_app_group[each.value.group_id].id : oci_identity_domains_group.these[each.value.group_id].id
     }
-    idcs_endpoint = contains(keys(oci_identity_domain.these),coalesce(each.value.app.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_applications_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_applications_configuration.default_identity_domain_id].url : data.oci_identity_domain.apps_domain[each.value.app_key].url)
+    idcs_endpoint = contains(keys(oci_identity_domain.these),coalesce(each.value.app.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.app.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_applications_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_applications_configuration.default_identity_domain_id].url : data.oci_identity_domain.apps_domain[each.value.app_key].url)
     schemas = ["urn:ietf:params:scim:schemas:oracle:idcs:Grant"]
     app {
         value = oci_identity_domains_app.these[each.value.app_key].id
     }
 
+}
+
+resource "oci_identity_domains_setting" "cert_public_access_setting" {
+  for_each       = {
+    for k,v in var.identity_domains_configuration != null ? var.identity_domains_configuration.identity_domains : {} : k => v
+    if v.allow_signing_cert_public_access 
+  }
+    #Required
+    csr_access      = "none"
+    idcs_endpoint   = oci_identity_domain.these[each.key].url
+    schemas         = ["urn:ietf:params:scim:schemas:oracle:idcs:Settings"]
+    setting_id      = "Settings"
+    signing_cert_public_access = true
 }
 
 resource "oci_identity_domains_app" "these" {
@@ -173,8 +193,6 @@ resource "oci_identity_domains_app" "these" {
         error_message = "VALIDATION FAILURE in application \"${each.key}\": Admin consent has not been granted for provisioning. Grant it by setting \"admin_consent_granted\" after reading ."
       }
 
-
-
     } 
     idcs_endpoint             = contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_applications_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_applications_configuration.default_identity_domain_id].url : data.oci_identity_domain.apps_domain[each.key].url)
     display_name              = each.value.display_name
@@ -196,7 +214,6 @@ resource "oci_identity_domains_app" "these" {
     linking_callback_url      = each.value.custom_social_linking_callback_url
 
     active                    = coalesce(each.value.active,false)
-   
     # Display Settings
     show_in_my_apps           = each.value.display_in_my_apps
     #   user_can_request_access???????
@@ -305,6 +322,9 @@ resource "oci_identity_domains_app" "these" {
         }
 
     }
+  depends_on = [
+      oci_identity_domains_setting.cert_public_access_setting
+  ]
 }
 
 resource "null_resource" "app_patch" {

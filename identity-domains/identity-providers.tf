@@ -17,16 +17,23 @@ data "oci_identity_domain" "identity_provider_domain" {
 
 data "http" "idp_signing_cert" {
   for_each = local.target_idps
-      url = join("",[data.oci_identity_domain.identity_provider_domain[each.key].url,local.sign_cert_uri])
+     # url = join("",[data.oci_identity_domain.identity_provider_domain[each.key].url,local.sign_cert_uri])
+     url = join("",contains(keys(oci_identity_domain.these),coalesce(each.value,"None")) ? [oci_identity_domain.these[each.value].url] : [data.oci_identity_domain.identity_provider_domain[each.key].url],[local.sign_cert_uri])
+  depends_on = [
+      oci_identity_domains_setting.cert_public_access_setting
+  ]
 }
 
 data "oci_identity_domains_rule" "default_idp_rule" {
-  for_each = (var.identity_domain_identity_providers_configuration != null ) ? (var.identity_domain_identity_providers_configuration["identity_providers"] != null ? var.identity_domain_identity_providers_configuration["identity_providers"] : {}) : {}
+  for_each = (var.identity_domain_identity_providers_configuration != null ) ? var.identity_domain_identity_providers_configuration.identity_providers : {}
 
     idcs_endpoint = contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_identity_providers_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_identity_providers_configuration.default_identity_domain_id].url : data.oci_identity_domain.idp_domain[each.key].url)
     rule_id = "DefaultIDPRule"
 
     attributes = "return"
+  depends_on = [
+      oci_identity_domain.these
+  ]
 }
 
 locals {
@@ -97,24 +104,35 @@ resource "oci_identity_domains_identity_provider" "these" {
     #partner_provider_id                 = each.value.idp_metadata_file != null ? null : each.value.idp_issuer_uri
     partner_provider_id                 = each.value.idp_metadata_file != null ? null : each.value.identity_domain_idp_id == null ? each.value.idp_issuer_uri : contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_idp_id,"None")) ? "${oci_identity_domain.these[each.value.identity_domain_idp_id].url}/fed" : "${data.oci_identity_domain.identity_provider_domain[each.key].url}/fed"
     #idp_sso_url                         = each.value.idp_metadata_file != null ? null : each.value.sso_service_url
-    idp_sso_url                         = each.value.idp_metadata_file != null ? null : each.value.identity_domain_idp_id == null ? each.value.sso_service_url : contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_idp_id,"None")) ? "${oci_identity_domain.these[each.value.identity_domain_idp_id].url}/fed" : "${data.oci_identity_domain.identity_provider_domain[each.key].url}/fed/v1/idp/sso"
+    idp_sso_url                         = each.value.idp_metadata_file != null ? null : each.value.identity_domain_idp_id == null ? each.value.sso_service_url : contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_idp_id,"None")) ? "${oci_identity_domain.these[each.value.identity_domain_idp_id].url}/fed/v1/idp/sso" : "${data.oci_identity_domain.identity_provider_domain[each.key].url}/fed/v1/idp/sso"
     authn_request_binding               = each.value.idp_metadata_file != null ? null : each.value.sso_service_binding
     #signing_certificate                 = each.value.idp_metadata_file != null ? null : each.value.idp_signing_certificate 
     signing_certificate                 = each.value.idp_metadata_file != null ? null : each.value.identity_domain_idp_id == null ? each.value.idp_signing_certificate : jsondecode(data.http.idp_signing_cert[each.key].response_body).keys[0].x5c[0]  
     encryption_certificate              = each.value.idp_metadata_file != null ? null : each.value.idp_encryption_certificate
     logout_enabled                      = each.value.idp_metadata_file != null ? null : each.value.enable_global_logout
     #logout_request_url                  = each.value.idp_metadata_file != null ? null : each.value.idp_logout_request_url
-    logout_request_url                  = each.value.idp_metadata_file != null ? null : each.value.identity_domain_idp_id == null ? each.value.idp_logout_request_url : contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_idp_id,"None")) ? "${oci_identity_domain.these[each.value.identity_domain_idp_id].url}/fed" : "${data.oci_identity_domain.identity_provider_domain[each.key].url}/fed/v1/idp/slo"
+    logout_request_url                  = each.value.idp_metadata_file != null ? null : each.value.identity_domain_idp_id == null ? each.value.idp_logout_request_url : contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_idp_id,"None")) ? "${oci_identity_domain.these[each.value.identity_domain_idp_id].url}/fed/v1/idp/slo" : "${data.oci_identity_domain.identity_provider_domain[each.key].url}/fed/v1/idp/slo"
     #logout_response_url                 = each.value.idp_metadata_file != null ? null : each.value.idp_logout_response_url
-    logout_response_url                 = each.value.idp_metadata_file != null ? null : each.value.identity_domain_idp_id == null ? each.value.idp_logout_response_url : contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_idp_id,"None")) ? "${oci_identity_domain.these[each.value.identity_domain_idp_id].url}/fed" : "${data.oci_identity_domain.identity_provider_domain[each.key].url}/fed/v1/idp/slo"
+    logout_response_url                 = each.value.idp_metadata_file != null ? null : each.value.identity_domain_idp_id == null ? each.value.idp_logout_response_url : contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_idp_id,"None")) ? "${oci_identity_domain.these[each.value.identity_domain_idp_id].url}/fed/v1/idp/slo" : "${data.oci_identity_domain.identity_provider_domain[each.key].url}/fed/v1/idp/slo"
     logout_binding                      = each.value.idp_metadata_file != null ? null : each.value.idp_logout_binding
     
     signature_hash_algorithm            = each.value.signature_hash_algorithm
     include_signing_cert_in_signature   = each.value.send_signing_certificate
+    shown_on_login_page                 = each.value.add_to_default_idp_policy
    #OCI Tags not supported
 
-    provisioner "local-exec" {
-    command = "[ ${each.value.add_to_default_idp_policy} = false ] && (exit 0) || oci identity-domains rule patch --schemas '[\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"]' --endpoint ${oci_identity_domains_identity_provider.these[each.key].idcs_endpoint} --rule-id \"DefaultIDPRule\" --operations '[{\"op\": \"replace\",\"path\": \"return[name eq \\\"SamlIDPs\\\"].value\",\"value\": \"[${trim(local.current_saml_idps["IDP"][0],"[]\"\\")},${oci_identity_domains_identity_provider.these["IDP"].id}]\"}]'"
+  depends_on = [
+      oci_identity_domains_setting.cert_public_access_setting
+  ]
+
+  provisioner "local-exec" {
+    #command = "[ ${each.value.add_to_default_idp_policy} = false ] && (exit 0) || oci identity-domains rule patch --schemas '[\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"]' --endpoint ${oci_identity_domains_identity_provider.these[each.key].idcs_endpoint} --rule-id \"DefaultIDPRule\" --operations '[{\"op\": \"replace\",\"path\": \"return[name eq \\\"SamlIDPs\\\"].value\",\"value\": \"[${trim(local.current_saml_idps[each.key][0],"[]\"\\")},${oci_identity_domains_identity_provider.these[each.key].id}]\"}]'"
+    command = "[ ${each.value.add_to_default_idp_policy} = false ] && (exit 0) || oci identity-domains rule patch --schemas '[\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"]' --endpoint ${oci_identity_domains_identity_provider.these[each.key].idcs_endpoint} --rule-id \"DefaultIDPRule\" --operations '[{\"op\": \"add\",\"path\": \"return\",\"value\": [{\"name\":\"SamlIDPs\",\"value\":\"[${local.current_saml_idps[each.key]!=[]?trim(local.current_saml_idps[each.key][0],"[]\"\\"):"\"\""}\\\"${oci_identity_domains_identity_provider.these[each.key].id}\\\"]\"}]}]'"
+ 
+    #command = "[ ${each.value.add_to_default_idp_policy} = false ] && (exit 0) || oci identity-domains rule patch --schemas '[\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"]' --endpoint ${oci_identity_domains_identity_provider.these[each.key].idcs_endpoint} --rule-id \"DefaultIDPRule\" --operations '[{\"op\": \"add\",\"path\": \"return\",\"value\": \"[{\"name\": \"SamlIDPs\",\"value\":\"[${oci_identity_domains_identity_provider.these[each.key].id}]}]\"}]'"
+    
+    #command = "[ ${each.value.add_to_default_idp_policy} = false ] && (exit 0) || oci identity-domains rule patch --schemas '[\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"]' --endpoint ${oci_identity_domains_identity_provider.these[each.key].idcs_endpoint} --rule-id \"DefaultIDPRule\" --operations '[{\"op\": \"replace\",\"path\": \"return[name eq \\\"SamlIDPs\\\"].value\",\"value\": \"[${oci_identity_domains_identity_provider.these[each.key].id}]\"}]'"
+
     on_failure = fail
-    }
+  }
 }
