@@ -28,6 +28,7 @@ variable "identity_domains_configuration" {
       is_hidden_on_login        = optional(bool),
       is_notification_bypassed  = optional(bool),
       is_primary_email_required = optional(bool),
+      allow_signing_cert_public_access = bool,
       defined_tags              = optional(map(string)),
       freeform_tags             = optional(map(string))
     }))
