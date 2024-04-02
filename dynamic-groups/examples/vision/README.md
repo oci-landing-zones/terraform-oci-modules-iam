@@ -1,8 +1,8 @@
-# OCI Dynamic Groups Module Example - Vision Dynamic Groups
+# OCI Landing Zones Dynamic Groups Module Example - Vision Dynamic Groups
 
 ## Introduction
 
-This example shows how to deploy Identity and Access Management (IAM) dynamic groups in Oracle Cloud Infrastructure (OCI) for a hypothetical Vision entity. The dynamic groups are the same deployed by [CIS Landing Zone Quick Start](https://github.com/oracle-quickstart/oci-cis-landingzone-quickstart).
+This example shows how to deploy Identity and Access Management (IAM) dynamic groups in Oracle Cloud Infrastructure (OCI) for a hypothetical Vision entity. The dynamic groups are the same deployed by [OCI Base Landing Zone](https://github.com/oracle-oci-landing-zones/oci-base-landing-zone).
 
 It creates the following dynamic groups as shown in the picture below:
 
