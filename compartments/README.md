@@ -23,7 +23,7 @@ A fundamental principle in using a map of objects is the ability to quickly visu
     - **is_user_required** &ndash; (Optional) Whether the user must provide a tag value for resources created in the compartment.
   - **children**:  &ndash; (Optional) The map of sub-compartments. It has the same structure of the *compartments* map, except for the *parent_id* attribute.  
 
-Note it is possible to apply tag defaults to compartments. Tag defaults are tag values that are automatically applied or required from users on any resources eventually created in the compartments and in their sub-compartments. Use tag defaults to enforce organization wide governance practices in your cloud infrastructure, like automatically applying the cost center identifier to specific compartments. Before using a tag default, a defined tag must be defined in OCI. For configuring tags, you can use the [Tags module in OCI Landing Zones Governance repository](https://github.com/oracle-oci-landing-zones/terraform-oci-landing-zone-governance/tags/).
+Note it is possible to apply tag defaults to compartments. Tag defaults are tag values that are automatically applied or required from users on any resources eventually created in the compartments and in their sub-compartments. Use tag defaults to enforce organization wide governance practices in your cloud infrastructure, like automatically applying the cost center identifier to specific compartments. Before using a tag default, a defined tag must be defined in OCI. For configuring tags, you can use the [Tags module in OCI Landing Zones Governance repository](https://github.com/oci-landing-zones/terraform-oci-landing-zone-governance/tags/).
 
 Tag defaults are defined using *tag_defaults* attribute within each compartment in *compartments* attribute. You can have multiple tag defaults in a single compartment. Each tag default requires an immutable key (use an uppercase string as a convention), a tag id (*tag_id*), the default value (*default_value*) and whether or not the value is required from users when creating resources (*is_user_required*). If *is_user_required* is not provided or set to false, the default value is automatically applied upon resource creation.  
 
@@ -119,13 +119,13 @@ module "compartments" {
 For invoking the module remotely, set the module *source* attribute to the compartments module folder in this repository, as shown:
 ```
 module "compartments" {
-  source = "github.com/oracle-oci-landing-zones/terraform-oci-landing-zone-iam/compartments"
+  source = "github.com/oci-landing-zones/terraform-oci-landing-zone-iam/compartments"
   compartments_configuration = var.compartments_configuration
 }
 ```
 For referring to a specific module version, append *ref=\<version\>* to the *source* attribute value, as in:
 ```
-  source = "github.com/oracle-oci-landing-zones/terraform-oci-landing-zone-iam//compartments?ref=v0.1.0"
+  source = "github.com/oci-landing-zones/terraform-oci-landing-zone-iam//compartments?ref=v0.1.0"
 ```
 
 ## Related Documentation

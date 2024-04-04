@@ -64,7 +64,7 @@ module "identity_domains" {
 For invoking the module remotely, set the module *source* attribute to the groups module folder in this repository, as shown:
 ```
 module "identity_domains" {
-  source = "github.com/oracle-oci-landing-zones/terraform-oci-landing-zone-iam/identity-domains"
+  source = "github.com/oci-landing-zones/terraform-oci-landing-zone-iam/identity-domains"
   tenancy_id                                       = var.tenancy_id
   identity_domains_configuration                   = var.identity_domains_configuration
   identity_domain_groups_configuration             = var.identity_domain_groups_configuration
@@ -74,7 +74,7 @@ module "identity_domains" {
 ```
 For referring to a specific module version, append *ref=\<version\>* to the *source* attribute value, as in:
 ```
-  source = "github.com/oracle-oci-landing-zones/terraform-oci-landing-zone-iam//identity-domains?ref=v0.1.0"
+  source = "github.com/oci-landing-zones/terraform-oci-landing-zone-iam//identity-domains?ref=v0.1.0"
 ```
 
 ## <a name="functioning">Module Functioning</a>

@@ -57,14 +57,14 @@ module "dynamic-groups" {
 For invoking the module remotely, set the module *source* attribute to the dynamic-groups module folder in this repository, as shown:
 ```
 module "dynamic-groups" {
-  source = "github.com/oracle-oci-landing-zones/terraform-oci-landing-zone-iam/dynamic-groups"
+  source = "github.com/oci-landing-zones/terraform-oci-landing-zone-iam/dynamic-groups"
   tenancy_id     = var.tenancy_id
   dynamic_groups_configuration = var.dynamic_groups_configuration
 }
 ```
 For referring to a specific module version, append *ref=\<version\>* to the *source* attribute value, as in:
 ```
-  source = "github.com/oracle-oci-landing-zones/terraform-oci-landing-zone-iam//dynamic-groups?ref=v0.1.0"
+  source = "github.com/oci-landing-zones/terraform-oci-landing-zone-iam//dynamic-groups?ref=v0.1.0"
 ```
 
 ## Related Documentation

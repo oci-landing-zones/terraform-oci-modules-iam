@@ -1,6 +1,6 @@
 # OCI Landing Zones IAM Compartments Module Example - Vision compartments
 
-This example shows how to deploy Identity and Access Management (IAM) compartments in Oracle Cloud Infrastructure (OCI) for a hypothetical Vision entity. The sample topology is the same one deployed by [OCI Base Landing Zone](https://github.com/oracle-oci-landing-zones/oci-base-landing-zone). 
+This example shows how to deploy Identity and Access Management (IAM) compartments in Oracle Cloud Infrastructure (OCI) for a hypothetical Vision entity. The sample topology is the same one deployed by [OCI Base Landing Zone](https://github.com/oci-landing-zones/oci-base-landing-zone). 
 
 It creates the compartment topology as shown in the picture below:
 
