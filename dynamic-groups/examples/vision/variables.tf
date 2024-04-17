@@ -10,16 +10,6 @@ variable "private_key_password" {default = ""}
 
 variable "dynamic_groups_configuration" {
   description = "The dynamic groups."
-  type = object({
-    default_defined_tags = optional(map(string)),
-    default_freeform_tags = optional(map(string))
-    dynamic_groups = map(object({
-      name          = string,
-      description   = string,
-      matching_rule = string
-      defined_tags  = optional(map(string)),
-      freeform_tags = optional(map(string))
-    }))
-  })
+  type = any
   default = null
 }
