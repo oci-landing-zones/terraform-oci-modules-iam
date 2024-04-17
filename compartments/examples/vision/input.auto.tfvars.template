@@ -38,10 +38,6 @@ compartments_configuration = {
       name = "vision-top-cmp", 
       description = "Vision Enclosing compartment", 
       #parent_id = null,
-      freeform_tags = {
-        "cislz"="vision",
-        "cislz-cmp-type"="enclosing"
-      },
       tag_defaults = {
         COST-CENTER-TAG-DEFAULT = {
           tag_id = "<REPLACE-BY-THE-COST-CENTER-TAG-OCID>"
@@ -58,44 +54,29 @@ compartments_configuration = {
         NETWORK-CMP = { 
           name = "vision-network-cmp", 
           description = "Vision Network compartment", 
-          freeform_tags = {
-            "cislz"="vision",
-            "cislz-cmp-type"="network"
-          }
         },
         SECURITY-CMP = { 
           name = "vision-security-cmp", 
           description = "Vision Security compartment", 
-          freeform_tags = {
-            "cislz"="vision",
-            "cislz-cmp-type"="security"
-          }
         },
         APP-CMP = { 
           name = "vision-application-cmp", 
           description = "Vision Application compartment", 
-          freeform_tags = {
-            "cislz"="vision",
-            "cislz-cmp-type"="application"
-          }
         },
         DB-CMP = { 
           name = "vision-database-cmp", 
           description = "Vision Database compartment", 
-          freeform_tags = {
-            "cislz"="vision",
-            "cislz-cmp-type"="database"
-          }
         },
         EXACS-CMP = { 
           name = "vision-exainfra-cmp", 
           description = "Vision Exadata Cloud Service compartment",  
-          freeform_tags = {
-            "cislz"="vision",
-            "cislz-cmp-type"="exainfra"
-          }
         } 
       }
     }
   }
 }  
+
+# automation_config = {
+#  bucket_name      : "<REPLACE-BY-THE-BUCKET-NAME>"
+#  output_file_name : "vision-compartments.json"
+# }

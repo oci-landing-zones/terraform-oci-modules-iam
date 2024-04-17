@@ -10,16 +10,6 @@ variable "private_key_password" {default = ""}
 
 variable "groups_configuration" {
   description = "The groups configuration."
-  type = object({
-    default_defined_tags  = optional(map(string)),
-    default_freeform_tags = optional(map(string))
-    groups = map(object({
-      name          = string,
-      description   = string,
-      members       = optional(list(string)),
-      defined_tags  = optional(map(string)),
-      freeform_tags = optional(map(string))
-    }))
-  })
+  type = any
   default = null
 }
