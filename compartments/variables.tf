@@ -100,13 +100,17 @@ variable module_name {
 }
 
 variable tags_dependency {
-  description = "A map of objects containing the externally managed tags this module may depend on. All map objects must have the same type and must contain at least an 'id' attribute (representing the tag OCID) of string type." 
-  type = map(any)
+  description = "A map of objects containing the externally managed tags this module may depend on. All map objects must have the same type and must contain at least an 'id' attribute (representing the tag OCID) of string type. See 'External Dependencies' section in README.md for details." 
+  type = map(object({
+    id = string
+  }))
   default = null
 }
 
-variable compartments_dependency {
-  description = "A map of objects containing the externally managed compartments this module may depend on. All map objects must have the same type and must contain at least an 'id' attribute (representing the compartment OCID) of string type." 
-  type = map(any)
+variable "compartments_dependency" {
+  description = "A map of objects containing the externally managed compartments this module may depend on. All map objects must have the same type and must contain an 'id' attribute of string type set with the compartment OCID. See 'External Dependencies' section in README.md for details."
+  type = map(object({
+    id = string
+  }))
   default = null
 }
