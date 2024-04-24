@@ -28,6 +28,7 @@ variable "identity_domain_identity_providers_configuration" {
 
       idp_metadata_file         = optional(string),
 
+      identity_domain_idp_id    = optional(string),
       idp_issuer_uri            = optional(string),
       sso_service_url           = optional(string),
       sso_service_binding       = optional(string),
@@ -40,6 +41,7 @@ variable "identity_domain_identity_providers_configuration" {
 
       signature_hash_algorithm  = optional(string),
       send_signing_certificate  = optional(bool),
+      add_to_default_idp_policy = bool,
       #defined_tags              = optional(map(string)),
       #freeform_tags             = optional(map(string))
     }))
