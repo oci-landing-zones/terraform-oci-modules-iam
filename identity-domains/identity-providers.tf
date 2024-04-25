@@ -56,11 +56,11 @@ locals {
 resource "oci_identity_domains_identity_provider" "these" {
   for_each       = var.identity_domain_identity_providers_configuration != null ? var.identity_domain_identity_providers_configuration.identity_providers : {}
     lifecycle {
-      ## Check 1: Valid Name ID format.
-      precondition {
-        condition = each.value.name_id_format != null ? contains(local.nameid_formats, each.value.name_id_format) : true
-        error_message = "VALIDATION FAILURE in identity provider \"${each.key}\": invalid value for \"name_id_format\" attribute. Valid values are ${join(",",local.nameid_formats)}."
-      }
+      # ## Check 1: Valid Name ID format.
+      # precondition {
+      #   condition = each.value.name_id_format != null ? contains(local.nameid_formats, each.value.name_id_format) : true
+      #   error_message = "VALIDATION FAILURE in identity provider \"${each.key}\": invalid value for \"name_id_format\" attribute. Valid values are ${join(",",local.nameid_formats)}."
+      # }
       ## Check 2: Valid User Mapping method.
       precondition {
         condition = each.value.user_mapping_method != null ? contains(local.user_mapping_methods, each.value.user_mapping_method) : true
