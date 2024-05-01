@@ -42,6 +42,8 @@ locals {
   application_types         = ["SAML", "Mobile", "Confidential", "Enterprise","SCIM"]
   allowed_operations        = ["introspect","onBehalfOfUser"]
   encryption_algorithms     = ["A128CBC-HS256","A192CBC-HS384","A256CBC-HS512","A128GCM","A192GCM","A256GCM"]
+  assertion_encryption_algorithms = ["AES-128","AES-192","AES-256","AES-128-CGM","AES-256-GCM","3DES"]
+  assertion_key_encryption_algorithms = ["RSA-V1.5", "RSA-OAEP"]
   authorized_resources      = ["All","Specific"]
   application_roles         = ["Me","Cloud Gate","Kerberos Administrator","DB Administrator","MFA Client","Authenticator Client","Posix Viewer","Me Password Validator","Identity Domain Administrator","Security Administrator","User Administrator","User Manager","Help Desk Administrator","Application Administrator","Audit Administrator","Change Password","Reset Password","Self Registration","Forgot Password","Verify Email"]
   app_roles                 = flatten([
@@ -74,6 +76,14 @@ locals {
                  }
   target_sps                =  { for k,v in var.identity_domain_applications_configuration != null ? var.identity_domain_applications_configuration.applications : {} :  k => v.identity_domain_sp_id
                  if v.identity_domain_sp_id != null
+                 }
+  # saml_attributemapping_op           =  { for k,v in var.identity_domain_applications_configuration != null ? var.identity_domain_applications_configuration.applications : {} :  k => 
+  #                 "{\"op\": \"replace\",\"path\": \"attributeMappings\",\"value\": [{\"managedObjectAttributeName\":\"ATTR1\",\"samlFormat\":\"Basic\",\"idcsAttributeName\":\"username\"},{\"managedObjectAttributeName\":\"ATTR2\",\"samlFormat\":\"Basic\",\"idcsAttributeName\":\"name.givenName\"},]}]}"
+  #                if v.type == "SAML" && v.attribute_configuration != null
+  #                }
+  saml_attributemapping_op  =  { for k,v in var.identity_domain_applications_configuration != null ? var.identity_domain_applications_configuration.applications : {} :  k => join("",[for attrs in v.attribute_configuration : "{\"managedObjectAttributeName\": \"${attrs.assertion_attribute}\",\"samlFormat\": \"${attrs.format}\",\"idcsAttributeName\": \"${attrs.identity_domain_attribute}\"},"])
+                
+                 if v.type == "SAML" && v.attribute_configuration != null
                  }
   
   
@@ -172,25 +182,30 @@ resource "oci_identity_domains_app" "these" {
         condition = each.value.id_token_encryption_algorithm != null ? contains(local.encryption_algorithms,each.value.id_token_encryption_algorithm) : true
         error_message = "VALIDATION FAILURE in application \"${each.key}\": invalid value for \"id_token_encryption_algorithm\" attribute. Valid values are ${join(",",local.encryption_algorithms)}."
       }
-      # Check 6: Verify id token encryption algorithm value.
-      precondition {
-        condition = each.value.id_token_encryption_algorithm != null ? contains(local.encryption_algorithms,each.value.id_token_encryption_algorithm) : true
-        error_message = "VALIDATION FAILURE in application \"${each.key}\": invalid value for \"authorized_resources\" attribute. Valid values are ${join(",",local.authorized_resources)}."
-      }
-      # Check 7: Verify primary audience is provided for a Resource Server app.
+      # Check 8: Verify primary audience is provided for a Resource Server app.
       precondition {
         condition = coalesce(each.value.configure_as_oauth_resource_server,false) ? each.value.primary_audience != null : true
         error_message = "VALIDATION FAILURE in application \"${each.key}\": invalid value for \"primary_audience\" attribute. Provide a Primary Audience when configuring OAuth Resource Server."
       }
-      # Check 8: Verfiy valid Application Roles.
+      # Check 7: Verfiy valid Application Roles.
       precondition {
         condition = each.value.application_roles !=null ? contains([for role in each.value.application_roles: (contains(local.application_roles,role) ? true : false)],false)? false : true : true
         error_message = "VALIDATION FAILURE in application \"${each.key}\": invalid value for \"application_roles\" attribute. Valid values are ${join(",",local.application_roles)}."
       }
-      # Check 9: Verfiy if admin consent has been granted.
+      # Check 8: Verfiy if admin consent has been granted.
       precondition {
         condition = each.value.admin_consent_granted ==null && each.value.type == "SCIM" && each.value.enable_provisioning == true ? false : true
         error_message = "VALIDATION FAILURE in application \"${each.key}\": Admin consent has not been granted for provisioning. Grant it by setting \"admin_consent_granted\" after reading ."
+      }
+      # Check 9: Verify assertion encryption algorithm value.
+      precondition {
+        condition = each.value.encryption_algorithm != null ? contains(local.assertion_encryption_algorithms,each.value.encryption_algorithm) : true
+        error_message = "VALIDATION FAILURE in application \"${each.key}\": invalid value for \"encryption_algorithm\" attribute. Valid values are ${join(",",local.assertion_encryption_algorithms)}."
+      }
+      # Check 10: Verify assertion key encryption algorithm value.
+      precondition {
+        condition = each.value.key_encryption_algorithm != null ? contains(local.assertion_key_encryption_algorithms,each.value.key_encryption_algorithm) : true
+        error_message = "VALIDATION FAILURE in application \"${each.key}\": invalid value for \"key_encryption_algorithm\" attribute. Valid values are ${join(",",local.assertion_key_encryption_algorithms)}."
       }
 
     } 
@@ -264,26 +279,28 @@ resource "oci_identity_domains_app" "these" {
 
     dynamic urnietfparamsscimschemasoracleidcsextensionsaml_service_provider_app {
         for_each = each.value.type == "SAML" ? ["yes"] : []
-        ### App Links TBA
+        ### App Links TBA - This needs a new apps resource to create the alias apps and then referred to them with alias_apps parameter.  Normally alias apps are created using /admin/v1/Bulk.
       content {     
-        #partner_provider_id     = each.value.identity_domain_sp_id == null ? each.value.entity_id : "${data.oci_identity_domain.service_provider_domain[each.key].url}/fed"
-        partner_provider_id     = each.value.identity_domain_sp_id == null ? each.value.entity_id : contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_sp_id,"None")) ? "${oci_identity_domain.these[each.value.identity_domain_sp_id].url}/fed" : "${data.oci_identity_domain.service_provider_domain[each.key].url}/fed"
-        #assertion_consumer_url  = each.value.identity_domain_sp_id == null ? each.value.assertion_consumer_url : "${data.oci_identity_domain.service_provider_domain[each.key].url}/fed/v1/sp/sso"
-        assertion_consumer_url  = each.value.identity_domain_sp_id == null ? each.value.assertion_consumer_url : contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_sp_id,"None")) ? "${oci_identity_domain.these[each.value.identity_domain_sp_id].url}/fed/v1/sp/sso" : "${data.oci_identity_domain.service_provider_domain[each.key].url}/fed/v1/sp/sso"
-        signing_certificate     = each.value.identity_domain_sp_id == null ? each.value.signing_certificate : jsondecode(data.http.sp_signing_cert[each.key].response_body).keys[0].x5c[0] 
-        name_id_format          = coalesce(each.value.name_id_format,"saml-emailaddress")
+        partner_provider_id         = each.value.identity_domain_sp_id == null ? each.value.entity_id : contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_sp_id,"None")) ? "${oci_identity_domain.these[each.value.identity_domain_sp_id].url}/fed" : "${data.oci_identity_domain.service_provider_domain[each.key].url}/fed"
+        assertion_consumer_url      = each.value.identity_domain_sp_id == null ? each.value.assertion_consumer_url : contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_sp_id,"None")) ? "${oci_identity_domain.these[each.value.identity_domain_sp_id].url}/fed/v1/sp/sso" : "${data.oci_identity_domain.service_provider_domain[each.key].url}/fed/v1/sp/sso"
+        signing_certificate         = each.value.identity_domain_sp_id == null ? each.value.signing_certificate : jsondecode(data.http.sp_signing_cert[each.key].response_body).keys[0].x5c[0] 
+        name_id_format              = coalesce(each.value.name_id_format,"saml-emailaddress")
         name_id_userstore_attribute = coalesce(each.value.name_id_value,"emails.primary.value")
         sign_response_or_assertion  = coalesce(each.value.signed_sso,"Assertion")
-        logout_enabled          = coalesce(each.value.enable_single_logout,false)
-        logout_binding          = coalesce(each.value.logout_binding,"Redirect")
-        #logout_request_url      = each.value.identity_domain_sp_id == null ? each.value.single_logout_url : "${data.oci_identity_domain.service_provider_domain[each.key].url}/fed/v1/sp/slo"
-        logout_request_url      = each.value.identity_domain_sp_id == null ? each.value.single_logout_url : contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_sp_id,"None")) ? "${oci_identity_domain.these[each.value.identity_domain_sp_id].url}/fed/v1/sp/slo" : "${data.oci_identity_domain.service_provider_domain[each.key].url}/fed/v1/sp/slo"
-        #logout_response_url     = each.value.identity_domain_sp_id == null ? each.value.logout_response_url : "${data.oci_identity_domain.service_provider_domain[each.key].url}/fed/v1/sp/slo"
-        logout_response_url     = each.value.identity_domain_sp_id == null ? each.value.logout_response_url : contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_sp_id,"None")) ? "${oci_identity_domain.these[each.value.identity_domain_sp_id].url}/fed/v1/sp/slo" : "${data.oci_identity_domain.service_provider_domain[each.key].url}/fed/v1/sp/slo"
-         ### Encrypted Assertion TBA
-         ### Atrribute Configuration TBA
-        }
+        logout_enabled              = coalesce(each.value.enable_single_logout,false)
+        logout_binding              = coalesce(each.value.logout_binding,"Redirect")
+        logout_request_url          = each.value.identity_domain_sp_id == null ? each.value.single_logout_url : contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_sp_id,"None")) ? "${oci_identity_domain.these[each.value.identity_domain_sp_id].url}/fed/v1/sp/slo" : "${data.oci_identity_domain.service_provider_domain[each.key].url}/fed/v1/sp/slo"
+        logout_response_url         = each.value.identity_domain_sp_id == null ? each.value.logout_response_url : contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_sp_id,"None")) ? "${oci_identity_domain.these[each.value.identity_domain_sp_id].url}/fed/v1/sp/slo" : "${data.oci_identity_domain.service_provider_domain[each.key].url}/fed/v1/sp/slo"
+         ### Encrypted Assertion
+        encrypt_assertion           = coalesce(each.value.require_encrypted_assertion,false)
+        encryption_certificate      = each.value.encryption_certificate
+        encryption_algorithm        = coalesce(each.value.encryption_algorithm,"AES-128")
+        key_encryption_algorithm    = coalesce(each.value.key_encryption_algorithm,"RSA-v1.5")
+         ### Atrribute Configuration TBA - Attribute mappings are patched using /admin/v1/MappedAttributes which is missing in OCI SDK, a workaround is to use a provisioner with oci raw-request to patch the resource
+      }
     }
+        
+    
 
   
     is_enterprise_app = each.value.type == "Enterprise" ? true : false
@@ -327,7 +344,7 @@ resource "oci_identity_domains_app" "these" {
   ]
 }
 
-resource "null_resource" "app_patch" {
+resource "null_resource" "app_patch" {    #Patches SCIM app with provisioning parameers
   for_each       = { for k,v  in var.identity_domain_applications_configuration != null ? var.identity_domain_applications_configuration.applications : {} : k=>v if v.type == "SCIM"}
     provisioner "local-exec" {
       #command = "oci identity-domains app patch --schemas '[\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"]' --endpoint ${self.idcs_endpoint} --app-id ${self.id} --operations '[{\"op\": \"replace\",\"path\": \"urn:ietf:params:scim:schemas:oracle:idcs:extension:managedapp:App:bundleConfigurationProperties[name eq \\\"authenticationServerUrl\\\"].value\",\"value\": [\"${each.value.authentication_server_url}\"]},{\"op\": \"replace\",\"path\": \"urn:ietf:params:scim:schemas:oracle:idcs:extension:managedapp:App:bundleConfigurationProperties[name eq \\\"clientid\\\"].value\",\"value\": [\"${each.value.client_id}\"]},{\"op\": \"replace\",\"path\": \"urn:ietf:params:scim:schemas:oracle:idcs:extension:managedapp:App:bundleConfigurationProperties[name eq \\\"clientSecret\\\"].value\",\"value\": [\"${each.value.client_secret}\"]},{\"op\": \"replace\",\"path\": \"urn:ietf:params:scim:schemas:oracle:idcs:extension:managedapp:App:bundleConfigurationProperties[name eq \\\"host\\\"].value\",\"value\": [\"${each.value.host_name}\"]}]'"
@@ -337,8 +354,19 @@ resource "null_resource" "app_patch" {
 
       on_failure = fail
     }
-
 }
+
+resource "null_resource" "MappedAttributes_patch" {    #Patches MappedAttributes for SSO Attribute Configuration
+  for_each       = { for k,v  in var.identity_domain_applications_configuration != null ? var.identity_domain_applications_configuration.applications : {} : k=>v if v.type == "SAML" && v.attribute_configuration!=null}
+    provisioner "local-exec" {
+      #command = "[ ${try(each.value.attribute_configuration==null?false:true,true)} = false ] && (exit 0) || oci raw-request --target-uri  ${oci_identity_domains_app.these[each.key].idcs_endpoint}/admin/v1/MappedAttributes/${oci_identity_domains_app.these[each.key].urnietfparamsscimschemasoracleidcsextensionsaml_service_provider_app[0].outbound_assertion_attributes[0].value} --http-method PATCH --request-body file://mappedattrs.json "
+      command = "[ ${try(each.value.attribute_configuration==null?false:true,true)} = false ] && (exit 0) || oci raw-request --target-uri  ${oci_identity_domains_app.these[each.key].idcs_endpoint}/admin/v1/MappedAttributes/${oci_identity_domains_app.these[each.key].urnietfparamsscimschemasoracleidcsextensionsaml_service_provider_app[0].outbound_assertion_attributes[0].value} --http-method PATCH --request-body '{\"schemas\":[\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\"Operations\":[{\"op\": \"replace\",\"path\": \"attributeMappings\",\"value\":[${local.saml_attributemapping_op[each.key]}]}]}'"
+ 
+      on_failure = fail
+    }
+}
+
+
 
 
 

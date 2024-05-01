@@ -183,6 +183,17 @@ variable "identity_domain_applications_configuration" {
       logout_binding                      = optional(string),
       single_logout_url                   = optional(string),
       logout_response_url                 = optional(string),
+      require_encrypted_assertion         = optional(bool),
+      encryption_certificate              = optional(string),
+      encryption_algorithm                = optional(string),    #AES-128,AES-192,AES-256,AES-128-CGM,AES-256-CGM,3DES
+      key_encryption_algorithm            = optional(string),    #RSA-V1.5, RSA-OAEP
+      attribute_configuration             = optional(map(object({
+                                                assertion_attribute        = string,
+                                                identity_domain_attribute  = string,
+                                                format                     = optional(string)
+                                            }))),
+
+
          ### Encrypted Assertion TBA
          ### Atrribute Configuration TBA
 
