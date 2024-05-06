@@ -26,7 +26,9 @@ variable "identity_domains_configuration" {
       is_notification_bypassed  = optional(bool),
       is_primary_email_required = optional(bool),
       defined_tags              = optional(map(string)),
-      freeform_tags             = optional(map(string))
+      freeform_tags             = optional(map(string)),
+      enable_domain_replication = optional(bool),
+      replica_region            = optional(string)
     }))
   })
   default = null

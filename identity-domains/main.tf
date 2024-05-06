@@ -38,3 +38,22 @@ resource "oci_identity_domain" "these" {
     defined_tags   = each.value.defined_tags != null ? each.value.defined_tags : var.identity_domains_configuration.default_defined_tags != null ? var.identity_domains_configuration.default_defined_tags : null
     freeform_tags  = merge(local.cislz_module_tag, each.value.freeform_tags != null ? each.value.freeform_tags : var.identity_domains_configuration.default_freeform_tags != null ? var.identity_domains_configuration.default_freeform_tags : null)
 }
+
+resource "oci_identity_domain_replication_to_region" "these" {
+  for_each = { for k, v in var.identity_domains_configuration != null ? var.identity_domains_configuration.identity_domains : {} : k => v
+    if coalesce(v.enable_domain_replication, false)
+  }
+  domain_id      = oci_identity_domain.these[each.key].id
+  replica_region = each.value.replica_region
+
+  lifecycle {
+    precondition {
+      condition     = each.value.enable_domain_replication && each.value.replica_region != null && each.value.replica_region != ""
+      error_message = "replica_region must not be null when domain replication is enabled. The region must be a subscribed region and cannot be the same as the home region."
+    }
+    precondition {
+      condition     = each.value.replica_region != each.value.home_region
+      error_message = "replica_region must not be the same as the home region when domain replication is enabled."
+    }
+  }
+}
