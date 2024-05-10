@@ -93,6 +93,11 @@ variable "identity_domain_applications_configuration" {
                                                 identity_domain_attribute  = string,
                                                 format                     = optional(string)
                                             }))),
+      app_links                           = optional(map(object({
+                                                relay_state       = string,
+                                                application_icon  = optional(string),
+                                                visible           = optional(bool)
+                                           }))),
 
 
          ### Encrypted Assertion TBA
