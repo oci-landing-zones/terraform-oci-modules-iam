@@ -98,7 +98,12 @@ variable "identity_domain_applications_configuration" {
                                                 application_icon  = optional(string),
                                                 visible           = optional(bool)
                                            }))),
-
+      fusion_service_urls                 = optional(object({
+                                                crm_landing_page_url = optional(string),
+                                                scm_landing_page_url = optional(string),
+                                                hcm_landing_page_url = optional(string),
+                                                erp_landing_page_url = optional(string)
+                                           }))
 
          ### Encrypted Assertion TBA
          ### Atrribute Configuration TBA
@@ -118,6 +123,13 @@ variable "identity_domain_applications_configuration" {
       authoritative_sync                  = optional(bool)
       enable_synchronization              = optional(bool)    
       admin_consent_granted               = optional(bool) 
+      # Catalog Apps: Oracle Fusion Applications 13 (FusionApps)
+      fa_port                             = optional(string)
+      fa_admin_user                       = optional(string)
+      fa_admin_password                   = optional(string)
+      fa_ssl_enabled                      = optional(bool)
+      fa_override_custom_sync             = optional(bool)
+      fa_admin_roles                      = optional(list(string))
       
       defined_tags              = optional(map(string)),
       freeform_tags             = optional(map(string))
