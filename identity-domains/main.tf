@@ -7,12 +7,16 @@ data "oci_identity_tenancy" "this" {
   tenancy_id = var.tenancy_ocid
 }
 
-locals {
-  regions_map     = { for r in data.oci_identity_regions.these.regions : r.key => r.name } 
-  home_region_key = data.oci_identity_tenancy.this.home_region_key                         
+data "oci_identity_region_subscriptions" "this" {
+  tenancy_id = var.tenancy_ocid
 }
 
-
+locals {
+  regions_map     = { for r in data.oci_identity_regions.these.regions : r.key => r.name }
+  home_region_key = data.oci_identity_tenancy.this.home_region_key
+  subscribed_regions = [ for region in data.oci_identity_region_subscriptions.this.region_subscriptions : region.region_name ]
+  home_region_name = one([ for region in data.oci_identity_region_subscriptions.this.region_subscriptions : region.region_name if region.is_home_region ])
+}
 
 resource "oci_identity_domain" "these" {
   for_each       = var.identity_domains_configuration != null ? var.identity_domains_configuration.identity_domains : {}
@@ -41,19 +45,21 @@ resource "oci_identity_domain" "these" {
 
 resource "oci_identity_domain_replication_to_region" "these" {
   for_each = { for k, v in var.identity_domains_configuration != null ? var.identity_domains_configuration.identity_domains : {} : k => v
-    if coalesce(v.enable_domain_replication, false)
+    if v.replica_region != null  ## replicaRegion must not be empty if domain replication is activated
   }
+
   domain_id      = oci_identity_domain.these[each.key].id
   replica_region = each.value.replica_region
 
   lifecycle {
     precondition {
-      condition     = each.value.enable_domain_replication && each.value.replica_region != null && each.value.replica_region != ""
-      error_message = "replica_region must not be null when domain replication is enabled. The region must be a subscribed region and cannot be the same as the home region."
+      condition     = contains(local.subscribed_regions, each.value.replica_region)
+      error_message = "replica_region must be in region subscription"
     }
+
     precondition {
-      condition     = each.value.replica_region != each.value.home_region
-      error_message = "replica_region must not be the same as the home region when domain replication is enabled."
+      condition     = each.value.replica_region != local.home_region_name
+      error_message = "replica_region cannot be the same as home_region ${local.home_region_name}"
     }
   }
 }
