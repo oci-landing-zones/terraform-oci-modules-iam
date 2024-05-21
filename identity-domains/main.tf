@@ -7,12 +7,16 @@ data "oci_identity_tenancy" "this" {
   tenancy_id = var.tenancy_ocid
 }
 
-locals {
-  regions_map     = { for r in data.oci_identity_regions.these.regions : r.key => r.name } 
-  home_region_key = data.oci_identity_tenancy.this.home_region_key                         
+data "oci_identity_region_subscriptions" "this" {
+  tenancy_id = var.tenancy_ocid
 }
 
-
+locals {
+  regions_map     = { for r in data.oci_identity_regions.these.regions : r.key => r.name }
+  home_region_key = data.oci_identity_tenancy.this.home_region_key
+  subscribed_regions = [ for region in data.oci_identity_region_subscriptions.this.region_subscriptions : region.region_name ]
+  home_region_name = one([ for region in data.oci_identity_region_subscriptions.this.region_subscriptions : region.region_name if region.is_home_region ])
+}
 
 resource "oci_identity_domain" "these" {
   for_each       = var.identity_domains_configuration != null ? var.identity_domains_configuration.identity_domains : {}
@@ -37,4 +41,25 @@ resource "oci_identity_domain" "these" {
 
     defined_tags   = each.value.defined_tags != null ? each.value.defined_tags : var.identity_domains_configuration.default_defined_tags != null ? var.identity_domains_configuration.default_defined_tags : null
     freeform_tags  = merge(local.cislz_module_tag, each.value.freeform_tags != null ? each.value.freeform_tags : var.identity_domains_configuration.default_freeform_tags != null ? var.identity_domains_configuration.default_freeform_tags : null)
+}
+
+resource "oci_identity_domain_replication_to_region" "these" {
+  for_each = { for k, v in var.identity_domains_configuration != null ? var.identity_domains_configuration.identity_domains : {} : k => v
+    if v.replica_region != null  ## replicaRegion must not be empty if domain replication is activated
+  }
+
+  domain_id      = oci_identity_domain.these[each.key].id
+  replica_region = each.value.replica_region
+
+  lifecycle {
+    precondition {
+      condition     = contains(local.subscribed_regions, each.value.replica_region)
+      error_message = "replica_region must be in region subscription"
+    }
+
+    precondition {
+      condition     = each.value.replica_region != local.home_region_name
+      error_message = "replica_region cannot be the same as home_region ${local.home_region_name}"
+    }
+  }
 }

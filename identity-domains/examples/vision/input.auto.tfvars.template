@@ -49,7 +49,8 @@ identity_domains_configuration = {
         is_notification_bypassed    = false
         is_primary_email_required   = false
 
-    } 
+        replica_region = "<REPLACE-BY-REPLICA-REGION or null>" ## replicate to region if specified; otherwise, domain replication is disabled
+    }
     PROD-DOMAIN  : { 
         compartment_id  = "<REPLACE-BY-COMPARTMENT-OCID>"
         display_name    = "VISION_PROD_Identity_Domain"
@@ -66,11 +67,9 @@ identity_domains_configuration = {
         is_notification_bypassed    = false
         is_primary_email_required   = true
 
+        replica_region = "<REPLACE-BY-REPLICA-REGION or null>" ## replicate to region if specified; otherwise, domain replication is disabled
     }
-                                                                 
   }
-
-                                                                 
 }
 
 
