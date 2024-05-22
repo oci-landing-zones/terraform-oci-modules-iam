@@ -121,7 +121,7 @@ variable "identity_domain_applications_configuration" {
       name                                = string,
       display_name                        = string,
       description                         = optional(string),
-      type                                = string,    # SAML, Mobile (public), Confidential, Enterprise, SCIM, FusionApps
+      type                                = string,    # SAML, Mobile (public), Confidential, SCIM, FusionApps, GenericSCIM
       active                              = optional(bool),
       application_group_ids               = optional(list(string)),
       #urls
@@ -151,7 +151,7 @@ variable "identity_domain_applications_configuration" {
       allow_on_behalf_of_operation        = optional(bool),
       id_token_encryption_algorithm       = optional(string),          # "A128CBC-HS256","A192CBC-HS384","A256CBC-HS512","A128GCM","A192GCM","A256GCM"
       bypass_consent                      = optional(bool),
-      client_ip_address                   = optional(list(string)),
+      client_ip_address                   = optional(list(string)),    #TBA
       authorized_resources                = optional(string),          # Same as trust_scope:  All(Account), Specific(Explicit)
       resources                           = optional(list(string)),    #resources listed must match scopes defined by an app
       application_roles                   = optional(list(string)),
@@ -173,7 +173,7 @@ variable "identity_domain_applications_configuration" {
       identity_domain_sp_id               = optional(string),
       entity_id                           = optional(string),
       assertion_consumer_url              = optional(string),
-      name_id_format                      = optional(string),
+      name_id_format                      = optional(string),    # "saml-emailaddress", "saml-x509", "saml-kerberos", "saml-persistent", "saml-transient", "saml-unspecified", "saml-windowsnamequalifier","saml-none"
       name_id_value                       = optional(string),
       signing_certificate                 = optional(string),
       signed_sso                          = optional(string),
@@ -204,9 +204,6 @@ variable "identity_domain_applications_configuration" {
                                                 erp_landing_page_url = optional(string)
                                            }))
 
-
-         ### Encrypted Assertion TBA
-         ### Atrribute Configuration TBA
 
       #Web Tier Policy
       web_tier_policy_json                = optional(string)
