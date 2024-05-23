@@ -204,7 +204,7 @@ resource "oci_identity_domains_app" "these" {
       }
       ## Check 2: Verify not null for redirect url.
       precondition {
-        condition = each.value.redirect_urls == null && !contains(["SAML","SCIM","FusionApps","GenericSCIM"],each.value.type) ? !(contains(local.grant_types, "implicit")||contains(local.grant_types, "authorization_code"))  : true
+        condition = each.value.redirect_urls == null && !contains(["SAML","SCIM","FusionApps","GenericSCIM"],each.value.type) ? (contains(local.grant_types, "implicit")||contains(local.grant_types, "authorization_code"))  : true
         error_message = "VALIDATION FAILURE in application \"${each.key}\": invalid value for \"redirect_urls\" attribute. A valid value must be provided if \"allowed_grant_types\" is \"implicit\" or \"authorization_code\""
       }
       # Check 3: Verify application type value.
