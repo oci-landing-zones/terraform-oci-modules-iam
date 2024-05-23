@@ -274,7 +274,7 @@ Use *identity_domain_applications_configuration* attribute. It currently support
   - **host_name**: (Optional) Hostname of the application.  See [Known Issues](#issues) #2 for limitations.
   - **client_id**: (Optional) Client ID of the API application.  Used when Grant Type is client credentials.  See [Known Issues](#issues) #2 for limitations.
   - **client_secret**: (Optional) Client Secret of the API application.  Used when Grant Type is client credentials.  See [Known Issues](#issues) #2 for limitations.
-  - **scope**: (Optional) Scope of the application.  Default value:  "urn:opc:idm:**myscopes**" only for type: SCIM (Identity Domain Catalog Application).  See [Known Issues](#issues) #2 for limitations.
+  - **scope**: (Optional) Scope of the application. See [Known Issues](#issues) #2 for limitations.
   - **authentication_server_url**: (Optional) URL of the authentication server.  See [Known Issues](#issues) #2 for limitations.
   - **authoritative_sync**: (Optional) Flag controlling whether to automatically create and manage users based on the data from the authoritative application.  Default value: false.
   - **authoritative_sync**: (Optional) Flag controlling whether to enable synchronization for the applications.  Default value: false.
@@ -340,7 +340,7 @@ An optional feature, external dependencies are resources managed elsewhere that 
     oci iam domain delete --domain-id <identity domain OCID>
     ```
 
-2. The terraform oci provider is missing some IDCS API Endpoints that limit the number of attributes that can be configured for an Identity Domain Application.  To workaround this limitation, a terraform local-exec provisioner is used to patch the respective application using OCI CLI commands.  This requires to setup OCI CLI in the same environment where terraform is executed.  This workaround is needed to configure the following Application attributes:
+2. The terraform oci provider is missing some IDCS API Endpoints that limit the number of attributes that can be configured for an Identity Domain Application with Terraform.  To workaround this limitation, a terraform local-exec provisioner is used to patch the respective application using OCI CLI commands (DEFAULT profile).  This requires to setup OCI CLI in the same environment where terraform is executed.  This workaround is needed to configure the following Application attributes:
 
    - **Provisioning Parameters**: host_name, client_id, client_secret, scope, authentication_server_url, base_uri, custom_auth_headers, http_operation_types, fa_port, fa_admin_user,fa_admin_password, fa_ssl_enabled, fa_override_custom_sync, fa_admin_roles.
 
@@ -348,7 +348,7 @@ An optional feature, external dependencies are resources managed elsewhere that 
 
    - **Identity Providers Parameters**: add_to_default_idp_policy.
 
-3. The following operations for Identity Domain Applications can't be configured through terraform.  Use the OCI Console or OCI API Endpoints to set them up:
+3. The following operations for Identity Domain Applications can't be configured through terraform.  Use the OCI Console or OCI Rest Endpoints to set them up:
 
    - **Provisioning Operations**: Create and Account, Update the Account, Deactivate the Account, Delete the Account, Push Passwords, Push user updates, Push user activation/deactivation status.
 
