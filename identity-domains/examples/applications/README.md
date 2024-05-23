@@ -18,11 +18,11 @@ It creates the following resources in one preexisting identity domain:
 
 1. Rename *input.auto.tfvars.template* to *\<project-name\>.auto.tfvars*, where *\<project-name\>* is any name of your choice.
 
-2. Within *\<project-name\>.auto.tfvars*, provide tenancy connectivity information and adjust the *identity_domain_identity_providers_configuration* input variable, by making the appropriate substitutions:
+2. Within *\<project-name\>.auto.tfvars*, provide tenancy connectivity information and adjust the *identity_domain_applications_configuration* input variable, by making the appropriate substitutions:
 
    - Replace *\<REPLACE-BY-DOMAIN-OCID>* placeholder by the identity domain OCID.
 
-    **NOTE**: Each object in the *identity-providers* map is indexed by an uppercase string, like *APP1*. These strings are used by Terraform as keys to the actual managed resources. They can actually be any random strings, but once defined they **must not be changed**, or Terraform will try to destroy and recreate the applications.
+    **NOTE**: Each object in the *applications* map is indexed by an uppercase string, like *APP1*. These strings are used by Terraform as keys to the actual managed resources. They can actually be any random strings, but once defined they **must not be changed**, or Terraform will try to destroy and recreate the applications.
 
 3. In this folder, run the typical Terraform workflow:
 
