@@ -169,7 +169,7 @@ variable "identity_domain_applications_configuration" {
                   requires_user_consent       = optional(bool)
       }))),
       # SAML SSO
-        ### App Links TBA
+        
       identity_domain_sp_id               = optional(string),
       entity_id                           = optional(string),
       assertion_consumer_url              = optional(string),
