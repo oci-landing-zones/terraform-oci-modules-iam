@@ -84,7 +84,7 @@ variable "identity_domain_applications_configuration" {
       name                                = string,
       display_name                        = string,
       description                         = optional(string),
-      type                                = string,    # SAML, Mobile (public), Confidential, Enterprise
+      type                                = string,    
       active                              = optional(bool),
       application_group_ids               = optional(list(string)),
       #urls
@@ -132,7 +132,7 @@ variable "identity_domain_applications_configuration" {
                   requires_user_consent       = optional(bool)
       }))),
       # SAML SSO
-        ### App Links TBA
+        
       identity_domain_sp_id               = optional(string),
       entity_id                           = optional(string),
       assertion_consumer_url              = optional(string),
