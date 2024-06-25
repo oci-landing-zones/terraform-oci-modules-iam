@@ -142,10 +142,10 @@ locals {
         "allow group ${local.auditor_group_names} to read vss-family in tenancy",
         "allow group ${local.auditor_group_names} to read usage-budgets in tenancy",
         "allow group ${local.auditor_group_names} to read usage-reports in tenancy",
-        "allow group ${local.auditor_group_names} to read data-safe-family in tenancy"
-        "allow group ${local.auditor_group_names} to read vaults in tenancy"
-        "allow group ${local.auditor_group_names} to read keys in tenancy"
-        "allow group ${local.auditor_group_names} to read tag-namespaces in tenancy"
+        "allow group ${local.auditor_group_names} to read data-safe-family in tenancy",
+        "allow group ${local.auditor_group_names} to read vaults in tenancy",
+        "allow group ${local.auditor_group_names} to read keys in tenancy",
+        "allow group ${local.auditor_group_names} to read tag-namespaces in tenancy",
         "allow group ${local.auditor_group_names} to use ons-family in tenancy where any {request.operation!=/Create*/, request.operation!=/Update*/, request.operation!=/Delete*/, request.operation!=/Change*/}"
   ] : []
 
