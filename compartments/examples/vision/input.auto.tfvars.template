@@ -4,11 +4,10 @@
 #---------------------------------------------------------------------------------------------------------------------
 # 1. Rename this file to <project-name>.auto.tfvars, where <project-name> is a name of your choice.
 # 2. Provide values for "Tenancy Connectivity Variables".
-# 3. Replace <REPLACE-BY-THE-PARENT-COMPARTMENT-OCID> placeholder by a compartment OCID. 
+# 3. Replace <ENCLOSING_COMPARTMENT_OCID> placeholder by a compartment OCID. 
 #    This determines the compartment that TOP-CMP compartment gets attached to.
-#    For referring to the tenancy_ocid, use the reserved key "TENANCY-ROOT".
-# 4. Replace <REPLACE-BY-THE-COST-CENTER-TAG-OCID> placeholder in TOP-CMP with the actual cost center tag ocid.
-# 5. Replace <REPLACE-BY-THE-ENVIRONMENT-TAG-OCID> placeholder in TOP-CMP with the actual environment tag ocid.
+# 4. Replace <OCI_COST_CENTER_TAG_OCID> placeholder in TOP-CMP with the actual cost center tag ocid.
+# 5. Replace <OCI_ENVIRONMENT_TAG_OCID> placeholder in TOP-CMP with the actual environment tag ocid.
 # Notice that tag defaults are optional and you can simply remove TOP-CMP's tag_defaults attribute altogether.
 #----------------------------------------------------------------------------------------------------------------------
 
@@ -16,12 +15,12 @@
 # Tenancy Connectivity Variables
 #---------------------------------------
 
-tenancy_ocid         = "<tenancy OCID>"             # Get this from OCI Console (after logging in, go to top-right-most menu item and click option "Tenancy: <your tenancy name>").
-user_ocid            = "<user OCID>"                # Get this from OCI Console (after logging in, go to top-right-most menu item and click option "My profile").
-fingerprint          = "<PEM key fingerprint>"      # The fingerprint can be gathered from your user account. In the "My profile page, click "API keys" on the menu in left hand side).
-private_key_path     = "<path to the private key>"  # This is the full path on your local system to the API signing private key.
-private_key_password = ""                           # This is the password that protects the private key, if any.
-region               = "<your tenancy home region>" # This is your tenancy home region.
+tenancy_ocid         = "<TENANCY_OCID>"             # Get this from OCI Console (after logging in, go to top-right-most menu item and click option "Tenancy: <your tenancy name>").
+user_ocid            = "<USER_OCID>"                # Get this from OCI Console (after logging in, go to top-right-most menu item and click option "My profile").
+fingerprint          = "<PEM_KEY_FINGERPRINT>"      # The fingerprint can be gathered from your user account. In the "My profile page, click "API keys" on the menu in left hand side).
+private_key_path     = "<PATH_TO_PRIVATE_KEY>"      # This is the full path on your local system to the API signing private key.
+private_key_password = "<PRIVATE_KEY_PASSWORD>"     # This is the password that protects the private key, or an empty string.
+region               = "<TENANCY_REGION>"           # This is your tenancy home region.
 
 
 #---------------------------------------
@@ -29,7 +28,7 @@ region               = "<your tenancy home region>" # This is your tenancy home 
 #---------------------------------------
 
 compartments_configuration = {
-  default_parent_id = "<REPLACE-BY-THE-PARENT-COMPARTMENT-OCID>" # For referring to the tenancy_ocid, use the reserved key "TENANCY-ROOT".
+  default_parent_id = "<ENCLOSING_COMPARTMENT_OCID>" # For referring to the tenancy_ocid, use the reserved key "TENANCY-ROOT".
   #default_defined_tags = null
   #default_freeform_tags = null
   #enable_delete = false
@@ -40,12 +39,12 @@ compartments_configuration = {
       #parent_id = null,
       tag_defaults = {
         COST-CENTER-TAG-DEFAULT = {
-          tag_id = "<REPLACE-BY-THE-COST-CENTER-TAG-OCID>"
+          tag_id = "<OCI_COST_CENTER_TAG_OCID>"
           default_value = "a1",
           is_user_required = false 
         }
         ENVIRONMENT-TAG-DEFAULT = {
-          tag_id = "<REPLACE-BY-THE-ENVIRONMENT-TAG-OCID>"
+          tag_id = "<OCI_ENVIRONMENT_TAG_OCID>"
           default_value = "low",
           is_user_required = true 
         }   

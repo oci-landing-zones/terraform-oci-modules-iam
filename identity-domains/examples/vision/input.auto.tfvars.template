@@ -15,12 +15,12 @@
 # Tenancy Connectivity Variables
 #---------------------------------------
 
-tenancy_ocid         = "<tenancy OCID>"             # Get this from OCI Console (after logging in, go to top-right-most menu item and click option "Tenancy: <your tenancy name>").
-user_ocid            = "<user OCID>"                # Get this from OCI Console (after logging in, go to top-right-most menu item and click option "My profile").
-fingerprint          = "<PEM key fingerprint>"      # The fingerprint can be gathered from your user account. In the "My profile page, click "API keys" on the menu in left hand side).
-private_key_path     = "<path to the private key>"  # This is the full path on your local system to the API signing private key.
-private_key_password = ""                           # This is the password that protects the private key, if any.
-region               = "<your tenancy home region>" # This is your tenancy home region.
+tenancy_ocid         = "<TENANCY_OCID>"             # Get this from OCI Console (after logging in, go to top-right-most menu item and click option "Tenancy: <your tenancy name>").
+user_ocid            = "<USER_OCID>"                # Get this from OCI Console (after logging in, go to top-right-most menu item and click option "My profile").
+fingerprint          = "<PEM_KEY_FINGERPRINT>"      # The fingerprint can be gathered from your user account. In the "My profile page, click "API keys" on the menu in left hand side).
+private_key_path     = "<PATH_TO_PRIVATE_KEY>"      # This is the full path on your local system to the API signing private key.
+private_key_password = "<PRIVATE_KEY_PASSWORD>"     # This is the password that protects the private key, or an empty string.
+region               = "<TENANCY_REGION>"           # This is your tenancy home region.
 
 
 #---------------------------------------
@@ -29,7 +29,7 @@ region               = "<your tenancy home region>" # This is your tenancy home 
 
 identity_domains_configuration = {
   #default_compartment_id : null
-  default_compartment_id : "<REPLACE-BY-COMPARTMENT-OCID>"
+  default_compartment_id : "<ENCLOSING_COMPARTMENT_OCID>"
   default_defined_tags : null
   default_freeform_tags : null
   identity_domains : {  
@@ -37,13 +37,13 @@ identity_domains_configuration = {
         compartment_id  = null
         display_name    = "VISION_DEV_Identity_Domain"
         description     = "VISION DEV Identity Domain"
-        home_region     = "<REPLACE-BY-REGION or null>"
+        home_region     = "<HOME_REGION>"
         license_type    = "free"
 
-        admin_email         = "<REPLACE-BY-ADMIN-EMAIL>"
-        admin_first_name    = "<REPLACE-BY-ADMIN-FIRST-NAME>"
-        admin_last_name     = "<REPLACE-BY-ADMIN-LAST-NAME>"
-        admin_user_name     = "<REPLACE-BY-ADMIN-USERNAME>"
+        admin_email         = "<ADMIN_EMAIL>"
+        admin_first_name    = "<ADMIN_FIRST_NAME>"
+        admin_last_name     = "<ADMIN_LAST_NAME>"
+        admin_user_name     = "<ADMIN_USERNAME>"
 
         is_hidden_on_login          = false
         is_notification_bypassed    = false
@@ -51,16 +51,16 @@ identity_domains_configuration = {
 
     } 
     PROD-DOMAIN  : { 
-        compartment_id  = "<REPLACE-BY-COMPARTMENT-OCID>"
+        compartment_id  = "<ENCLOSING_COMPARTMENT_OCID>"
         display_name    = "VISION_PROD_Identity_Domain"
         description     = "VISION PROD Identity Domain"
-        home_region     = "<REPLACE-BY-REGION or null>"
+        home_region     = "<HOME_REGION>"
         license_type    = "free"
 
-        admin_email         = "<REPLACE-BY-ADMIN-EMAIL>"
-        admin_first_name    = "<REPLACE-BY-ADMIN-FIRST-NAME>"
-        admin_last_name     = "<REPLACE-BY-ADMIN-LAST-NAME>"
-        admin_user_name     = "<REPLACE-BY-ADMIN-EMAIL>"
+        admin_email         = "<ADMIN_EMAIL>"
+        admin_first_name    = "<ADMIN_FIRST_NAME>"
+        admin_last_name     = "<ADMIN_LAST_NAME>"
+        admin_user_name     = "<ADMIN_USERNAME>"
 
         is_hidden_on_login          = false
         is_notification_bypassed    = false
@@ -103,22 +103,22 @@ identity_domain_dynamic_groups_configuration = {
       identity_domain_id        = "DEV-DOMAIN"
       name : "vision-sec-fun-dynamic-group",  
       description : "Dynamic group for security functions execution.",      
-      matching_rule : "ALL {resource.type = 'fnfunc',resource.compartment.id = '<REPLACE-BY-SECURITY-COMPARTMENT-OCID>'}"
+      matching_rule : "ALL {resource.type = 'fnfunc',resource.compartment.id = '<SECURITY_COMPARTMENT_OCID>'}"
     },
     APPDEV-FUN-DYN-GROUP : { 
       name : "vision-appdev-fun-dynamic-group",  
       description : "Dynamic group for application functions execution.",      
-      matching_rule : "ALL {resource.type = 'fnfunc',resource.compartment.id = '<REPLACE-BY-APPLICATION-COMPARTMENT-OCID>'}"
+      matching_rule : "ALL {resource.type = 'fnfunc',resource.compartment.id = '<APPLICATION_COMPARTMENT_OCID>'}"
     },  
     APPDEV-COMPUTE-AGENT-DYN-GROUP : { 
       name : "vision-appdev-computeagent-dynamic-group",  
       description : "Dynamic group for Compute Agent plugin execution.",      
-      matching_rule : "ALL {resource.type = 'managementagent',resource.compartment.id = '<REPLACE-BY-APPLICATION-COMPARTMENT-OCID>'}"
+      matching_rule : "ALL {resource.type = 'managementagent',resource.compartment.id = '<APPLICATION_COMPARTMENT_OCID>'}"
     },                                        
     DATABASE-KMS-DYN-GROUP : { 
       name : "vision-database-kms-dynamic-group",  
       description : "Dynamic group for databases accessing Key Management service (aka Vault service).",      
-      matching_rule : "ALL {resource.compartment.id = '<REPLACE-BY-DATABASE-COMPARTMENT-OCID>'}"
+      matching_rule : "ALL {resource.compartment.id = '<DATABASE_COMPARTMENT_OCID>'}"
     }
   }
 }
