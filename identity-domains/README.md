@@ -1,4 +1,4 @@
-# CIS OCI Landing Zone Identity Domains Module
+# OCI Landing Zones Identity Domains Module
 
 ![Landing Zone logo](../landing_zone_300.png)
 
@@ -75,7 +75,7 @@ For invoking the module remotely, set the module *source* attribute to the group
 
 ```
 module "identity_domains" {
-  source = "github.com/oracle-quickstart/terraform-oci-cis-landing-zone-iam/identity-domains"
+  source = "github.com/oci-landing-zones/terraform-oci-landing-zone-iam/identity-domains"
   tenancy_id                                       = var.tenancy_id
   identity_domains_configuration                   = var.identity_domains_configuration
   identity_domain_groups_configuration             = var.identity_domain_groups_configuration
@@ -88,7 +88,7 @@ module "identity_domains" {
 For referring to a specific module version, append *ref=\<version\>* to the *source* attribute value, as in:
 
 ```
-  source = "github.com/oracle-quickstart/terraform-oci-cis-landing-zone-iam//identity-domains?ref=v0.1.0"
+  source = "github.com/oci-landing-zones/terraform-oci-landing-zone-iam//identity-domains?ref=v0.1.0"
 ```
 
 ## <a name="functioning">Module Functioning</a>
@@ -99,24 +99,25 @@ The module defines five top-level input variables named *identity_domains_config
 
 Use *identity_domains_configuration* attribute. It supports the following attributes:
 
-- **default_compartment_id**: (Optional) defines the compartment for all identity domains, unless overriden by *compartment_id* attribute within each identity domain.  This attribute is overloaded: it can be either a compartment OCID or a reference (a key) to the compartment OCID. *tenancy_ocid* is used if undefined. See [External Dependencies](#extdep) section.
-- **default_defined_tags**: (Optional) defined tags to apply to all resources, unless overriden by *defined_tags* attribute within each resource.
-- **default_freeform_tags**: (Optional) freeform tags to apply to all resources, unless overriden by *freeform_tags* attribute within each resource.
-- **identity_domains**: (Optional) the map of objects that defines the identity domains, where each object corresponds to an identity domain resource.
-  - **compartment_id**:  (Optional) The compartment for the identity domain. This attribute is overloaded: it can be either a compartment OCID or a reference (a key) to the compartment OCID. *default_compartment_id* is used if undefined. See [External Dependencies](#extdep).
-  - **display_name**:  (Required) The mutable display name for the identity domain.
-  - **description**:  (Required) The description of the identity domain.
-  - **home_region**:  (Required) The region name of the identity domain. The tenancy home region name is used if undefined.  Example: us-ashburn-1
-  - **license_type**: (Required) The license type of the identity domain.  Examples: free, oracle-apps-premium, premium, external-user.
-  - **admin_email**:  (Optional) The email address of the identity domain administrator.
-  - **admin_first_name**: (Optional) The first name of the identity domain administrator.
-  - **admin_last_name**: (Optional) The last name of the identity domain administrator.
-  - **admin_user_name**: (Optional) The username for the identity domain administrator.
-  - **is_hidden_on_login**:  (Optional) Indicates whether the identity domain is hidden on login screen or not.  Example: true
-  - **is_notification_bypassed**:  Indicates if admin user created in the Identity Domain would like to receive notification like welcome email or not. Required field only if admin information is provided, otherwise optional.  
-  - **is_primary_email_required**: (Optional) Indicates whether users in the domain are required to have a primary email address or not.  Example: true
-  - **defined_tags**: (Optional) defined tags to apply to the identity domain. *default_defined_tags* is used if undefined.
-  - **freeform_tags**:  (Optional) free tags to apply to the identity domain. *default_freeform_tags* is used if undefined.
+  - **default_compartment_id**: (Optional) defines the compartment for all identity domains, unless overriden by *compartment_id* attribute within each identity domain.  This attribute is overloaded: it can be either a compartment OCID or a reference (a key) to the compartment OCID. *tenancy_ocid* is used if undefined. See [External Dependencies](#extdep) section.
+  - **default_defined_tags**: (Optional) defined tags to apply to all resources, unless overriden by *defined_tags* attribute within each resource.
+  - **default_freeform_tags**: (Optional) freeform tags to apply to all resources, unless overriden by *freeform_tags* attribute within each resource.
+  - **identity_domains**: (Optional) the map of objects that defines the identity domains, where each object corresponds to an identity domain resource.
+    - **compartment_id**:  (Optional) The compartment for the identity domain. This attribute is overloaded: it can be either a compartment OCID or a reference (a key) to the compartment OCID. *default_compartment_id* is used if undefined. See [External Dependencies](#extdep).            
+    - **display_name**:  (Required) The mutable display name for the identity domain.              
+    - **description**:  (Required) The description of the identity domain.              
+    - **home_region**:  (Required) The region name of the identity domain. The tenancy home region name is used if undefined.  Example: us-ashburn-1
+    - **license_type**: (Required) The license type of the identity domain.  Examples: free, oracle-apps-premium, premium, external-user.             
+    - **admin_email**:  (Optional) The email address of the identity domain administrator.               
+    - **admin_first_name**: (Optional) The first name of the identity domain administrator.      
+    - **admin_last_name**: (Optional) The last name of the identity domain administrator.              
+    - **admin_user_name**: (Optional) The username for the identity domain administrator.             
+    - **is_hidden_on_login**:  (Optional) Indicates whether the identity domain is hidden on login screen or not.  Example: true   
+    - **is_notification_bypassed**:  Indicates if admin user created in the Identity Domain would like to receive notification like welcome email or not. Required field only if admin information is provided, otherwise optional.  
+    - **is_primary_email_required**: (Optional) Indicates whether users in the domain are required to have a primary email address or not.  Example: true
+    - **defined_tags**: (Optional) defined tags to apply to the identity domain. *default_defined_tags* is used if undefined.             
+    - **freeform_tags**:  (Optional) free tags to apply to the identity domain. *default_freeform_tags* is used if undefined.
+    - **replica_region**: (Optional) The name of the replica region for identity domain replication. Example: us-phoenix-1. The region cannot be the same as the home region.
 
 ## Defining Identity Domain Groups
 

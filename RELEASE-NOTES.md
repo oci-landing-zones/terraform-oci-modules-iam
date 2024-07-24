@@ -1,11 +1,19 @@
-# February 27, 2024 Release Notes
+# April 17, 2024 Release Notes - 0.2.1
+## Updates
+### All Modules
+1. Dependency variables are now strongly typed, enhancing usage guidance.
+### Policies Module
+1. FSS (File System Service) principal names fixed in realms with keys greater than 10.
+
+
+# February 27, 2024 Release Notes - 0.2.0
 ## Updates
 ### Identity Domains Module
 1. The Identity Domains module now supports creating SAML Identity Providers through a new configuration variable. The variable *identity_domain_identity_providers_configuration* includes parameters to manage identity providers using either a SAML metadata file or individual metadata parameter values.
 ### Compartments Module
 1. The reserved key "TENANCY-ROOT" has been introduced. It is used for referring to the root compartment OCID. It can be assigned to *default_parent_id* and *parent_id* attributes.
 ### Policies Module
-1. The reserved key "TENANCY-ROOT" has been introduced. It is used for referring to the root compartment OCID. It can be assigned to *compartment_id* attribute within *supplied_policies* attribute.
+2. The reserved key "TENANCY-ROOT" has been introduced. It is used for referring to the root compartment OCID. It can be assigned to *compartment_id* attribute within *supplied_policies* attribute.
 
 # January 08, 2024 Release Notes - 0.1.9
 ## Updates

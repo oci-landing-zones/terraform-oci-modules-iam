@@ -1,8 +1,8 @@
-# CIS OCI IAM Policy Module Example - Supplied policies
+# OCI Landing Zones IAM Policy Module Example - Supplied policies
 
 ## Introduction
 
-This example shows how to use [CIS Landing Zone IAM policy module](../..) to manage policies that are directly supplied to the module.
+This example shows how to use [OCI Landing Zones IAM policy module](../..) to manage policies that are directly supplied to the module.
 
 Directly supplied policies are passed to the module via the *supplied_policies* attribute.
 

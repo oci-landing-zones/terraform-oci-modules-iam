@@ -1,4 +1,4 @@
-# CIS OCI Landing Zone IAM Compartments Module
+# OCI Landing Zones IAM Compartments Module
 
 ![Landing Zone logo](../landing_zone_300.png)
 
@@ -23,7 +23,7 @@ A fundamental principle in using a map of objects is the ability to quickly visu
     - **is_user_required** &ndash; (Optional) Whether the user must provide a tag value for resources created in the compartment.
   - **children**:  &ndash; (Optional) The map of sub-compartments. It has the same structure of the *compartments* map, except for the *parent_id* attribute.  
 
-Note it is possible to apply tag defaults to compartments. Tag defaults are tag values that are automatically applied or required from users on any resources eventually created in the compartments and in their sub-compartments. Use tag defaults to enforce organization wide governance practices in your cloud infrastructure, like automatically applying the cost center identifier to specific compartments. Before using a tag default, a defined tag must be defined in OCI. For configuring tags, you can use the [Tags module in CIS OCI Landing Zone Governance repository](https://github.com/oracle-quickstart/terraform-oci-cis-landing-zone-governance/tags/).
+Note it is possible to apply tag defaults to compartments. Tag defaults are tag values that are automatically applied or required from users on any resources eventually created in the compartments and in their sub-compartments. Use tag defaults to enforce organization wide governance practices in your cloud infrastructure, like automatically applying the cost center identifier to specific compartments. Before using a tag default, a defined tag must be defined in OCI. For configuring tags, you can use the [Tags module in OCI Landing Zones Governance repository](https://github.com/oci-landing-zones/terraform-oci-landing-zone-governance/tags/).
 
 Tag defaults are defined using *tag_defaults* attribute within each compartment in *compartments* attribute. You can have multiple tag defaults in a single compartment. Each tag default requires an immutable key (use an uppercase string as a convention), a tag id (*tag_id*), the default value (*default_value*) and whether or not the value is required from users when creating resources (*is_user_required*). If *is_user_required* is not provided or set to false, the default value is automatically applied upon resource creation.  
 
@@ -56,10 +56,29 @@ Check the [examples](./examples) folder for module usage with actual input data.
 
 ## External Dependencies
 
-An optional feature, external dependencies are resources managed elsewhere that resources managed by this module may depend on. The following dependencies are supported:
+An optional feature, external dependencies are resources managed elsewhere that resources managed by this module depends on. The following dependencies are supported:
 
-- **tags_dependency** &ndash; (Optional) A map of objects containing the externally managed tags this module may depend on. All map objects must have the same type and must contain at least an *id* attribute with the tag OCID.
-- **compartments_dependency** &ndash; (Optional) A map of objects containing the externally managed compartments this module may depend on. All map objects must have the same type and must contain at least an *id* attribute with the tag OCID. This is typically used when using separate configurations for managing compartments.
+- **compartments_dependency** &ndash; (Optional) A map of objects containing the externally managed compartments this module may depend on. All map objects must have the same type and must contain at least an *id* attribute with the compartment OCID. This mechanism allows for the usage of referring keys (instead of OCIDs) in *default_parent_id* and *parent_id* attributes. The module replaces the keys by the OCIDs provided within *compartments_dependency* map. Contents of *compartments_dependency* is typically the output of a client of this module.
+
+Example:
+```
+{
+	"NETWORK-CMP": {
+		"id": "ocid1.compartment.oc1..aaaaaaaa...7xq"
+	}
+}
+```
+
+- **tags_dependency** &ndash; (Optional) A map of objects containing the externally managed tags this module may depend on. All map objects must have the same type and must contain at least an *id* attribute with the tag OCID. This mechanism allows for the usage of referring keys (instead of OCIDs) in *tag_id* attribute. The module replaces the keys by the OCIDs provided within *tags_dependency* map. Contents of *tags_dependency* is typically the output of a client of the [Tags module](https://github.com/oracle-quickstart/terraform-oci-cis-landing-zone-governance/tree/main/tags).
+
+Example:
+```
+{
+	"COST-CENTER-TAG": {
+		"id": "ocid1.tag.oc1..aaaaaaaa...8yr"
+	}
+}
+```
 
 ## Requirements
 ### IAM Permissions
@@ -119,13 +138,13 @@ module "compartments" {
 For invoking the module remotely, set the module *source* attribute to the compartments module folder in this repository, as shown:
 ```
 module "compartments" {
-  source = "github.com/oracle-quickstart/terraform-oci-cis-landing-zone-iam/compartments"
+  source = "github.com/oci-landing-zones/terraform-oci-landing-zone-iam/compartments"
   compartments_configuration = var.compartments_configuration
 }
 ```
 For referring to a specific module version, append *ref=\<version\>* to the *source* attribute value, as in:
 ```
-  source = "github.com/oracle-quickstart/terraform-oci-cis-landing-zone-iam//compartments?ref=v0.1.0"
+  source = "github.com/oci-landing-zones/terraform-oci-landing-zone-iam//compartments?ref=v0.1.0"
 ```
 
 ## Related Documentation
@@ -134,6 +153,27 @@ For referring to a specific module version, append *ref=\<version\>* to the *sou
 - [Compartments in Terraform OCI Provider](https://registry.terraform.io/providers/oracle/oci/latest/docs/resources/identity_compartment)
 - [Managing Tag Defaults](https://docs.oracle.com/en-us/iaas/Content/Tagging/Tasks/managingtagdefaults.htm)
 - [Tag Defaults in Terraform OCI Provider](https://registry.terraform.io/providers/oracle/oci/latest/docs/resources/identity_tag_default)
+
+## Help
+
+Open an issue in this repository.
+
+## Contributing
+
+This project welcomes contributions from the community. Before submitting a pull request, please [review our contribution guide](./CONTRIBUTING.md).
+
+## Security
+
+Please consult the [security guide](./SECURITY.md) for our responsible security vulnerability disclosure process.
+
+## License
+
+Copyright (c) 2023,2024 Oracle and/or its affiliates.
+
+*Replace this statement if your project is not licensed under the UPL*
+
+Released under the Universal Permissive License v1.0 as shown at
+<https://oss.oracle.com/licenses/upl/>.
 
 ## Known Issues
 None.

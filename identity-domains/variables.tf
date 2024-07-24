@@ -27,7 +27,8 @@ variable "identity_domains_configuration" {
       is_primary_email_required = optional(bool),
       allow_signing_cert_public_access = bool,
       defined_tags              = optional(map(string)),
-      freeform_tags             = optional(map(string))
+      freeform_tags             = optional(map(string)),
+      replica_region            = optional(string)
     }))
   })
   default = null
@@ -248,6 +249,8 @@ variable module_name {
 
 variable compartments_dependency {
   description = "A map of objects containing the externally managed compartments this module may depend on. All map objects must have the same type and must contain at least an 'id' attribute (representing the compartment OCID) of string type." 
-  type = map(any)
+  type = map(object({
+    id = string
+  }))
   default = null
 }

@@ -1,6 +1,6 @@
-# CIS OCI IAM Compartments Module Example - Vision compartments
+# OCI Landing Zones IAM Compartments Module Example - Vision compartments
 
-This example shows how to deploy Identity and Access Management (IAM) compartments in Oracle Cloud Infrastructure (OCI) for a hypothetical Vision entity. The sample topology is the same one deployed by [CIS Landing Zone Quick Start](https://github.com/oracle-quickstart/oci-cis-landingzone-quickstart). 
+This example shows how to deploy Identity and Access Management (IAM) compartments in Oracle Cloud Infrastructure (OCI) for a hypothetical Vision entity. The sample topology is the same one deployed by [OCI Base Landing Zone](https://github.com/oci-landing-zones/oci-base-landing-zone). 
 
 It creates the compartment topology as shown in the picture below:
 
@@ -21,9 +21,9 @@ The same structure as shown by OCI Console:
 
 Refer to [compartment's module README.md](../../README.md) for overall attributes usage.
 
-Note the *freeform_tags* applied to each compartment. **They are not required**, but if defined they are leveraged by [OCI CIS Landing Zone IAM Policies Module](../../../policies/) for deploying template (pre-configured) policies.
+*TOP-CMP* defines two tag defaults. *COST-CENTER-TAG-DEFAULT* will automatically apply value "a1" to any resources created in *TOP-CMP* compartment and  sub-compartments. *ENVIRONMENT-TAG-DEFAULT* will automatically require that users provide a value when creating resources in *TOP-CMP* compartment and sub-compartments.
 
-*TOP-CMP* defines two tag defaults. *COST-CENTER-TAG-DEFAULT* will automatically apply value "a1" to any resources created in *TOP-CMP* compartment and  sub-compartments. *ENVIRONMENT-TAG-DEFAULT* will automatically require that users provide a value when creating resources in *TOP-CMP* compartment and  sub-compartments.
+**Note**: If the *automation_config* variable is provided, the example writes the compartments output to the specified OCI Object Storage bucket (write permissions are required on the bucket). The example can be easily changed to write the output to a local file instead. The output can be further used by another module that depends on these compartments.
 
 3. In this folder, run the typical Terraform workflow:
 ```
