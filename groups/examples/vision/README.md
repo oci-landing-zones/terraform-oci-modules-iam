@@ -1,7 +1,7 @@
 # OCI Landing Zones Groups Module Usage Example - Vision groups
 ## Introduction
 
-This example shows how to deploy Identity and Access Management (IAM) groups of users in Oracle Cloud Infrastructure (OCI) for a hypothetical Vision entity. The groups are the same deployed by [OCI Base Landing Zone](https://github.com/oci-landing-zones/oci-base-landing-zone).
+This example shows how to deploy Identity and Access Management (IAM) groups of users in Oracle Cloud Infrastructure (OCI) for a hypothetical Vision entity. The groups are the same deployed by [OCI Base Landing Zone](https://github.com/oracle-quickstart/oci-cis-landingzone-quickstart).
 
 It creates the following groups as shown in the picture below:
 

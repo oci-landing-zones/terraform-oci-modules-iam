@@ -11,7 +11,7 @@ The module defines a single input variable named *dynamic_groups_configuration*,
    - **default_defined_tags**: defined tags to apply to all dynamic groups, unless overriden by *defined_tags* attribute within each dynamic group object.
    - **default_freeform_tags**: freeform tags to apply to all dynamic groups, unless overriden by *freeform_tags* attribute within each dynamic group object.
 
-Check the [examples](./examples/) folder for module usage. Specifically, see [vision](./examples/vision/README.md) example for the dynamic groups deployed by [OCI Base Landing Zone](https://github.com/oci-landing-zones/oci-base-landing-zone).
+Check the [examples](./examples/) folder for module usage. Specifically, see [vision](./examples/vision/README.md) example for the dynamic groups deployed by [OCI Base Landing Zone](https://github.com/oracle-quickstart/oci-cis-landingzone-quickstart).
 
 ## Requirements
 ### IAM Permissions
@@ -57,14 +57,14 @@ module "dynamic-groups" {
 For invoking the module remotely, set the module *source* attribute to the dynamic-groups module folder in this repository, as shown:
 ```
 module "dynamic-groups" {
-  source = "github.com/oci-landing-zones/terraform-oci-landing-zone-iam/dynamic-groups"
+  source = "github.com/oracle-quickstart/terraform-oci-cis-landing-zone-iam/dynamic-groups"
   tenancy_id     = var.tenancy_id
   dynamic_groups_configuration = var.dynamic_groups_configuration
 }
 ```
 For referring to a specific module version, append *ref=\<version\>* to the *source* attribute value, as in:
 ```
-  source = "github.com/oci-landing-zones/terraform-oci-landing-zone-iam//dynamic-groups?ref=v0.1.0"
+  source = "github.com/oracle-quickstart/terraform-oci-cis-landing-zone-iam//dynamic-groups?ref=v0.1.0"
 ```
 
 ## Related Documentation
