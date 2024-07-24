@@ -7,6 +7,10 @@ terraform {
     oci = {
       source = "oracle/oci"
     }
+    time = {
+      source = "hashicorp/time"
+      version = "0.12.0"
+    }
   }
   experiments = [module_variable_optional_attrs]
 }

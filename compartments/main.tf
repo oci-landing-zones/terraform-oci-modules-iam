@@ -143,6 +143,10 @@ resource "oci_identity_compartment" "these" {
     freeform_tags  = merge(local.cislz_module_tag, each.value.freeform_tags)
 }
 
+resource "time_sleep" "wait_1_seconds_level_2" {
+  create_duration = "1s"
+}
+
 resource "oci_identity_compartment" "level_2" {
   for_each = {for c in local.level_2 : c.key => {name: c.name, 
                                                  description: c.description,
@@ -156,6 +160,11 @@ resource "oci_identity_compartment" "level_2" {
     enable_delete  = each.value.enable_delete
     defined_tags   = each.value.defined_tags
     freeform_tags  = merge(local.cislz_module_tag, each.value.freeform_tags)
+    depends_on     = [time_sleep.wait_1_seconds_level_2]
+}
+
+resource "time_sleep" "wait_1_seconds_level_3" {
+  create_duration = "1s"
 }
 
 resource "oci_identity_compartment" "level_3" {
@@ -171,6 +180,11 @@ resource "oci_identity_compartment" "level_3" {
     enable_delete  = each.value.enable_delete
     defined_tags   = each.value.defined_tags
     freeform_tags  = merge(local.cislz_module_tag, each.value.freeform_tags)
+    depends_on     = [time_sleep.wait_1_seconds_level_3]
+}
+
+resource "time_sleep" "wait_1_seconds_level_4" {
+  create_duration = "1s"
 }
 
 resource "oci_identity_compartment" "level_4" {
@@ -186,6 +200,11 @@ resource "oci_identity_compartment" "level_4" {
     enable_delete  = each.value.enable_delete
     defined_tags   = each.value.defined_tags
     freeform_tags  = merge(local.cislz_module_tag, each.value.freeform_tags)
+    depends_on     = [time_sleep.wait_1_seconds_level_4]
+}
+
+resource "time_sleep" "wait_1_seconds_level_5" {
+  create_duration = "1s"
 }
 
 resource "oci_identity_compartment" "level_5" {
@@ -201,6 +220,11 @@ resource "oci_identity_compartment" "level_5" {
     enable_delete  = each.value.enable_delete
     defined_tags   = each.value.defined_tags
     freeform_tags  = merge(local.cislz_module_tag, each.value.freeform_tags)
+    depends_on     = [time_sleep.wait_1_seconds_level_5]
+}
+
+resource "time_sleep" "wait_1_seconds_level_6" {
+  create_duration = "1s"
 }
 
 resource "oci_identity_compartment" "level_6" {
@@ -216,6 +240,7 @@ resource "oci_identity_compartment" "level_6" {
     enable_delete  = each.value.enable_delete
     defined_tags   = each.value.defined_tags
     freeform_tags  = merge(local.cislz_module_tag, each.value.freeform_tags)
+    depends_on     = [time_sleep.wait_1_seconds_level_6]
 } 
 
 resource "oci_identity_tag_default" "these" {
