@@ -101,7 +101,8 @@ Use *identity_domains_configuration* attribute. It supports the following attrib
     - **is_notification_bypassed**:  Indicates if admin user created in the Identity Domain would like to receive notification like welcome email or not. Required field only if admin information is provided, otherwise optional.  
     - **is_primary_email_required**: (Optional) Indicates whether users in the domain are required to have a primary email address or not.  Example: true
     - **defined_tags**: (Optional) defined tags to apply to the identity domain. *default_defined_tags* is used if undefined.             
-    - **freeform_tags**:  (Optional) free tags to apply to the identity domain. *default_freeform_tags* is used if undefined.       
+    - **freeform_tags**:  (Optional) free tags to apply to the identity domain. *default_freeform_tags* is used if undefined.
+    - **replica_region**: (Optional) The name of the replica region for identity domain replication. Example: us-phoenix-1. The region cannot be the same as the home region.
 
 ## Defining Identity Domain Groups
 Use *identity_domain_groups_configuration* attribute. It supports the following attributes:

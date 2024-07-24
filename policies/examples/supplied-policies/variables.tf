@@ -10,13 +10,6 @@ variable "private_key_password" {default = ""}
 
 variable "policies_configuration" {
   description = "Policies configuration"
-  type = object({
-    supplied_policies = map(object({
-      name             = string
-      description      = string
-      compartment_id   = string
-      statements       = list(string)
-    }))
-  })
+  type = any
   default = null
 }

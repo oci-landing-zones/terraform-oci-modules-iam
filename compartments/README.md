@@ -56,10 +56,29 @@ Check the [examples](./examples) folder for module usage with actual input data.
 
 ## External Dependencies
 
-An optional feature, external dependencies are resources managed elsewhere that resources managed by this module may depend on. The following dependencies are supported:
+An optional feature, external dependencies are resources managed elsewhere that resources managed by this module depends on. The following dependencies are supported:
 
-- **tags_dependency** &ndash; (Optional) A map of objects containing the externally managed tags this module may depend on. All map objects must have the same type and must contain at least an *id* attribute with the tag OCID.
-- **compartments_dependency** &ndash; (Optional) A map of objects containing the externally managed compartments this module may depend on. All map objects must have the same type and must contain at least an *id* attribute with the tag OCID. This is typically used when using separate configurations for managing compartments.
+- **compartments_dependency** &ndash; (Optional) A map of objects containing the externally managed compartments this module may depend on. All map objects must have the same type and must contain at least an *id* attribute with the compartment OCID. This mechanism allows for the usage of referring keys (instead of OCIDs) in *default_parent_id* and *parent_id* attributes. The module replaces the keys by the OCIDs provided within *compartments_dependency* map. Contents of *compartments_dependency* is typically the output of a client of this module.
+
+Example:
+```
+{
+	"NETWORK-CMP": {
+		"id": "ocid1.compartment.oc1..aaaaaaaa...7xq"
+	}
+}
+```
+
+- **tags_dependency** &ndash; (Optional) A map of objects containing the externally managed tags this module may depend on. All map objects must have the same type and must contain at least an *id* attribute with the tag OCID. This mechanism allows for the usage of referring keys (instead of OCIDs) in *tag_id* attribute. The module replaces the keys by the OCIDs provided within *tags_dependency* map. Contents of *tags_dependency* is typically the output of a client of the [Tags module](https://github.com/oracle-quickstart/terraform-oci-cis-landing-zone-governance/tree/main/tags).
+
+Example:
+```
+{
+	"COST-CENTER-TAG": {
+		"id": "ocid1.tag.oc1..aaaaaaaa...8yr"
+	}
+}
+```
 
 ## Requirements
 ### IAM Permissions
