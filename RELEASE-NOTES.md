@@ -1,3 +1,12 @@
+# July 24, 2024 Release Notes - 0.2.2
+## New
+1. [Identity Domains module](./identity-domains/)
+    - Ability to define Identity Domain applications, with support for SAML applications, mobile applications, confidential applications, and the following catalog applications: Oracle Identity Domain, Generic SCIM (Client Credentials), and Oracle Fusion Applications Release 13.
+## Updates    
+1. Auditor policies aligned with documentation.
+2. Aligned [README.md](./README.md) structure to Oracle's GitHub organizations requirements.
+
+
 # April 17, 2024 Release Notes - 0.2.1
 ## Updates
 ### All Modules

@@ -1,4 +1,4 @@
-# CIS OCI Landing Zone IAM Policy Module
+# OCI Landing Zones IAM Policy Module
 
 ![Landing Zone logo](../landing_zone_300.png)
 

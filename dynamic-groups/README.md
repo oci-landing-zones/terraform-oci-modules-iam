@@ -1,4 +1,4 @@
-# CIS OCI Landing Zone IAM Dynamic Groups Module
+# OCI Landing Zones IAM Dynamic Groups Module
 
 ![Landing Zone logo](../landing_zone_300.png)
 
@@ -11,7 +11,7 @@ The module defines a single input variable named *dynamic_groups_configuration*,
    - **default_defined_tags**: defined tags to apply to all dynamic groups, unless overriden by *defined_tags* attribute within each dynamic group object.
    - **default_freeform_tags**: freeform tags to apply to all dynamic groups, unless overriden by *freeform_tags* attribute within each dynamic group object.
 
-Check the [examples](./examples/) folder for module usage. Specifically, see [vision](./examples/vision/README.md) example for the dynamic groups deployed by [CIS OCI Landing Zone Quick Start](https://github.com/oracle-quickstart/oci-cis-landingzone-quickstart).
+Check the [examples](./examples/) folder for module usage. Specifically, see [vision](./examples/vision/README.md) example for the dynamic groups deployed by [OCI Base Landing Zone](https://github.com/oracle-quickstart/oci-cis-landingzone-quickstart).
 
 ## Requirements
 ### IAM Permissions
