@@ -16,6 +16,13 @@ output "identity_domain_dynamic_groups" {
   value = oci_identity_domains_dynamic_resource_group.these
 }
 
+output "identity_domain_applications" {
+  description = "The identity domain applications"
+  value = oci_identity_domains_app.these
+}
+
+
+
 output "identity_domain_identity_providers" {
   description = "The identity domain groups"
   value = oci_identity_domains_identity_provider.these

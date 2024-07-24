@@ -1,0 +1,146 @@
+# Copyright (c) 2023 Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
+
+#---------------------------------------------------------------------------------------------------------------------
+# 1. Rename this file to <project-name>.auto.tfvars, where <project-name> is any name of your choice.
+# 2. Provide values for "Tenancy Connectivity Variables".
+# 3. Replace <REPLACE-BY-DOMAIN-OCID> placeholder by the identity domain OCID.
+# Each object in the *identity_domains* map is indexed by an uppercase string, like IDP1, IDP2, etc. 
+# These strings are used by Terraform as keys to the actual managed resources. 
+# They can actually be any random strings, but once defined they MUST NOT BE CHANGED, 
+# or Terraform will try to destroy and recreate the identity domains.
+#---------------------------------------------------------------------------------------------------------------------
+
+#---------------------------------------
+# Tenancy Connectivity Variables
+#---------------------------------------
+
+tenancy_ocid         = "<tenancy OCID>"             # Get this from OCI Console (after logging in, go to top-right-most menu item and click option "Tenancy: <your tenancy name>").
+user_ocid            = "<user OCID>"                # Get this from OCI Console (after logging in, go to top-right-most menu item and click option "My profile").
+fingerprint          = "<PEM key fingerprint>"      # The fingerprint can be gathered from your user account. In the "My profile page, click "API keys" on the menu in left hand side.
+private_key_path     = "<path to the private key>"  # This is the full path on your local system to the API signing private key.
+private_key_password = ""                           # This is the password that protects the private key, if any.
+region               = "<your tenancy home region>" # This is your tenancy home region.
+
+#---------------------------------------
+# Input variable
+#---------------------------------------
+
+identity_domain_applications_configuration = {
+  applications = {
+  CONF_APP : {
+    identity_domain_id              = "DEV-DOMAIN"
+    name                            = "TFConfidential1"
+    display_name                    = "TFConfidential1"
+    description                     = "TFConfidential1"
+    active                          = true
+    type                            = "Confidential"   # SAML, Mobile (public), Confidential, SCIM 
+    configure_as_oauth_client       = true
+    allowed_grant_types             = ["client_credentials"]   # ["authorization_code", "client_credentials", "resource_owner", "refresh_token", "implicit", "tls_client_auth", "jwt_assertion", "saml2_assertion", "device_code"]
+    client_type                     = "confidential"
+    id_token_encryption_algorithm   = "A192CBC-HS384"   #"A128CBC-HS256","A192CBC-HS384","A256CBC-HS512","A128GCM","A192GCM","A256GCM"
+    bypass_consent                  = true
+    authorized_resources            = "Specific"
+    application_roles               = ["Identity Domain Administrator","Me"]
+ 
+  }
+  SAML_APP : {
+    identity_domain_id              = "PROD-DOMAIN"
+    name                            = "TFSAML1"
+    display_name                    = "TFSAML1"
+    description                     = "TFSAML1"
+    active                          = true
+    type                            = "SAML"   
+    application_group_ids           = ["PROD_GRP"]
+    identity_domain_sp_id           = "DEV-DOMAIN"
+    name_id_value                   = "userName"
+    enable_single_logout            = true  
+   }
+  SCIM_APP : {
+    identity_domain_id              = "PROD-DOMAIN"
+    name                            = "TFSCIM1"
+    display_name                    = "TFSCIM1"
+    description                     = "TFSCIM1"
+    active                          = true
+    type                            = "SCIM"  
+    scope                           = "urn:opc:idm:__myscopes__"
+    enable_provisioning             = true
+    target_app_id                   = "CONF_APP"
+    application_group_ids           = ["PROD_GRP"]
+    authoritative_sync              = false
+    enable_synchronization          = false 
+    admin_consent_granted           = true
+  }
+  }
+}
+
+identity_domain_identity_providers_configuration = {
+  default_identity_domain_id  : "DEV-DOMAIN"
+
+  identity_providers = {  
+    IDP : { 
+      identity_domain_id = "DEV-DOMAIN"
+      enable_global_logout                      = true,
+      name : "PROD_DOMAIN_IDP",  
+      description : "Identity Provider for Domain PROD-DOMAIN.",     
+      identity_domain_idp_id                  = "PROD-DOMAIN",
+      enabled                   = true,
+      add_to_default_idp_policy = true
+    }
+  }
+}
+
+identity_domain_groups_configuration = {
+    default_identity_domain_id  : "DEV-DOMAIN"
+    default_defined_tags : null
+    default_freeform_tags : null
+    groups : {
+      PROD_GRP : {
+        identity_domain_id        = "PROD-DOMAIN"
+        name                      = "usermgmtgroup"
+        description               = "User Management Group"
+      }
+    }
+}
+
+identity_domains_configuration = {
+  default_compartment_id : "<REPLACE-BY-COMPARTMENT-OCID>"
+  default_defined_tags : null
+  default_freeform_tags : null
+
+  identity_domains : {  
+    DEV-DOMAIN  : { 
+
+        display_name    = "DEV_Identity_Domain"
+        description     = "DEV Identity Domain"
+        license_type    = "free"
+
+        admin_email         = "<REPLACE-BY-ADMINISTRATOR-EMAIL>"
+        admin_first_name    = "<REPLACE-BY-ADMINISTRATIOR-FIRST-NAME>"
+        admin_last_name     = "<REPLACE-BY-ADMINISTRATIOR-LAST-NAME>"
+        admin_user_name     = "<REPLACE-BY-ADMINISTRATIOR-EMAIL>"
+
+        is_hidden_on_login          = false
+        is_notification_bypassed    = false
+        is_primary_email_required   = false
+        allow_signing_cert_public_access = true
+
+    } 
+    PROD-DOMAIN  : { 
+        display_name    = "PROD_Identity_Domain"
+        description     = "PROD Identity Domain"
+        license_type    = "free"
+
+        admin_email         = "<REPLACE-BY-ADMINISTRATOR-EMAIL>"
+        admin_first_name    = "<REPLACE-BY-ADMINISTRATIOR-FIRST-NAME>"
+        admin_last_name     = "<REPLACE-BY-ADMINISTRATIOR-LAST-NAME>"
+        admin_user_name     = "<REPLACE-BY-ADMINISTRATIOR-EMAIL>"
+
+        is_hidden_on_login          = false
+        is_notification_bypassed    = false
+        is_primary_email_required   = true
+        allow_signing_cert_public_access = true
+    }
+                                                                 
+  }
+}
