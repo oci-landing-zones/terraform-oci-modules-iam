@@ -126,20 +126,27 @@ locals {
   ] : []  
 
   auditor_grants = contains(keys(local.group_name_map_transpose),local.auditor_role) ? [
-    "allow group ${local.auditor_group_names} to inspect all-resources in tenancy",
-    "allow group ${local.auditor_group_names} to read instances in tenancy",
-    "allow group ${local.auditor_group_names} to read load-balancers in tenancy",
-    "allow group ${local.auditor_group_names} to read buckets in tenancy",
-    "allow group ${local.auditor_group_names} to read nat-gateways in tenancy",
-    "allow group ${local.auditor_group_names} to read public-ips in tenancy",
-    "allow group ${local.auditor_group_names} to read file-family in tenancy",
-    "allow group ${local.auditor_group_names} to read instance-configurations in tenancy",
-    "allow group ${local.auditor_group_names} to read network-security-groups in tenancy",
-    "allow group ${local.auditor_group_names} to read resource-availability in tenancy",
-    "allow group ${local.auditor_group_names} to read audit-events in tenancy",
-    "allow group ${local.auditor_group_names} to read users in tenancy",
-    "allow group ${local.auditor_group_names} to read vss-family in tenancy",       
-    "allow group ${local.auditor_group_names} to read data-safe-family in tenancy"
+ "allow group ${local.auditor_group_names} to inspect all-resources in tenancy",
+        "allow group ${local.auditor_group_names} to read instances in tenancy",
+        "allow group ${local.auditor_group_names} to read load-balancers in tenancy",
+        "allow group ${local.auditor_group_names} to read buckets in tenancy",
+        "allow group ${local.auditor_group_names} to read nat-gateways in tenancy",
+        "allow group ${local.auditor_group_names} to read public-ips in tenancy",
+        "allow group ${local.auditor_group_names} to read file-family in tenancy",
+        "allow group ${local.auditor_group_names} to read instance-configurations in tenancy",
+        "allow group ${local.auditor_group_names} to read network-security-groups in tenancy",
+        "allow group ${local.auditor_group_names} to read resource-availability in tenancy",
+        "allow group ${local.auditor_group_names} to read audit-events in tenancy",
+        "allow group ${local.auditor_group_names} to read users in tenancy",
+        "allow group ${local.auditor_group_names} to use cloud-shell in tenancy",
+        "allow group ${local.auditor_group_names} to read vss-family in tenancy",
+        "allow group ${local.auditor_group_names} to read usage-budgets in tenancy",
+        "allow group ${local.auditor_group_names} to read usage-reports in tenancy",
+        "allow group ${local.auditor_group_names} to read data-safe-family in tenancy",
+        "allow group ${local.auditor_group_names} to read vaults in tenancy",
+        "allow group ${local.auditor_group_names} to read keys in tenancy",
+        "allow group ${local.auditor_group_names} to read tag-namespaces in tenancy",
+        "allow group ${local.auditor_group_names} to use ons-family in tenancy where any {request.operation!=/Create*/, request.operation!=/Update*/, request.operation!=/Delete*/, request.operation!=/Change*/}"
   ] : []
 
   announcement_reader_grants = contains(keys(local.group_name_map_transpose),local.announcement_reader_role) ? [
