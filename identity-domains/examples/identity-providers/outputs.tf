@@ -10,3 +10,7 @@ resource "local_file" "identity-domain-metadata" {
   content  = module.vision_identity_domains.identity_domain_saml_metadata[keys(module.vision_identity_domains.identity_domain_saml_metadata)[0]]
   filename = "./identity-domain-metadata.xml"
 }
+
+output "test" {
+  value = module.vision_identity_domains.test_output
+}
