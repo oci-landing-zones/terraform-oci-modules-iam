@@ -1,4 +1,4 @@
-# CIS OCI Landing Zone IAM Compartments Module
+# OCI Landing Zones IAM Compartments Module
 
 ![Landing Zone logo](../landing_zone_300.png)
 
@@ -23,7 +23,7 @@ A fundamental principle in using a map of objects is the ability to quickly visu
     - **is_user_required** &ndash; (Optional) Whether the user must provide a tag value for resources created in the compartment.
   - **children**:  &ndash; (Optional) The map of sub-compartments. It has the same structure of the *compartments* map, except for the *parent_id* attribute.  
 
-Note it is possible to apply tag defaults to compartments. Tag defaults are tag values that are automatically applied or required from users on any resources eventually created in the compartments and in their sub-compartments. Use tag defaults to enforce organization wide governance practices in your cloud infrastructure, like automatically applying the cost center identifier to specific compartments. Before using a tag default, a defined tag must be defined in OCI. For configuring tags, you can use the [Tags module in CIS OCI Landing Zone Governance repository](https://github.com/oracle-quickstart/terraform-oci-cis-landing-zone-governance/tags/).
+Note it is possible to apply tag defaults to compartments. Tag defaults are tag values that are automatically applied or required from users on any resources eventually created in the compartments and in their sub-compartments. Use tag defaults to enforce organization wide governance practices in your cloud infrastructure, like automatically applying the cost center identifier to specific compartments. Before using a tag default, a defined tag must be defined in OCI. For configuring tags, you can use the [Tags module in OCI Landing Zones Governance repository](https://github.com/oracle-quickstart/terraform-oci-cis-landing-zone-governance/tags/).
 
 Tag defaults are defined using *tag_defaults* attribute within each compartment in *compartments* attribute. You can have multiple tag defaults in a single compartment. Each tag default requires an immutable key (use an uppercase string as a convention), a tag id (*tag_id*), the default value (*default_value*) and whether or not the value is required from users when creating resources (*is_user_required*). If *is_user_required* is not provided or set to false, the default value is automatically applied upon resource creation.  
 
@@ -153,6 +153,27 @@ For referring to a specific module version, append *ref=\<version\>* to the *sou
 - [Compartments in Terraform OCI Provider](https://registry.terraform.io/providers/oracle/oci/latest/docs/resources/identity_compartment)
 - [Managing Tag Defaults](https://docs.oracle.com/en-us/iaas/Content/Tagging/Tasks/managingtagdefaults.htm)
 - [Tag Defaults in Terraform OCI Provider](https://registry.terraform.io/providers/oracle/oci/latest/docs/resources/identity_tag_default)
+
+## Help
+
+Open an issue in this repository.
+
+## Contributing
+
+This project welcomes contributions from the community. Before submitting a pull request, please [review our contribution guide](./CONTRIBUTING.md).
+
+## Security
+
+Please consult the [security guide](./SECURITY.md) for our responsible security vulnerability disclosure process.
+
+## License
+
+Copyright (c) 2023,2024 Oracle and/or its affiliates.
+
+*Replace this statement if your project is not licensed under the UPL*
+
+Released under the Universal Permissive License v1.0 as shown at
+<https://oss.oracle.com/licenses/upl/>.
 
 ## Known Issues
 None.

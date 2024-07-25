@@ -1,4 +1,4 @@
-# CIS OCI IAM Compartments Module Example - External Dependencies
+# OCI Landing Zones IAM Compartments Module Example - External Dependencies
 
 This example shows how to deploy Identity and Access Management (IAM) compartments in Oracle Cloud Infrastructure (OCI) with external dependencies. 
 

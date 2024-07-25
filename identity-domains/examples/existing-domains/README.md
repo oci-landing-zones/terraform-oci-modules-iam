@@ -1,4 +1,4 @@
-# OCI Identity Domains Module Usage Example - Vision identity domains
+# OCI Landing Zones Identity Domains Module Usage Example - Vision identity domains
 ## Introduction
 
 This example shows how to deploy Identity and Access Management (IAM) identity domain Groups and Dynamic Groups with existing Identity Domains in Oracle Cloud Infrastructure (OCI) for a hypothetical Vision entity.

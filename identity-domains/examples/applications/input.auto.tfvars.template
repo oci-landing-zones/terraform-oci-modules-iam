@@ -1,0 +1,212 @@
+# Copyright (c) 2023 Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
+
+#---------------------------------------------------------------------------------------------------------------------
+# 1. Rename this file to <project-name>.auto.tfvars, where <project-name> is any name of your choice.
+# 2. Provide values for "Tenancy Connectivity Variables".
+# 3. Replace <REPLACE-BY-DOMAIN-OCID> placeholder by the identity domain OCID.
+# Each object in the *identity_domains* map is indexed by an uppercase string, like IDP1, IDP2, etc. 
+# These strings are used by Terraform as keys to the actual managed resources. 
+# They can actually be any random strings, but once defined they MUST NOT BE CHANGED, 
+# or Terraform will try to destroy and recreate the identity domains.
+#---------------------------------------------------------------------------------------------------------------------
+
+#---------------------------------------
+# Tenancy Connectivity Variables
+#---------------------------------------
+
+tenancy_ocid         = "<tenancy OCID>"             # Get this from OCI Console (after logging in, go to top-right-most menu item and click option "Tenancy: <your tenancy name>").
+user_ocid            = "<user OCID>"                # Get this from OCI Console (after logging in, go to top-right-most menu item and click option "My profile").
+fingerprint          = "<PEM key fingerprint>"      # The fingerprint can be gathered from your user account. In the "My profile page, click "API keys" on the menu in left hand side.
+private_key_path     = "<path to the private key>"  # This is the full path on your local system to the API signing private key.
+private_key_password = ""                           # This is the password that protects the private key, if any.
+region               = "<your tenancy home region>" # This is your tenancy home region.
+
+#---------------------------------------
+# Input variable
+#---------------------------------------
+
+identity_domain_applications_configuration = {
+  default_identity_domain_id  : "<REPLACE-BY-DOMAIN-OCID>"
+  applications = {
+   SAML_APP : {   # Sample SAML Application: parameter values are simple examples to show their format.
+    identity_domain_id              = "<REPLACE-BY-DOMAIN-OCID>"
+    name                            = "MYSAMLApp1"
+    display_name                    = "MY SAML App1"
+    description                     = "Demo SAML APP"
+    active                          = true
+    type                            = "SAML"   
+    application_group_ids           = ["REPLACE-BY-GROUP-OCID-OR-KEY"]
+    app_url                         = "https://appurl1.com"   # Same a Relay State
+    enforce_grants_as_authorization = true
+    #SSO Configuration 
+    entity_id                       = "EntityID1"
+    assertion_consumer_url          = "https://assertionurl1.com"
+    logout_binding                  = "Redirect",
+    single_logout_url               = "https://singlelogouturl1.com",
+    logout_response_url             = "https://logoutresponse1.com"
+    signing_certificate             = "MIIDZjCCAk6gAwIBAgIGAYu0x06RMA0GCSqGSIb3DQEBCwUAMFkxEzARBgoJkiaJk/IsZAEZFgNjb20xFjAUBgoJkiaJk/IsZAEZFgZvcmFjbGUxFTATBgoJkiaJk/IsZAEZFgVjbG91ZDETMBEGA1UEAxMKQ2xvdWQ5Q0EtMjAeFw0yMzExMDkxNTUwNDJaFw0zMzExMDkxNTUwNDJaMFsxEzARBgNVBAMTCnNzbERvbWFpbnMxDzANBgNVBAMTBkNsb3VkOTEzMDEGA1UEAwwqaWRjcy1kMDZkNTkwYjE0ZTg0MmYxYjE5MDYyYzI3ZmFkZTUzMV9rZXlzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAn4F8Jp9Ks6Z7iW/iZboJewKeqPJ03semecCC7ewd7IWQMYUrSWcthqU1D45T9Di7iwbJhM4V1JB1XAMpEXJINbqdfXNpurfeHyKN52T4m1Zc/4l3Dx8p0r+JVPLp6aLhEbNo7AsufkUwlQUQTa3vp/+nebQRSu0Pei8Lx+23xsr6w5ZxzoNIL9LeAwEvl5B7dS2mIgUgzU35u/N5UgJcgydgxzM3sGZo4dLeWaLUieYNWyOJj2DgDphL2j4e+C+t9TVYu/ulJFooMbGnC5uHjnFKo2oGGm8suM3167g/uKC+0vIA4PRx72DNQEVo42i5spXVEUJADYu1pGbAS76hxwIDAQABozIwMDAPBgNVHQ8BAf8EBQMDB/gAMB0GA1UdDgQWBBSjnRVztHLhTh82kr01vGwqRBUs7TANBgkqhkiG9w0BAQsFAAOCAQEAZ9LlqOLd9L+snBUStMQewW/gFRcqNNq5Js3HvVdvEwitQOWehBBi9NIp/nEr66PWKB+7m6JHfrXzjw45nPzp2erupFNSadQ8N/9Pp9Bq/KqKy1W/NLgcmwqRLpStTPpTwEcDFYqKVZIrr+WtGa+kvbfynAAoBziRg2ejWZVPaGheJFKG6DNVjj/7YYYYYYYYYYYDjs1hEjJVCc2BDPlr2FuAOegKtCzW5LxZWaScOW6u+mXZGaEbS9Jw99a3KiI+A2rfclrU4q0aOvbzq4OLOzG81a4cf9nQ8MC0/Itmitdpvqui5BfLTjeMqlA==",
+    name_id_value                   = "userName"    # "userName", "emails.primary.value", or Expression
+    name_id_format                  = "saml-emailaddress"    #"saml-emailaddress", "saml-x509", "saml-kerberos", "saml-persistent", "saml-transient", "saml-unspecified", "saml-windowsnamequalifier","saml-none"
+    enable_single_logout            = true  
+    include_signing_certificate     = true
+    signature_hash_algorithm        = "SHA-256"
+    require_encrypted_assertion     = true,
+    encryption_certificate          = "MIIDZjCCAk6gAwIBAgIGAYu0x06RMA0GCSqGSIb3DQEBCwUAMFkxEzARBgoJkiaJk/IsZAEZFgNjb20xFjAUBgoJkiaJk/IsZAEZFgZvcmFjbGUxFTATBgoJkiaJk/IsZAEZFgVjbG91ZDETMBEGA1UEAxMKQ2xvdWQ5Q0EtMjAeFw0yMzExMDkxNTUwNDJaFw0zMzExMDkxNTUwNDJaMFsxEzARBgNVBAMTCnNzbERvbWFpbnMxDzANBgNVBAMTBkNsb3VkOTEzMDEGA1UEAwwqaWRjcy1kMDZkNTkwYjE0ZTg0MmYxYjE5MDYyYzI3ZmFkZTUzMV9rZXlzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAn4F8Jp9Ks6Z7iW/iZboJewKeqPJ03semecCC7ewd7IWQMYUrSWcthqU1D45T9Di7iwbJhM4V1JB1XAMpEXJINbqdfXNpurfeHyKN52T4m1Zc/4l3Dx8p0r+JVPLp6aLhEbNo7AsufkUwlQUQTa3vp/+nebQRSu0Pei8Lx+23xsr6w5ZxzoNIL9LeAwEvl5B7dS2mIgUgzU35u/N5UgJcgydgxzM3sGZo4dLeWaLUieYNWyOJj2DgDphL2j4e+C+t9TVYu/ulJFooMbGnC5uHjnFKo2oGGm8suM3167g/uKC+0vIA4PRx72DNQEVo42i5spXVEUJADYu1pGbAS76hxwIDAQABozIwMDAPBgNVHQ8BAf8EBQMDB/gAMB0GA1UdDgQWBBSjnRVztHLhTh82kr01vGwqRBUs7TANBgkqhkiG9w0BAQsFAAOCAQEAZ9LlqOLd9L+snBUStMQewW/gFRcqNNq5Js3HvVdvEwitQOWehBBi9NIp/nEr66PWKB+7m6JHfrXzjw45nPzp2erupFNSadQ8N/9Pp9Bq/KqKy1W/NLgcmwqRLpStTPpTwEcDFYqKVZIrr+WtGa+kvbfynAAoBziRg2ejWZVPaGheJFKG6DNVjYYYYYYYYYYYYYYYYpgmnS2w/f7+uP20uMpGjA5QL9WhDjs1hEjJVCc2BDPlr2FuAOegKtCzW5LxZWaScOW6u+mXZGaEbS9Jw99a3KiI+A2rfclrU4q0aOvbzq4OLOzG81a4cf9nQ8MC0/Itmitdpvqui5BfLTjeMqlA==",
+    encryption_algorithm            = "AES-256-GCM",
+    key_encryption_algorithm        = "RSA-OAEP",
+    attribute_configuration         = {    # This parameter uses OCI CLI to patch the app .  OCI CLI local configuration is required.
+                                        ATTR1 : { assertion_attribute     = "user_groups"
+                                                identity_domain_attribute = "$(user.groups[*].display)"
+                                                format                    = "Basic"},
+                                        ATTR2 : { assertion_attribute     = "user_country"
+                                                identity_domain_attribute = "$(user.addresses[type eq \\\"work\\\"].country)"
+                                                format                    = "Basic"}
+   
+                                      }
+    app_links                        = {  
+                                        AppLink1 : {relay_state = "http://relayapp1.com"                                     
+                                        }
+                                        AppLink2 : {relay_state = "http://relayapp2.com"                                     
+                                        }
+    }
+   
+   }
+   CONF_APP : {   # Sample Confidential Application: parameter values are simple examples to show their format.
+    identity_domain_id              = "<REPLACE-BY-DOMAIN-OCID>"
+    name                            = "MyConfApp1"
+    display_name                    = "My Confidential App1"
+    description                     = "Demo Confidential App"
+    active                          = false
+    type                            = "Confidential"   
+    app_url                         = "https://confidentialurl1.com"
+
+    configure_as_oauth_client       = true
+    allowed_grant_types             = ["client_credentials","jwt_assertion"]   # ["authorization_code", "client_credentials", "resource_owner", "refresh_token", "implicit", "tls_client_auth", "jwt_assertion", "saml2_assertion", "device_code"]
+    redirect_urls                   = ["https://conf.redirecturl1.com"]
+    client_type                     = "confidential"
+    id_token_encryption_algorithm   = "A128CBC-HS256"   #"A128CBC-HS256","A192CBC-HS384","A256CBC-HS512","A128GCM","A192GCM","A256GCM"
+    allow_introspect_operation      = true
+    allow_on_behalf_of_operation    = false
+    bypass_consent                  = true
+    authorized_resources            = "Specific"
+    application_roles               = ["User Administrator","Audit Administrator"] #"Me","Cloud Gate","Kerberos Administrator","DB Administrator","MFA Client","Authenticator Client","Posix Viewer","Me Password Validator","Identity Domain Administrator","Security Administrator","User Administrator","User Manager","Help Desk Administrator","Application Administrator","Audit Administrator","Change Password","Reset Password","Self Registration","Forgot Password","Verify Email"
+    #app_client_certificate          = {"alias" = "APPCert1","base64certificate" = "MIIDdDCCAlygAwIBAgIJAIf88d9dRGVbMA0GCSqGSIb3DQEBDAUAMGgxEDAOBgNVBAYTB1Vua25vd24xEDAOBgNVBAgTB1Vua25vd24xEDAOBgNVBAcTB1Vua25vd24xEDAOBgNVBAoTB1Vua25vd24xEDAOBgNVBAsTB1Vua25vd24xDDAKBgNVBAMTA0cgUzAeFw0yNDAyMjcxNTU3MjFaFw0yNTAyMjYxNTU3MjFaMGgxEDAOBgNVBAYTB1Vua25vd24xEDAOBgNVBAgTB1Vua25vd24xEDAOBgNVBAcTB1Vua25vd24xEDAOBgNVBAoTB1Vua25vd24xEDAOBgNVBAsTB1Vua25vd24xDDAKBgNVBAMTA0cgUzCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJBR5qOd6Cnz0WZ4uUOAtIH2dMZNh8Tyco8MImwJppIko5srooC/EEMPoFu7NOQjbuAm1bFuB15CYpPgEnsmyOxQL5y+/fhWHsvz61NslMk3otg95briO2v5qoounA2KVRvSc9TTFuaBWCX5pM3Uu2EuPTbIrH9V/WgaoukZ370culhMV2mGBQk++3Dm5yam8CWUyhQqeaonYqrH/jbd8epYYNNSERgtLjPJPGf54HbQ5H3E8QXxWAm3yaGB84lxyjkdYvMWZvukpXLbW5HG4VlQdh2pnB7GHencpJ/9wkAYxZEUdabAFr9rgf5uLW1FRWnHo8drFzgaK4uqOz356yECAwEAAaMhMB8wHQYDVR0OBBYEFP/vJBGSENCSJiYvfeaetaEbnKMcMA0GCSqGSIb3DQEBDAUAA4IBAQAjMX29KlwXerNl2W27ZOR2Xj9OSDGXx+AVRJRARBVZdFgjcX1YQLbxk0s2CPLHshxpwyld/MPUaNZZ8ZzA/ftVGyZMo/MGR/yHMw767IU6TjJ/5yW1cELmNDQOcr4X1a6P5C88rSmJ9U11YRUOqkPjrXNBkAK4eej+sps6vy+AxyT6eu8sjxR6E4K03YvBm8/0IrhF1IrD/pWCOgUpu9mwa8NfNPMVBFF1el0R6JepscFXDxNQR1CYqs61WxMH8mj8jLjd+hMddJhh92al1hd1pHYMlryi1GGdhAe4y84s9CiEJ5HMUBW8/zvUbCZYVvJhxrHnT3vDAz07oZkTOTZu" }
+    #resources                      = ["hzx5akzqvwariahxjnnYYYYY.apigateway.us-ashburn-1.oci.customer-oci.com/Commercial","hzx5akzqvwariahxjnntcjiqbq.apigateway.us-ashburn-1.oci.customer-oci.com/Retail"]
+    configure_as_oauth_resource_server = true
+    primary_audience                   = "hzx5akzqvwaYYYYYYYYYYY.apigateway.us-ashburn-1.oci.customer-oci.com"
+    allow_token_refresh                = true
+    refresh_token_expiration           = 3600
+    secondary_audiences                = ["secondary1","secondary2"]
+    scopes                             = {  SCOPE1 : {
+                                                      scope = "scope1" 
+                                                      description = "demo scope"  
+                                                      requires_user_consent = true
+                                                     }
+                                            SCOPE2 : {
+                                                      scope = "scope2" 
+                                                      description = "another demo scope"  
+                                                      requires_user_consent = true
+                                                     }
+
+                                         }
+   
+   } 
+  MOBILE_APP : {   # Sample Mobile Application: parameter values are simple examples to show their format.
+    identity_domain_id              = "<REPLACE-BY-DOMAIN-OCID>"
+    name                            = "MyMobileApp1"
+    display_name                    = "My Mobile App1"
+    description                     = "Demo Mobile App"
+    type                            = "Mobile"
+    enforce_grants_as_authorization = false
+    user_can_request_access         = true
+    display_in_my_apps              = true
+    configure_as_oauth_client       = true
+    allowed_grant_types             = ["refresh_token","implicit"]
+    redirect_urls                   = ["https://mobileredirect1.com","https://mobileredirect2.com"]
+    resources                       = ["hzx5akzqvwarYYYYYYYYY.apigateway.us-ashburn-1.oci.customer-oci.com/Commercial","hzx5akzqvwariahxYYYYYYYYY.apigateway.us-ashburn-1.oci.customer-oci.com/Retail"]
+    application_roles               = ["Reset Password"]
+  }
+  SCIM_APP : {     # Sample Catalog Application Oracle Identity Domain (Provisioning): parameter values are simple examples to show their format.
+    identity_domain_id              = "<REPLACE-BY-DOMAIN-OCID>"
+    name                            = "MySCIM1"
+    display_name                    = "My SCIM App1"
+    description                     = "Demo Identity Domain SCIM App"
+    active                          = false
+    type                            = "SCIM"
+    enable_provisioning             = true
+    #application_group_ids           = ["GRP1"]
+    host_name                       = "myhostname1.com"                 # This parameter uses OCI CLI to patch the app.  OCI CLI local configuration is required.
+    client_id                       = "CLIENTID1"                       # This parameter uses OCI CLI to patch the app.  OCI CLI local configuration is required.
+    client_secret                   = "SECRETSECRET"                    # This parameter uses OCI CLI to patch the app.  OCI CLI local configuration is required.
+    scope                           = "urn:opc:idm:__myscopes__"        # This parameter uses OCI CLI to patch the app.  OCI CLI local configuration is required.
+    authentication_server_url       = "https://myauthnserverurl1.com"   # This parameter uses OCI CLI to patch the app.  OCI CLI local configuration is required.
+    authoritative_sync              = true
+    enable_synchronization          = true 
+    admin_consent_granted           = true
+  }
+  GENERIC_SCIM_APP : {   # Sample Catalog Application GenericScim - Client Credentials: parameter values are simple examples to show their format.
+    identity_domain_id              = "<REPLACE-BY-DOMAIN-OCID>"
+    name                            = "MyGenericSCIM1"
+    display_name                    = "My GenericSCIM App1"
+    description                     = "Demo GenericSCIM App"
+    active                          = false
+    type                            = "GenericSCIM"   
+    enable_provisioning             = true
+    
+    #application_group_ids           = ["ocid1.group.oc1..aaaaaaaak4jeyviifdyuqYYYYYYbdqmc56scte6fg3qecuf33ci3qbq"]
+    host_name                       = "myhostname1.com"                 # This parameter uses OCI CLI to patch the app.  OCI CLI local configuration is required.
+    client_id                       = "CLIENTID1"                       # This parameter uses OCI CLI to patch the app.  OCI CLI local configuration is required.
+    client_secret                   = "SECRETSECRET"                    # This parameter uses OCI CLI to patch the app.  OCI CLI local configuration is required.
+    scope                           = "urn:opc:idm:__myscopes__"        # This parameter uses OCI CLI to patch the app.  OCI CLI local configuration is required.
+    base_uri                        = "https://baseuri1.com"            # This parameter uses OCI CLI to patch the app.  OCI CLI local configuration is required.
+    custom_auth_headers             = "authheader1"                     # This parameter uses OCI CLI to patch the app.  OCI CLI local configuration is required.
+    http_operation_types            = "POST,PATCH"                      # This parameter uses OCI CLI to patch the app.  OCI CLI local configuration is required.
+    authentication_server_url       = "https://myauthnserverurl1.com"   # This parameter uses OCI CLI to patch the app.  OCI CLI local configuration is required.
+    authoritative_sync              = true
+    enable_synchronization          = true 
+    admin_consent_granted           = true
+  }
+  FUSION_APP1 : {   # Sample Catalog Application Oracle Fusion Applications Release 13 (Provisioning/SAML): parameter values are simple examples to show their format.
+    identity_domain_id              = "<REPLACE-BY-DOMAIN-OCID>"
+    name                            = "MyFusionApp1"
+    display_name                    = "My Fusion App1"
+    description                     = "Demo Fusion Apps"
+    active                          = false
+    type                            = "FusionApps"   
+    #application_group_ids           = ["<REPLACE-BY-GROUP-OCID-OR-KEY>"]
+    enforce_grants_as_authorization = true
+    #SSO Configuration
+    entity_id                       = "https://fa-XXXX-test-saasfaprod1.fa.ocs.oraclecloud.com/oam/fed"
+    assertion_consumer_url          = "https://fa-XXXX-test-saasfaprod1.fa.ocs.oraclecloud.com/oam/server/fed/sp/sso"
+    logout_binding                  = "Redirect",
+    single_logout_url               = "https://fa-XXXX-test-saasfaprod1.fa.ocs.oraclecloud.com/oam/fed/idp/samlv20"
+    logout_response_url             = "https://fa-XXXX-test-saasfaprod1.fa.ocs.oraclecloud.com/oam/fed/idp/samlv20"
+    signing_certificate             = "MIIDZjCCAk6gAwIBAgIGAYu0x06RMA0GCSqGSIb3DQEBCwUAMFkxEzARBgoJkiaJk/IsZAEZFgNjb20xFjAUBgoJkiaJk/IsZAEZFgZvcmFjbGUxFTATBgoJkiaJk/IsZAEZFgVjbG91ZDETMBEGA1UEAxMKQ2xvdWQ5Q0EtMjAeFw0yMzExMDkxNTUwNDJaFw0zMzExMDkxNTUwNDJaMFsxEzARBgNVBAMTCnNzbERvbWFpbnMxDzANBgNVBAMTBkNsb3VkOTEzMDEGA1UEAwwqaWRjcy1kMDZkNTkwYjE0ZTg0MmYxYjE5MDYyYzI3ZmFkZTUzMV9rZXlzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAn4F8Jp9Ks6Z7iW/iZboJewKeqPJ03semecCC7ewd7IWQMYUrSWcthqU1D45T9Di7iwbJhM4V1JB1XAMpEXJINbqdfXNpurfeHyKN52T4m1Zc/4l3Dx8p0r+JVPLp6aLhEbNo7AsufkUwlQUQTa3vp/+nebQRSu0Pei8Lx+23xsr6w5ZxzoNIL9LeAwEvl5B7dS2mIgUgzU35u/N5UgJcgydgxzM3sGZo4dLeWaLUieYNWyOJj2DgDphL2j4e+C+t9TVYu/ulJFooMbGnC5uHjnFKo2oGGm8suM3167g/uKC+0vIA4PRx72DNQEVo42i5spXVEUJADYu1pGbAS76hxwIDAQABozIwMDAPBgNVHQ8BAf8EBQMDB/gAMB0GA1UdDgQWBBSjnRVztHLhTh82kr01vGwqRBUs7TANBgkqhkiG9w0BAQsFAAOCAQEAZ9LlqOLd9L+snBUStMQewW/gFRcqNNq5Js3HvVdvEwitQOWehBBi9NIp/nEr66PWKB+7m6JHfrXzjw45nPzp2erupFNSadQ8N/9Pp9Bq/KqKy1W/NLgcmwqRLpStTPpTwEcDFYqKVZIrr+WtGa+kvbfynAAoBziRg2ejWZVPaGheJFKG6DNVjj/7gN3J2uPIrqHpgmnS2w/f7+uP20uMpGjA5QL9WhDjs1hEjJVCc2BDPlr2FuAOegKtCzW5LxZWaScOW6u+mXZGaEbS9Jw99a3KiI+A2rfclrU4q0aOvbzq4OLOzG81a4cf9nQ8MC0/Itmitdpvqui5BfLTjeMqlA==",
+    #name_id_value                  = "userName"
+    #name_id_format                 = "saml-unspecified"
+    enable_single_logout            = true  
+
+   
+    fusion_service_urls               = { crm_landing_page_url = "https://fa-XXXX-test-saasfaprod1.fa.ocs.oraclecloud.com/crmUI/faces/FuseWelcome"
+                                          scm_landing_page_url = "https://fa-XXXX-test-saasfaprod1.fa.ocs.oraclecloud.com/fscmUI/faces/FuseWelcome"
+                                          hcm_landing_page_url = "https://fa-XXXX-test-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/faces/FuseWelcome"
+                                          erp_landing_page_url = "https://fa-XXXX-test-saasfaprod1.fa.ocs.oraclecloud.com/fscmUI/faces/FuseWelcome"
+                                        }
+    authoritative_sync              = true
+    enable_synchronization          = true 
+    admin_consent_granted           = true
+    enable_provisioning             = true
+
+    host_name                       = "fa-XXXX-test-saasfaprod1.fa.ocs.oraclecloud.com"     # This parameter uses OCI CLI to patch the app .  OCI CLI local configuration is required.
+    fa_port                         = 443                # This parameter uses OCI CLI to patch the app.  OCI CLI local configuration is required.
+    fa_admin_user                   = "FA_admin_user"    # This parameter uses OCI CLI to patch the app.  OCI CLI local configuration is required.
+    fa_admin_password               = "FAWelcome123"     # This parameter uses OCI CLI to patch the app.  OCI CLI local configuration is required.
+    fa_ssl_enabled                  = true               # This parameter uses OCI CLI to patch the app.  OCI CLI local configuration is required.
+    fa_override_custom_sync         = true               # This parameter uses OCI CLI to patch the app.  OCI CLI local configuration is required.
+    fa_admin_roles                  = ["ORA_OKC_SUPPLIER_CONTRACT_ADMINISTRATOR_JOB","ORA_POS_SUPPLIER_SELF_SERVICE_ADMINISTRATOR_ABSTRACT"]   # This parameter uses OCI CLI to patch the app .  OCI CLI local configuration is required.
+  
+ }
+
+}
+}

@@ -1,4 +1,4 @@
-# CIS OCI Landing Zone IAM Groups Module
+# OCI Landing Zones IAM Groups Module
 
 ![Landing Zone logo](../landing_zone_300.png)
 
@@ -14,7 +14,7 @@ The module defines a single input variable named *groups_configuration*, support
    - **default_freeform_tags**: freeform tags to apply to all groups, unless overriden by *freeform_tags* attribute within each group object.
      **Note**: Freeform tags are limited to 10 tags per OCI resource.
 
-Check the [examples](./examples/) folder for module usage. Specifically, see [vision](./examples/vision/README.md) example for the groups deployed by [CIS OCI Landing Zone Quick Start](https://github.com/oracle-quickstart/oci-cis-landingzone-quickstart).
+Check the [examples](./examples/) folder for module usage. Specifically, see [vision](./examples/vision/README.md) example for the groups deployed by [OCI Base Landing Zone](https://github.com/oracle-quickstart/oci-cis-landingzone-quickstart).
 
 ## Requirements
 ### IAM Permissions
