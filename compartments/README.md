@@ -81,6 +81,10 @@ Example:
 ```
 
 ## Requirements
+### Terraform Version >= 1.3.0
+
+This module requires Terraform binary version 1.3.0 or greater, as it relies on Optional Object Type Attributes feature. The feature shortens the amount of input values in complex object types, by having Terraform automatically inserting a default value for any missing optional attributes.
+
 ### IAM Permissions
 
 This module requires the following OCI IAM permission in compartments referred by *default_parent_ocid* and/or *parent_ocid*:

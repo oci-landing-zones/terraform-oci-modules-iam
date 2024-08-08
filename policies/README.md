@@ -17,6 +17,10 @@
 - [Known Issues](#issues)
 
 ## <a name="requirements">Requirements</a>
+### Terraform Version >= 1.3.0
+
+This module requires Terraform binary version 1.3.0 or greater, as it relies on Optional Object Type Attributes feature. The feature shortens the amount of input values in complex object types, by having Terraform automatically inserting a default value for any missing optional attributes.
+
 ### IAM Permissions
 
 This module requires the following OCI IAM permissions in the top-most compartment that policies get attached to.

@@ -17,6 +17,10 @@ The module defines a single input variable named *groups_configuration*, support
 Check the [examples](./examples/) folder for module usage. Specifically, see [vision](./examples/vision/README.md) example for the groups deployed by [OCI Base Landing Zone](https://github.com/oracle-quickstart/oci-cis-landingzone-quickstart).
 
 ## Requirements
+### Terraform Version >= 1.3.0
+
+This module requires Terraform binary version 1.3.0 or greater, as it relies on Optional Object Type Attributes feature. The feature shortens the amount of input values in complex object types, by having Terraform automatically inserting a default value for any missing optional attributes.
+
 ### IAM Permissions
 
 This module requires the following OCI IAM permission:

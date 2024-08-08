@@ -15,6 +15,9 @@ Check the [examples](./examples/) folder for actual module usage.
 - [Known Issues](#issues)
 
 ## <a name="requirements">Requirements</a>
+### Terraform Version >= 1.3.0
+
+This module requires Terraform binary version 1.3.0 or greater, as it relies on Optional Object Type Attributes feature. The feature shortens the amount of input values in complex object types, by having Terraform automatically inserting a default value for any missing optional attributes.
 
 ### IAM Permissions
 
