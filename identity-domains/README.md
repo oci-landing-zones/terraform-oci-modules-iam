@@ -22,11 +22,9 @@ This module requires Terraform binary version 1.3.0 or greater, as it relies on 
 ### IAM Permissions
 
 This module requires the following OCI IAM permission:
-
 ```
 Allow group <group> to manage domains in tenancy
 ```
-
 ## <a name="invoke">How to Invoke the Module</a>
 
 Terraform modules can be invoked locally or remotely.
