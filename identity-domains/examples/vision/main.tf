@@ -7,5 +7,4 @@ module "vision_identity_domains" {
   identity_domains_configuration                = var.identity_domains_configuration
   identity_domain_groups_configuration          = var.identity_domain_groups_configuration
   identity_domain_dynamic_groups_configuration  = var.identity_domain_dynamic_groups_configuration
-
 }
