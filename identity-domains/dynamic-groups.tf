@@ -19,7 +19,7 @@ resource "oci_identity_domains_dynamic_resource_group" "these" {
     urnietfparamsscimschemasoracleidcsextension_oci_tags {
 
         dynamic "defined_tags" {
-            for_each = each.value.defined_tags != null ? each.value.defined_tags : (var.identity_domain_groups_configuration.default_defined_tags !=null ? var.identity_domain_groups_configuration.default_defined_tags : {})
+            for_each = each.value.defined_tags != null ? each.value.defined_tags : (var.identity_domain_dynamic_groups_configuration.default_defined_tags !=null ? var.identity_domain_dynamic_groups_configuration.default_defined_tags : {})
                content {
                  key = split(".",defined_tags["key"])[1]
                  namespace = split(".",defined_tags["key"])[0]
@@ -28,7 +28,7 @@ resource "oci_identity_domains_dynamic_resource_group" "these" {
         }
 
         dynamic "freeform_tags" {
-            for_each = each.value.freeform_tags != null ? each.value.freeform_tags : (var.identity_domain_groups_configuration.default_freeform_tags !=null ? var.identity_domain_groups_configuration.default_freeform_tags : {})
+            for_each = each.value.freeform_tags != null ? each.value.freeform_tags : (var.identity_domain_dynamic_groups_configuration.default_freeform_tags !=null ? var.identity_domain_dynamic_groups_configuration.default_freeform_tags : {})
                content {
                  key = freeform_tags["key"]
                  value = freeform_tags["value"]
