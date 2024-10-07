@@ -1,3 +1,9 @@
+# October 07, 2024 Release Notes - 0.2.4
+## Updates
+1. [Identity Domains module](./identity-domains/)
+    - Typo fixed in *defined_tags* and *freeform_tags* for dynamic groups.
+
+
 # August 27, 2024 Release Notes - 0.2.3
 ## Updates
 1. All modules now require Terraform binary equal or greater than 1.3.0.
