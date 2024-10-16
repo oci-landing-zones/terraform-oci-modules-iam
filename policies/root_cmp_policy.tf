@@ -94,8 +94,17 @@ locals {
   security_admin_grants_on_root_cmp = contains(keys(local.group_name_map_transpose),local.security_role) ? [
     "allow group ${local.security_group_names} to manage cloudevents-rules in tenancy",
     "allow group ${local.security_group_names} to manage cloud-guard-family in tenancy",
-    "allow group ${local.security_group_names} to read tenancies in tenancy"
+    "allow group ${local.security_group_names} to read tenancies in tenancy",
+    "allow group ${local.security_group_names} to manage zpr-configuration in tenancy",
+    "allow group ${local.security_group_names} to manage zpr-policy in tenancy",
+    "allow group ${local.security_group_names} to manage security-attribute-namespace in tenancy"
     #"allow group ${local.security_group_names} to read objectstorage-namespaces in tenancy"
+  ] : []
+
+  network_admin_grants_on_root_cmp = contains(keys(local.group_name_map_transpose),local.network_role) ? [
+    "allow group ${local.network_group_names} to read zpr-configuration in tenancy",
+    "allow group ${local.network_group_names} to read zpr-policy in tenancy",
+    "allow group ${local.network_group_names} to read security-attribute-namespace in tenancy"
   ] : []
 
   objectstorage_read_grantees = compact(
@@ -126,27 +135,31 @@ locals {
   ] : []  
 
   auditor_grants = contains(keys(local.group_name_map_transpose),local.auditor_role) ? [
- "allow group ${local.auditor_group_names} to inspect all-resources in tenancy",
-        "allow group ${local.auditor_group_names} to read instances in tenancy",
-        "allow group ${local.auditor_group_names} to read load-balancers in tenancy",
-        "allow group ${local.auditor_group_names} to read buckets in tenancy",
-        "allow group ${local.auditor_group_names} to read nat-gateways in tenancy",
-        "allow group ${local.auditor_group_names} to read public-ips in tenancy",
-        "allow group ${local.auditor_group_names} to read file-family in tenancy",
-        "allow group ${local.auditor_group_names} to read instance-configurations in tenancy",
-        "allow group ${local.auditor_group_names} to read network-security-groups in tenancy",
-        "allow group ${local.auditor_group_names} to read resource-availability in tenancy",
-        "allow group ${local.auditor_group_names} to read audit-events in tenancy",
-        "allow group ${local.auditor_group_names} to read users in tenancy",
-        "allow group ${local.auditor_group_names} to use cloud-shell in tenancy",
-        "allow group ${local.auditor_group_names} to read vss-family in tenancy",
-        "allow group ${local.auditor_group_names} to read usage-budgets in tenancy",
-        "allow group ${local.auditor_group_names} to read usage-reports in tenancy",
-        "allow group ${local.auditor_group_names} to read data-safe-family in tenancy",
-        "allow group ${local.auditor_group_names} to read vaults in tenancy",
-        "allow group ${local.auditor_group_names} to read keys in tenancy",
-        "allow group ${local.auditor_group_names} to read tag-namespaces in tenancy",
-        "allow group ${local.auditor_group_names} to use ons-family in tenancy where any {request.operation!=/Create*/, request.operation!=/Update*/, request.operation!=/Delete*/, request.operation!=/Change*/}"
+    "allow group ${local.auditor_group_names} to inspect all-resources in tenancy",
+    "allow group ${local.auditor_group_names} to read instances in tenancy",
+    "allow group ${local.auditor_group_names} to read load-balancers in tenancy",
+    "allow group ${local.auditor_group_names} to read buckets in tenancy",
+    "allow group ${local.auditor_group_names} to read nat-gateways in tenancy",
+    "allow group ${local.auditor_group_names} to read public-ips in tenancy",
+    "allow group ${local.auditor_group_names} to read file-family in tenancy",
+    "allow group ${local.auditor_group_names} to read instance-configurations in tenancy",
+    "allow group ${local.auditor_group_names} to read network-security-groups in tenancy",
+    "allow group ${local.auditor_group_names} to read resource-availability in tenancy",
+    "allow group ${local.auditor_group_names} to read audit-events in tenancy",
+    "allow group ${local.auditor_group_names} to read users in tenancy",
+    "allow group ${local.auditor_group_names} to use cloud-shell in tenancy",
+    "allow group ${local.auditor_group_names} to read vss-family in tenancy",
+    "allow group ${local.auditor_group_names} to read usage-budgets in tenancy",
+    "allow group ${local.auditor_group_names} to read usage-reports in tenancy",
+    "allow group ${local.auditor_group_names} to read data-safe-family in tenancy",
+    "allow group ${local.auditor_group_names} to read vaults in tenancy",
+    "allow group ${local.auditor_group_names} to read keys in tenancy",
+    "allow group ${local.auditor_group_names} to read tag-namespaces in tenancy",
+    "allow group ${local.auditor_group_names} to use ons-family in tenancy where any {request.operation!=/Create*/, request.operation!=/Update*/, request.operation!=/Delete*/, request.operation!=/Change*/}",
+    "allow group ${local.auditor_group_names} to read zpr-configuration in tenancy",
+    "allow group ${local.auditor_group_names} to read zpr-policy in tenancy",
+    "allow group ${local.auditor_group_names} to read security-attribute-namespace in tenancy",
+    "allow group ${local.auditor_group_names} to read network-firewall-family in tenancy"
   ] : []
 
   announcement_reader_grants = contains(keys(local.group_name_map_transpose),local.announcement_reader_role) ? [
@@ -155,7 +168,8 @@ locals {
 
   root_cmp_admin_grants = concat(local.cost_admin_grants_on_root_cmp,local.iam_admin_grants_on_root_cmp,
                                  local.iam_admin_grants_on_enclosing_cmp,local.cred_admin_grants_on_root_cmp,
-                                 local.security_admin_grants_on_root_cmp,local.security_admin_grants_on_enclosing_cmp)
+                                 local.security_admin_grants_on_root_cmp,local.security_admin_grants_on_enclosing_cmp,
+                                 local.network_admin_grants_on_root_cmp)
 
   root_cmp_nonadmin_grants = concat(local.basic_grants_on_root_cmp,local.application_admin_grants_on_enclosing_cmp,
                                     local.auditor_grants,local.announcement_reader_grants, local.objectstorage_read_on_root_cmp)                               

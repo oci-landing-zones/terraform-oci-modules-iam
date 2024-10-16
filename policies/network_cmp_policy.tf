@@ -39,7 +39,8 @@ locals {
       "allow group ${values["net-group"]} to manage metrics in compartment ${values["name"]}",
       "allow group ${values["net-group"]} to manage keys in compartment ${values["name"]}",
       "allow group ${values["net-group"]} to use key-delegate in compartment ${values["name"]}",
-      "allow group ${values["net-group"]} to manage secret-family in compartment ${values["name"]}"
+      "allow group ${values["net-group"]} to manage secret-family in compartment ${values["name"]}",
+      "allow group ${values["net-group"]} to manage network-firewall-family in compartment ${values["name"]}"
       #"allow group ${values["net-group"]} to read instance-agent-plugins in compartment ${values["name"]}"
     ] : []
   }  
@@ -61,7 +62,8 @@ locals {
   #-- Security admin grants on Network compartment
   security_admin_grants_on_network_cmp_map = {
     for k, values in local.cmp_name_to_cislz_tag_map : k => (contains(split(",",values["cmp-type"]),"network") && values["sec-group"] != null) ? [
-      "allow group ${values["sec-group"]} to read keys in compartment ${values["name"]}"
+      "allow group ${values["sec-group"]} to read keys in compartment ${values["name"]}",
+      "allow group ${values["sec-group"]} to use network-firewall-family in compartment ${values["name"]}"
     ] : []
   }
 
