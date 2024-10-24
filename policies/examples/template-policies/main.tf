@@ -74,8 +74,8 @@ locals {
         name : cmp.name, 
         id : cmp.id, 
         cislz_metadata : local.cislz_compartments_metadata[cmp.freeform_tags["cislz-cmp-type"]] #-- This example expects compartments to be freeform tagged with "cislz-cmp-type", so it can figure out the compartments intent and associate it with the appropriate metadata.
-      } 
-    if lookup(cmp.freeform_tags, "cislz","") == "vision" #-- The compartments we are interested are freeform tagged as {"cislz" : "vision"} but you could identify the compartments through some other attributes that makes sense to your deployment.
+      }
+    if lookup(cmp.freeform_tags, "cislz","") == "template-policies-example" #-- The compartments we are interested are freeform tagged as {"cislz" : "template-policies-example"} but you could identify the compartments through some other attributes that makes sense to your deployment.
   }
 
   policies_configuration = {

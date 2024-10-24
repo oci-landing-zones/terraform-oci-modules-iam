@@ -37,6 +37,10 @@ compartments_configuration = {
     TOP-CMP = { 
       name = "vision-top-cmp", 
       description = "Vision Enclosing compartment", 
+      freeform_tags = {
+        cislz = "template-policies-example",
+        cislz-cmp-type = "enclosing"
+      }
       #parent_id = null,
       tag_defaults = {
         COST-CENTER-TAG-DEFAULT = {
@@ -54,22 +58,42 @@ compartments_configuration = {
         NETWORK-CMP = { 
           name = "vision-network-cmp", 
           description = "Vision Network compartment", 
+          freeform_tags = {
+            cislz = "template-policies-example",
+            cislz-cmp-type = "network"
+          }
         },
         SECURITY-CMP = { 
           name = "vision-security-cmp", 
-          description = "Vision Security compartment", 
+          description = "Vision Security compartment",
+          freeform_tags = {
+            cislz = "template-policies-example",
+            cislz-cmp-type = "security"
+          } 
         },
         APP-CMP = { 
           name = "vision-application-cmp", 
-          description = "Vision Application compartment", 
+          description = "Vision Application compartment",
+          freeform_tags = {
+            cislz = "template-policies-example",
+            cislz-cmp-type = "application"
+          } 
         },
         DB-CMP = { 
           name = "vision-database-cmp", 
-          description = "Vision Database compartment", 
+          description = "Vision Database compartment",
+          freeform_tags = {
+            cislz = "template-policies-example",
+            cislz-cmp-type = "database"
+          } 
         },
         EXACS-CMP = { 
           name = "vision-exainfra-cmp", 
-          description = "Vision Exadata Cloud Service compartment",  
+          description = "Vision Exadata Cloud Service compartment", 
+          freeform_tags = {
+            cislz = "template-policies-example",
+            cislz-cmp-type = "exainfra"
+          } 
         } 
       }
     }
