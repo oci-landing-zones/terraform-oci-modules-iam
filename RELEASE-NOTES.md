@@ -1,3 +1,9 @@
+# November 01, 2024 Release Notes - 0.2.5
+## Updates
+1. [Policies module](./policies/)
+    - Added IAM policies for OCI Network Firewall and ZPR.
+
+
 # October 07, 2024 Release Notes - 0.2.4
 ## Updates
 1. [Identity Domains module](./identity-domains/)
