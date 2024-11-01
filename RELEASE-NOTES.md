@@ -2,6 +2,8 @@
 ## Updates
 1. [Policies module](./policies/)
     - Added IAM policies for OCI Network Firewall and ZPR.
+        - OCI Network Firewall granted manage permissions to Network admins.
+        - ZPR granted manage permissions to Security admins.   
 
 
 # October 07, 2024 Release Notes - 0.2.4
