@@ -1,6 +1,6 @@
 # OCI Landing Zones IAM Compartments Module Example - Vision compartments
 
-This example shows how to deploy Identity and Access Management (IAM) compartments in Oracle Cloud Infrastructure (OCI) for a hypothetical Vision entity. The sample topology is the same one deployed by [OCI Base Landing Zone](https://github.com/oracle-quickstart/oci-cis-landingzone-quickstart). 
+This example shows how to deploy Identity and Access Management (IAM) compartments in Oracle Cloud Infrastructure (OCI) for a hypothetical Vision entity. The sample topology is the same one deployed by [OCI Core Landing Zone](https://github.com/oci-landing-zones/terraform-oci-core-landingzone). 
 
 It creates the compartment topology as shown in the picture below:
 
@@ -22,6 +22,8 @@ The same structure as shown by OCI Console:
 Refer to [compartment's module README.md](../../README.md) for overall attributes usage.
 
 *TOP-CMP* defines two tag defaults. *COST-CENTER-TAG-DEFAULT* will automatically apply value "a1" to any resources created in *TOP-CMP* compartment and  sub-compartments. *ENVIRONMENT-TAG-DEFAULT* will automatically require that users provide a value when creating resources in *TOP-CMP* compartment and sub-compartments.
+
+The *cislz* and *cislz-cmp-type* freeform tags assigned to each compartment are used as lookups by [Template Policies Example](https://github.com/oci-landing-zones/terraform-oci-modules-iam/tree/main/policies/examples/template-policies).
 
 **Note**: If the *automation_config* variable is provided, the example writes the compartments output to the specified OCI Object Storage bucket (write permissions are required on the bucket). The example can be easily changed to write the output to a local file instead. The output can be further used by another module that depends on these compartments.
 
