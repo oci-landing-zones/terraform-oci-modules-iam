@@ -24,6 +24,7 @@ locals {
 resource "oci_identity_domains_group" "these" {
   for_each       = var.identity_domain_groups_configuration != null ? var.identity_domain_groups_configuration.groups : {}
 
+    attribute_sets = ["all"]
     idcs_endpoint = contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_groups_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_groups_configuration.default_identity_domain_id].url : data.oci_identity_domain.grp_domain[each.key].url)
   
     display_name            = each.value.name
