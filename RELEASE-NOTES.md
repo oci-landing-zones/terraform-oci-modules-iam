@@ -1,3 +1,9 @@
+# December 09, 2024 Release Notes - 0.2.6
+## Updates
+1. [Identity Domains module](./identity-domains/)
+    - Added *attribute_sets = ["all"]* to *oci_identity_domains_group* resource block to avoid group memberships being updated when there are no updates to group memberships. Bug https://github.com/oracle/terraform-provider-oci/issues/1933.
+
+
 # November 01, 2024 Release Notes - 0.2.5
 ## Updates
 1. [Policies module](./policies/)
