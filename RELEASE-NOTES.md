@@ -1,3 +1,9 @@
+# January 08, 2025 Release Notes - 0.2.7
+## Updates
+1. [Groups module](./groups/)
+    - Protection against username dupes when assigning group memberships.
+
+
 # December 09, 2024 Release Notes - 0.2.6
 ## Updates
 1. [Identity Domains module](./identity-domains/)
