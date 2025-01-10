@@ -2,7 +2,9 @@
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 data "oci_identity_users" "these" {
-  compartment_id = var.tenancy_ocid
+  count = length(local.group_memberships) > 0 ? 1 : 0
+    compartment_id = var.tenancy_ocid
+    state = "ACTIVE"
 }
 
 resource "oci_identity_group" "these" {
@@ -15,13 +17,16 @@ resource "oci_identity_group" "these" {
 }
 
 resource "oci_identity_user_group_membership" "these" {
-  for_each = { for m in local.group_memberships : "${m.group_key}.${m.user_name}" => m... }
+  for_each = { for m in local.group_memberships : "${m.group_key}.${m.user_name}" => m... if contains(keys(local.users),m.user_name)}
     group_id = oci_identity_group.these[split(".",each.key)[0]].id
-    user_id  = local.users[each.value[0].user_name][0].id
+    user_id  = local.users[each.value[0].user_name].id
 }
 
 locals {
-  users  = { for u in data.oci_identity_users.these.users : u.name => u... if length(local.group_memberships) > 0 }
+  all_users = [ for u in try(data.oci_identity_users.these[0].users,[]) : u ]
+  users  = { for u in local.all_users : u.name => u if length([ for u1 in local.all_users : u1.name if u1.name == u.name]) == 1 }
+  
+  #users  = { for u in try(data.oci_identity_users.these.users,[]) : u.name => u... }
 
   group_memberships = flatten([
     for k, v in (var.groups_configuration != null ? var.groups_configuration.groups : {}) : [
