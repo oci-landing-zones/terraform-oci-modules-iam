@@ -1,7 +1,7 @@
-# January 08, 2025 Release Notes - 0.2.7
+# January 10, 2025 Release Notes - 0.2.7
 ## Updates
 1. [Groups module](./groups/)
-    - Protection against username dupes when assigning group memberships.
+    - Only ACTIVE users are looked up for group membership assignments.
 
 
 # December 09, 2024 Release Notes - 0.2.6
