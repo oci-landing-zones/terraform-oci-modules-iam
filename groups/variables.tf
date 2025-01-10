@@ -9,6 +9,7 @@ variable "tenancy_ocid" {
 variable "groups_configuration" {
   description = "The groups configuration."
   type = object({
+    enable_debug = optional(bool,false)
     default_defined_tags  = optional(map(string)),
     default_freeform_tags = optional(map(string))
     groups = map(object({
