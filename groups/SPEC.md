@@ -26,7 +26,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_groups_configuration"></a> [groups\_configuration](#input\_groups\_configuration) | The groups configuration. | <pre>object({<br>    default_defined_tags  = optional(map(string)),<br>    default_freeform_tags = optional(map(string))<br>    groups = map(object({<br>      name          = string,<br>      description   = string,<br>      members       = optional(list(string)),<br>      defined_tags  = optional(map(string)),<br>      freeform_tags = optional(map(string))<br>    }))<br>  })</pre> | `null` | no |
+| <a name="input_groups_configuration"></a> [groups\_configuration](#input\_groups\_configuration) | The groups configuration. | <pre>object({<br>    enable_debug = optional(bool,false)<br>    default_defined_tags  = optional(map(string)),<br>    default_freeform_tags = optional(map(string))<br>    groups = map(object({<br>      name          = string,<br>      description   = string,<br>      members       = optional(list(string)),<br>      defined_tags  = optional(map(string)),<br>      freeform_tags = optional(map(string))<br>    }))<br>  })</pre> | `null` | no |
 | <a name="input_module_name"></a> [module\_name](#input\_module\_name) | The module name. | `string` | `"iam-groups"` | no |
 | <a name="input_tenancy_ocid"></a> [tenancy\_ocid](#input\_tenancy\_ocid) | The OCID of the tenancy. | `string` | n/a | yes |
 
@@ -34,5 +34,6 @@ No modules.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_debug_ignored_users"></a> [debug\_ignored\_users](#output\_debug\_ignored\_users) | (Debug) Ignored users. |
 | <a name="output_groups"></a> [groups](#output\_groups) | The groups. |
 | <a name="output_memberships"></a> [memberships](#output\_memberships) | The group memberships. |
