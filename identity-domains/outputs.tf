@@ -31,3 +31,12 @@ output "identity_domain_identity_providers" {
 output "identity_domain_saml_metadata" {
   value = { for k,v in data.http.saml_metadata : k=> v.response_body }
 }
+
+output "debug_ignored_users" {
+  description = "(Debug) Ignored users."
+  value = try(var.identity_domain_groups_configuration.enable_debug,false) ? { for k,v in local.identity_domains : "${k} with url ${v}" => [for u in local.all_users[k] : u if length([for u1 in local.all_users[k] : u1.user_name if u1.user_name == u.user_name]) > 1] } : null
+}
+
+output "all_users" {
+  value = try(var.identity_domain_groups_configuration.enable_debug,false) ? { for k,v in local.identity_domains : "${k} with url ${v}" => [for u in local.all_users[k] : u]} : null
+}
