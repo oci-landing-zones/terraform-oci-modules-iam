@@ -37,7 +37,6 @@ variable "identity_domains_configuration" {
 variable "identity_domain_groups_configuration" {
   description = "The identity domain groups configuration."
   type = object({
-    enable_debug                = optional(bool,false)
     default_identity_domain_id  = optional(string)
     default_defined_tags        = optional(map(string))
     default_freeform_tags       = optional(map(string))
