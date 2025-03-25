@@ -51,10 +51,6 @@ No modules.
 | [oci_identity_region_subscriptions.this](https://registry.terraform.io/providers/oracle/oci/latest/docs/data-sources/identity_region_subscriptions) | data source |
 | [oci_identity_regions.these](https://registry.terraform.io/providers/oracle/oci/latest/docs/data-sources/identity_regions) | data source |
 | [oci_identity_tenancy.this](https://registry.terraform.io/providers/oracle/oci/latest/docs/data-sources/identity_tenancy) | data source |
-| [oci_identity_domain.service_provider_domain](https://registry.terraform.io/providers/oracle/oci/latest/docs/data-sources/identity_domain) | data source |
-| [oci_identity_domains_app_roles.client_app_roles](https://registry.terraform.io/providers/oracle/oci/latest/docs/data-sources/identity_domains_app_roles) | data source |
-| [oci_identity_domains_group.granted_app_group](https://registry.terraform.io/providers/oracle/oci/latest/docs/data-sources/identity_domains_group) | data source |
-| [http.sp_signing_cert](https://docs.oracle.com/en/cloud/paas/identity-cloud/rest-api/op-admin-v1-signingcert-jwk-get.html) | data source |
 
 ## Inputs
 
@@ -76,7 +72,6 @@ No modules.
 | <a name="output_identity_domain_applications"></a> [identity\_domain\_applications](#output\_identity\_domain\_applications) | The identity domain applications |
 | <a name="output_identity_domain_dynamic_groups"></a> [identity\_domain\_dynamic\_groups](#output\_identity\_domain\_dynamic\_groups) | The identity domain groups |
 | <a name="output_identity_domain_groups"></a> [identity\_domain\_groups](#output\_identity\_domain\_groups) | The identity domain groups |
-| <a name="output_identity_domain_identity_providers"></a> [identity\_domain\_identity\_providers](#output\_identity\_domain\_identity\_providers) | The identity domain identity providers |
-| <a name="output_identity_domain_applications"></a> [identity\_domain\_applications](#output\_identity\_domain\_applicationss) | The identity domain applications |
+| <a name="output_identity_domain_identity_providers"></a> [identity\_domain\_identity\_providers](#output\_identity\_domain\_identity\_providers) | The identity domain groups |
 | <a name="output_identity_domain_saml_metadata"></a> [identity\_domain\_saml\_metadata](#output\_identity\_domain\_saml\_metadata) | n/a |
 | <a name="output_identity_domains"></a> [identity\_domains](#output\_identity\_domains) | The identity domains. |

@@ -17,9 +17,11 @@ variable "identity_domains_configuration" {
 variable "identity_domain_groups_configuration" {
   description = "The identity domain groups configuration."
   type = any
+  default = null
 }
 
 variable "identity_domain_dynamic_groups_configuration" {
   description = "The identity domain dynamic groups configuration."
   type = any
+  default = null
 }

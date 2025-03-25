@@ -1,3 +1,9 @@
+# March 25, 2025 Release Notes - 0.2.8
+## Updates
+1. [Identity Domains module](./identity-domains/)
+    - Only ACTIVE users are looked up for group membership assignments in identity domains.
+
+
 # January 10, 2025 Release Notes - 0.2.7
 ## Updates
 1. [Groups module](./groups/)

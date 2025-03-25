@@ -21,8 +21,6 @@ output "identity_domain_applications" {
   value = oci_identity_domains_app.these
 }
 
-
-
 output "identity_domain_identity_providers" {
   description = "The identity domain groups"
   value = oci_identity_domains_identity_provider.these
