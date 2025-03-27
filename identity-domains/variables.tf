@@ -45,7 +45,7 @@ variable "identity_domain_groups_configuration" {
       identity_domain_id        = optional(string),
       name                      = string,
       description               = optional(string),
-      requestable               = optional(bool),
+      requestable               = optional(bool,true),
       members                   = optional(list(string)),
       defined_tags              = optional(map(string)),
       freeform_tags             = optional(map(string))
