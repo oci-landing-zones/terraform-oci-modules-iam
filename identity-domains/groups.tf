@@ -10,15 +10,12 @@ data "oci_identity_domains_users" "these" {
   for_each = var.identity_domain_groups_configuration != null ? (var.identity_domain_groups_configuration.groups != null ? var.identity_domain_groups_configuration.groups : {} ): {}
     idcs_endpoint = contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_groups_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_groups_configuration.default_identity_domain_id].url : data.oci_identity_domain.grp_domain[each.key].url)
     user_filter = "active eq true" # Only active users are looked up. 
-  
 }
 
 locals {
   users =  { for k,g in (var.identity_domain_groups_configuration != null ? var.identity_domain_groups_configuration["groups"]: {}) : k =>
       { for u in data.oci_identity_domains_users.these[k].users : u.user_name => u.id}}
 }
-
-
 
 resource "oci_identity_domains_group" "these" {
   for_each = var.identity_domain_groups_configuration != null ? (try(var.identity_domain_groups_configuration.ignore_external_membership_updates,true) == true ? var.identity_domain_groups_configuration.groups : {}) : {}
@@ -32,7 +29,7 @@ resource "oci_identity_domains_group" "these" {
     attribute_sets = ["all"]
     idcs_endpoint = contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_groups_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_groups_configuration.default_identity_domain_id].url : data.oci_identity_domain.grp_domain[each.key].url)
   
-    display_name            = each.value.name
+    display_name = each.value.name
     schemas = ["urn:ietf:params:scim:schemas:core:2.0:Group","urn:ietf:params:scim:schemas:oracle:idcs:extension:requestable:Group","urn:ietf:params:scim:schemas:oracle:idcs:extension:OCITags","urn:ietf:params:scim:schemas:oracle:idcs:extension:group:Group"]
     urnietfparamsscimschemasoracleidcsextensiongroup_group {
         creation_mechanism = "api"
@@ -78,7 +75,7 @@ resource "oci_identity_domains_group" "these_with_external_membership_updates" {
     attribute_sets = ["all"]
     idcs_endpoint = contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_groups_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_groups_configuration.default_identity_domain_id].url : data.oci_identity_domain.grp_domain[each.key].url)
   
-    display_name            = each.value.name
+    display_name = each.value.name
     schemas = ["urn:ietf:params:scim:schemas:core:2.0:Group","urn:ietf:params:scim:schemas:oracle:idcs:extension:requestable:Group","urn:ietf:params:scim:schemas:oracle:idcs:extension:OCITags","urn:ietf:params:scim:schemas:oracle:idcs:extension:group:Group"]
     urnietfparamsscimschemasoracleidcsextensiongroup_group {
         creation_mechanism = "api"
