@@ -1,3 +1,9 @@
+# March 28, 2025 Release Notes - 0.2.9
+## Updates
+1. [Identity Domains module](./identity-domains/)
+    - Group membership updates managed through some means other than via the module can be either ignored or honored. This is enabled by new attribute *ignore_external_membership_updates* within *identity_domain_groups_configuration* variable. See it in [variables.tf](./identity-domains/variables.tf). The attribute behavior is described in [Identity Domains module README.md](./identity-domains/README.md#functioning).
+
+
 # March 25, 2025 Release Notes - 0.2.8
 ## Updates
 1. [Identity Domains module](./identity-domains/)
