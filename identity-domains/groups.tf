@@ -23,7 +23,7 @@ locals {
 resource "oci_identity_domains_group" "these" {
   for_each = var.identity_domain_groups_configuration != null ? (try(var.identity_domain_groups_configuration.ignore_external_membership_updates,true) == true ? var.identity_domain_groups_configuration.groups : {}) : {}
     lifecycle {
-      ignore_changes = [ members, schemas, urnietfparamsscimschemasoracleidcsextensionrequestable_group ]
+      ignore_changes = [ members, schemas, urnietfparamsscimschemasoracleidcsextensionrequestable_group, urnietfparamsscimschemasoracleidcsextension_oci_tags ]
       precondition {
         condition = each.value.members != null ? length(setsubtract(toset(each.value.members),toset([for m in each.value.members : m if contains(keys(local.users[each.key]),m)]))) == 0 : true
         error_message = each.value.members != null ? "VALIDATION FAILURE: following provided usernames in \"members\" attribute of group \"${each.key}\" do not exist or are not active\": ${join(", ",setsubtract(toset(each.value.members),toset([for m in each.value.members : m if contains(keys(local.users[each.key]),m)])))}. Please either correct their spelling or activate them." : ""
@@ -70,7 +70,7 @@ resource "oci_identity_domains_group" "these" {
 resource "oci_identity_domains_group" "these_with_external_membership_updates" {
   for_each = var.identity_domain_groups_configuration != null ? (try(var.identity_domain_groups_configuration.ignore_external_membership_updates,true) == false ? var.identity_domain_groups_configuration.groups : {}) : {}
     lifecycle {
-      ignore_changes = [ schemas, urnietfparamsscimschemasoracleidcsextensionrequestable_group ]
+      ignore_changes = [ schemas, urnietfparamsscimschemasoracleidcsextensionrequestable_group, urnietfparamsscimschemasoracleidcsextension_oci_tags ]
       precondition {
         condition = each.value.members != null ? length(setsubtract(toset(each.value.members),toset([for m in each.value.members : m if contains(keys(local.users[each.key]),m)]))) == 0 : true
         error_message = each.value.members != null ? "VALIDATION FAILURE: following provided usernames in \"members\" attribute of group \"${each.key}\" do not exist or are not active\": ${join(", ",setsubtract(toset(each.value.members),toset([for m in each.value.members : m if contains(keys(local.users[each.key]),m)])))}. Please either correct their spelling or activate them." : ""
