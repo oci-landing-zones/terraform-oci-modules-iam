@@ -74,9 +74,9 @@ The module defines five top-level input variables named *identity_domains_config
 
 Use *identity_domains_configuration* attribute. It supports the following attributes:
 
-  - **default_compartment_id**: (Optional) defines the compartment for all identity domains, unless overriden by *compartment_id* attribute within each identity domain.  This attribute is overloaded: it can be either a compartment OCID or a reference (a key) to the compartment OCID. *tenancy_ocid* is used if undefined. See [External Dependencies](#extdep) section.
-  - **default_defined_tags**: (Optional) defined tags to apply to all resources, unless overriden by *defined_tags* attribute within each resource.
-  - **default_freeform_tags**: (Optional) freeform tags to apply to all resources, unless overriden by *freeform_tags* attribute within each resource.
+  - **default_compartment_id**: (Optional) defines the compartment for all identity domains, unless overridden by *compartment_id* attribute within each identity domain.  This attribute is overloaded: it can be either a compartment OCID or a reference (a key) to the compartment OCID. *tenancy_ocid* is used if undefined. See [External Dependencies](#extdep) section.
+  - **default_defined_tags**: (Optional) defined tags to apply to all resources, unless overridden by *defined_tags* attribute within each resource.
+  - **default_freeform_tags**: (Optional) freeform tags to apply to all resources, unless overridden by *freeform_tags* attribute within each resource.
   - **identity_domains**: (Optional) the map of objects that defines the identity domains, where each object corresponds to an identity domain resource.
     - **compartment_id**:  (Optional) The compartment for the identity domain. This attribute is overloaded: it can be either a compartment OCID or a reference (a key) to the compartment OCID. *default_compartment_id* is used if undefined. See [External Dependencies](#extdep).            
     - **display_name**:  (Required) The mutable display name for the identity domain.              
@@ -98,9 +98,10 @@ Use *identity_domains_configuration* attribute. It supports the following attrib
 
 Use *identity_domain_groups_configuration* attribute. It supports the following attributes:
 
-- **default_identity_domain_id**: (Optional) defines the identity domain for all groups, unless overriden by *identity_domain_id* attribute within each group.  This attribute is overloaded: it can be either an existing identity domain OCID (if provisioning the group in an existing identity domain) or the identity domain reference (key) in identity_domains map.
-- **default_defined_tags**: (Optional) defined tags to apply to all resources, unless overriden by *defined_tags* attribute within each resource.
-- **default_freeform_tags**: (Optional) freeform tags to apply to all resources, unless overriden by *freeform_tags* attribute within each resource.
+- **default_identity_domain_id**: (Optional) defines the identity domain for all groups, unless overridden by *identity_domain_id* attribute within each group.  This attribute is overloaded: it can be either an existing identity domain OCID (if provisioning the group in an existing identity domain) or the identity domain reference (key) in identity_domains map.
+- **ignore_external_membership_updates**: (Optional) defines whether group membership updates are managed by this module or through some other means (OCI Console, APIs, JIT, SCIM, etc). Default is true, meaning group memberships updates are managed by this module only. Membership updates done through other means are reset on subsequent executions of this module (i.e., it ignores membership updates done through some other means than this module). Set this to false if membership updates are to be managed through some other means (i.e., it does NOT ignore membership updates done through some other means). In this case, membership updates done through other means are kept on subsequent executions of this module. **This attribute is to be used as a one time setting. Changing it later on will trigger recreation of all groups in *groups* attribute.** 
+- **default_defined_tags**: (Optional) defined tags to apply to all resources, unless overridden by *defined_tags* attribute within each resource.
+- **default_freeform_tags**: (Optional) freeform tags to apply to all resources, unless overridden by *freeform_tags* attribute within each resource.
 - **groups**: (Optional) the map of objects that defines groups of users, where each object corresponds to a group resource.
   - **identity_domain_id**: (Optional) The identity domain for the group. This attribute is overloaded: it can be either an existing identity domain OCID (if provisioning the group in an existing identity domain) or the identity domain reference (key) in identity_domains map.
   - **name**:  (Required) The display name of the group.
@@ -114,9 +115,9 @@ Use *identity_domain_groups_configuration* attribute. It supports the following 
 
 Use *identity_domain_dynamic_groups_configuration* attribute. It supports the following attributes:
 
-- **default_identity_domain_id**: (Optional) defines the identity domain for all dynamic groups, unless overriden by *identity_domain_id* attribute within each dynamic group.  This attribute is overloaded: it can be either an identity domain OCID or a reference (a key) to the identity domain OCID.
-- **default_defined_tags**: (Optional) defined tags to apply to all resources, unless overriden by *defined_tags* attribute within each resource.
-- **default_freeform_tags**: (Optional) freeform tags to apply to all resources, unless overriden by *freeform_tags* attribute within each resource.
+- **default_identity_domain_id**: (Optional) defines the identity domain for all dynamic groups, unless overridden by *identity_domain_id* attribute within each dynamic group.  This attribute is overloaded: it can be either an identity domain OCID or a reference (a key) to the identity domain OCID.
+- **default_defined_tags**: (Optional) defined tags to apply to all resources, unless overridden by *defined_tags* attribute within each resource.
+- **default_freeform_tags**: (Optional) freeform tags to apply to all resources, unless overridden by *freeform_tags* attribute within each resource.
 - **dynamic_groups**: (Optional) the map of objects that defines dynamic groups, where each object corresponds to a dynamic group resource.
   - **identity_domain_id**: (Optional) The identity domain for the dynamic group. This attribute is overloaded: it can be either an existing identity domain OCID (if provisioning the dynamic group in an existing identity domain) or the identity domain reference (key) in identity_domains map.
   - **name**:  (Required) The display name of the dynamic group.
@@ -129,7 +130,7 @@ Use *identity_domain_dynamic_groups_configuration* attribute. It supports the fo
 
 Use *identity_domain_identity_providers_configuration* attribute. It supports SAML Identity Providers which can be configured either by importing the IDP SAML Metadata (XML file) or by directly specifying the identity provider parameters.  It supports the following attributes:
 
-- **default_identity_domain_id**: (Optional) defines the identity domain for all identity providers, unless overriden by *identity_domain_id* attribute within each identity provider.  This attribute is overloaded: it can be either an identity domain OCID or a reference (a key) to the identity domain OCID.
+- **default_identity_domain_id**: (Optional) defines the identity domain for all identity providers, unless overridden by *identity_domain_id* attribute within each identity provider.  This attribute is overloaded: it can be either an identity domain OCID or a reference (a key) to the identity domain OCID.
 - **identity_providers**: (Optional) the map of objects that defines identity providers, where each object corresponds to an identity provider resource.
   - **identity_domain_id**: (Optional) The identity domain for the identity provider. This attribute is overloaded: it can be either an existing identity domain OCID (if provisioning the identity provider in an existing identity domain) or the identity domain reference (key) in identity_domains map.
   - **name**:  (Required) The display name of the identity provider.
@@ -155,7 +156,7 @@ Use *identity_domain_identity_providers_configuration* attribute. It supports SA
 
 Use *identity_domain_applications_configuration* attribute. It currently supports *SAML Applications*, *Mobile Applications*, *Confidential Applications*, and the following Catalog Applications: *Oracle Identity Domain*, *Generic SCIM (Cliend Credentials)*, and *Oracle Fusion Applications Release 13*.  It supports the following attributes (please refer to [Known Issues](#issues) for not supported attributes).  For better understanding of each attribute and since not all attributes apply for all application types, look at the UI in the OCI Console for each application type and refer to: [Adding a SAML Application](https://docs.oracle.com/en-us/iaas/Content/Identity/applications/add-saml-application.htm), [Adding a Mobile Application](https://docs.oracle.com/en-us/iaas/Content/Identity/applications/add-mobile-application.htm), [Adding a Confidential Application](https://docs.oracle.com/en-us/iaas/Content/Identity/applications/add-confidential-application.htm), [Adding a Catalog Application](https://docs.oracle.com/en-us/iaas/Content/Identity/applications/add-app-catalog-application.htm).  Most of the attributes below have the same name as in the OCI Console:
 
-- **default_identity_domain_id**: (Optional) defines the default identity domain for all applicaitons, unless overriden by *identity_domain_id* attribute within each application.  This attribute is overloaded: it can be either an identity domain OCID or a reference (a key) to the identity domain OCID.
+- **default_identity_domain_id**: (Optional) defines the default identity domain for all applicaitons, unless overridden by *identity_domain_id* attribute within each application.  This attribute is overloaded: it can be either an identity domain OCID or a reference (a key) to the identity domain OCID.
 - **applications**: (Optional) the map of objects that defines applications, where each object corresponds to an application resource.
 
     **General Attributes**
