@@ -25,7 +25,7 @@ resource "oci_identity_domains_group" "these" {
     lifecycle {
       ignore_changes = [ members ]
       precondition {
-        condition = length(setsubtract(toset(each.value.members),toset([for m in each.value.members : m if contains(keys(local.users[each.key]),m)]))) == 0
+        condition = each.value.members != null ? length(setsubtract(toset(each.value.members),toset([for m in each.value.members : m if contains(keys(local.users[each.key]),m)]))) == 0 : true
         error_message = "VALIDATION FAILURE: following provided usernames in \"members\" attribute of group \"${each.key}\" do not exist or are not active\": ${join(", ",setsubtract(toset(each.value.members),toset([for m in each.value.members : m if contains(keys(local.users[each.key]),m)])))}. Please either correct their spelling or activate them."
       }
     }
