@@ -52,16 +52,12 @@ resource "oci_identity_domains_group" "these" {
           }
       }
       dynamic "freeform_tags" {
-        for_each = each.value.freeform_tags != null ? each.value.freeform_tags : (var.identity_domain_groups_configuration.default_freeform_tags !=null ? var.identity_domain_groups_configuration.default_freeform_tags : {})
+        for_each = each.value.freeform_tags != null ? merge(local.cislz_module_tag,each.value.freeform_tags) : (var.identity_domain_groups_configuration.default_freeform_tags != null ? merge(local.cislz_module_tag,var.identity_domain_groups_configuration.default_freeform_tags) : local.cislz_module_tag)
         content {
           key = freeform_tags["key"]
           value = freeform_tags["value"]
         }
       }
-      # freeform_tags {
-      #   key = keys(local.cislz_module_tag)[0]
-      #   value = local.cislz_module_tag[keys(local.cislz_module_tag)[0]]
-      # }
     }
     urnietfparamsscimschemasoracleidcsextensionrequestable_group {
         requestable =  each.value.requestable
@@ -102,11 +98,15 @@ resource "oci_identity_domains_group" "these_with_external_membership_updates" {
           }
       }
       dynamic "freeform_tags" {
-        for_each = each.value.freeform_tags != null ? each.value.freeform_tags : (var.identity_domain_groups_configuration.default_freeform_tags !=null ? var.identity_domain_groups_configuration.default_freeform_tags : {})
+        for_each = each.value.freeform_tags != null ? merge(local.cislz_module_tag,each.value.freeform_tags) : (var.identity_domain_groups_configuration.default_freeform_tags != null ? merge(local.cislz_module_tag,var.identity_domain_groups_configuration.default_freeform_tags) : local.cislz_module_tag)
         content {
           key = freeform_tags["key"]
           value = freeform_tags["value"]
         }
+      }
+      freeform_tags {
+        key = keys(local.cislz_module_tag)[0]
+        value = local.cislz_module_tag[keys(local.cislz_module_tag)[0]]
       }
     }
     urnietfparamsscimschemasoracleidcsextensionrequestable_group {
