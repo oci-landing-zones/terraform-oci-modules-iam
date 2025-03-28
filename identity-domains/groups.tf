@@ -26,7 +26,7 @@ resource "oci_identity_domains_group" "these" {
         error_message = each.value.members != null ? "VALIDATION FAILURE: following provided usernames in \"members\" attribute of group \"${each.key}\" do not exist or are not active\": ${join(", ",setsubtract(toset(each.value.members),toset([for m in each.value.members : m if contains(keys(local.users[each.key]),m)])))}. Please either correct their spelling or activate them." : ""
       }
     }
-    attribute_sets = ["all"]
+    #attribute_sets = ["all"]
     idcs_endpoint = contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_groups_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_groups_configuration.default_identity_domain_id].url : data.oci_identity_domain.grp_domain[each.key].url)
   
     display_name = each.value.name
@@ -58,6 +58,10 @@ resource "oci_identity_domains_group" "these" {
           value = freeform_tags["value"]
         }
       }
+      # freeform_tags {
+      #   key = keys(local.cislz_module_tag)[0]
+      #   value = local.cislz_module_tag[keys(local.cislz_module_tag)[0]]
+      # }
     }
     urnietfparamsscimschemasoracleidcsextensionrequestable_group {
         requestable =  each.value.requestable
@@ -72,7 +76,7 @@ resource "oci_identity_domains_group" "these_with_external_membership_updates" {
         error_message = each.value.members != null ? "VALIDATION FAILURE: following provided usernames in \"members\" attribute of group \"${each.key}\" do not exist or are not active\": ${join(", ",setsubtract(toset(each.value.members),toset([for m in each.value.members : m if contains(keys(local.users[each.key]),m)])))}. Please either correct their spelling or activate them." : ""
       }
     }
-    attribute_sets = ["all"]
+    #attribute_sets = ["all"]
     idcs_endpoint = contains(keys(oci_identity_domain.these),coalesce(each.value.identity_domain_id,"None")) ? oci_identity_domain.these[each.value.identity_domain_id].url : (contains(keys(oci_identity_domain.these),coalesce(var.identity_domain_groups_configuration.default_identity_domain_id,"None") ) ? oci_identity_domain.these[var.identity_domain_groups_configuration.default_identity_domain_id].url : data.oci_identity_domain.grp_domain[each.key].url)
   
     display_name = each.value.name
