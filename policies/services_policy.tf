@@ -52,7 +52,7 @@ locals {
     (local.services_policy_key) = {
       compartment_id   = var.tenancy_ocid
       name             = local.services_policy_name
-      description      = "CIS Landing Zone policy for OCI services."
+      description      = "Core Landing Zone policy for OCI services."
       statements       = concat(local.cloud_guard_statements, local.vss_statements, local.os_mgmt_statements, local.keys_access_statements)
       defined_tags     = var.policies_configuration != null ? var.policies_configuration.defined_tags : null
       freeform_tags    = var.policies_configuration != null ? var.policies_configuration.freeform_tags : null
