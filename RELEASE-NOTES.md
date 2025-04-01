@@ -5,7 +5,7 @@
     - Removed *attribute_sets = ["all"]* from *oci_identity_domains_group* resource block, as it has been observed it prevents tags from being updated. A solution for the less harmful side effect of unsolicited updates during *terraform plan* is being sought.
     - Added module default freeform tags to groups and dynamic groups.
 2. [Policies module](./policies/)  
-    - Added permissions in template policies to application administrators for reading Tag namespaces, Compute images, Catalog listings and repositories at the tenancy level, even when an enclosing compartment is deployed.
+    - Moved permissions in template policies to application administrators for reading Tag namespaces, Compute images, Catalog listings and repositories to the tenancy level, even when an enclosing compartment is deployed.
     - Description of policies updated to "Core Landing Zone policy for...".
 
 
