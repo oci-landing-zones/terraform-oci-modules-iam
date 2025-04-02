@@ -48,7 +48,8 @@ locals {
     "allow group ${local.group_names} to use cloud-shell in tenancy",
     "allow group ${local.group_names} to read usage-budgets in tenancy",
     "allow group ${local.group_names} to read usage-reports in tenancy",
-    "allow group ${local.group_names} to read objectstorage-namespaces in tenancy"
+    "allow group ${local.group_names} to read objectstorage-namespaces in tenancy",
+    "allow group ${local.group_names} to read tag-namespaces in tenancy"
   ] : []
 
   iam_admin_grants_on_root_cmp = contains(keys(local.group_name_map_transpose),local.iam_role) ? [
@@ -107,6 +108,12 @@ locals {
     "allow group ${local.network_group_names} to read security-attribute-namespace in tenancy"
   ] : []
 
+  application_admin_grants_on_root_cmp = contains(keys(local.group_name_map_transpose),local.application_role) ? [
+    "allow group ${local.application_group_names} to read app-catalog-listing in tenancy",
+    "allow group ${local.application_group_names} to read instance-images in tenancy",
+    "allow group ${local.application_group_names} to read repos in tenancy"
+  ] : []
+
   objectstorage_read_grantees = compact(
                                   concat(contains(keys(local.group_name_map_transpose),local.network_role) ?     [local.network_group_names]     : [],
                                          contains(keys(local.group_name_map_transpose),local.security_role) ?    [local.security_group_names]    : [],
@@ -125,13 +132,6 @@ locals {
     "allow group ${local.security_group_names} to read app-catalog-listing in tenancy",
     "allow group ${local.security_group_names} to read instance-images in tenancy",
     "allow group ${local.security_group_names} to inspect buckets in tenancy"
-  ] : []  
-
-  # For the case when there's no enclosing compartment defined, the grants are set in the root compartment. Analogous grants are present in enclosing_cmp_policy.tf, which are applied when an enclosing compartment is defined.
-  application_admin_grants_on_enclosing_cmp = contains(keys(local.group_name_map_transpose),local.application_role) && !contains(local.cmp_type_list,"enclosing") ? [
-    "allow group ${local.application_group_names} to read app-catalog-listing in tenancy",
-    "allow group ${local.application_group_names} to read instance-images in tenancy",
-    "allow group ${local.application_group_names} to read repos in tenancy"
   ] : []  
 
   auditor_grants = contains(keys(local.group_name_map_transpose),local.auditor_role) ? [
@@ -169,10 +169,9 @@ locals {
   root_cmp_admin_grants = concat(local.cost_admin_grants_on_root_cmp,local.iam_admin_grants_on_root_cmp,
                                  local.iam_admin_grants_on_enclosing_cmp,local.cred_admin_grants_on_root_cmp,
                                  local.security_admin_grants_on_root_cmp,local.security_admin_grants_on_enclosing_cmp,
-                                 local.network_admin_grants_on_root_cmp)
+                                 local.network_admin_grants_on_root_cmp,local.application_admin_grants_on_root_cmp)
 
-  root_cmp_nonadmin_grants = concat(local.basic_grants_on_root_cmp,local.application_admin_grants_on_enclosing_cmp,
-                                    local.auditor_grants,local.announcement_reader_grants, local.objectstorage_read_on_root_cmp)                               
+  root_cmp_nonadmin_grants = concat(local.basic_grants_on_root_cmp, local.auditor_grants,local.announcement_reader_grants, local.objectstorage_read_on_root_cmp)                               
 
   #-- Policies
   #root_policy_name_prefix = local.enable_tenancy_level_template_policies == true ? (var.policies_configuration.template_policies.tenancy_level_settings.policy_name_prefix != null ? "${var.policies_configuration.template_policies.tenancy_level_settings.policy_name_prefix}-" : "") : ""
@@ -185,7 +184,7 @@ locals {
     (local.root_cmp_admin_policy_key) = {
       name           = local.root_cmp_admin_policy_name
       compartment_id = var.tenancy_ocid
-      description    = "CIS Landing Zone root policy for admin groups."
+      description    = "Core Landing Zone root policy for admin groups."
       defined_tags   = var.policies_configuration.defined_tags
       freeform_tags  = var.policies_configuration.freeform_tags
       statements     = local.root_cmp_admin_grants
@@ -201,7 +200,7 @@ locals {
     (local.root_cmp_nonadmin_policy_key) = {
       name             = local.root_cmp_nonadmin_policy_name
       compartment_id   = var.tenancy_ocid
-      description      = "CIS Landing Zone root policy for non-admin groups."
+      description      = "Core Landing Zone root policy for non-admin groups."
       defined_tags     = var.policies_configuration.defined_tags
       freeform_tags    = var.policies_configuration.freeform_tags
       statements       = local.root_cmp_nonadmin_grants

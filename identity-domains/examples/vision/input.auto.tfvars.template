@@ -75,6 +75,7 @@ identity_domains_configuration = {
 
 identity_domain_groups_configuration = {
     default_identity_domain_id  : "DEV-DOMAIN"
+    ignore_external_membership_updates : true # set this to false if you expect to manage membership updates through some other means.
     default_defined_tags        : null
     default_freeform_tags       : null
     groups : {

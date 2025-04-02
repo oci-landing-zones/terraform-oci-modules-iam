@@ -1,3 +1,14 @@
+# April 01, 2025 Release Notes - 0.2.9
+## Updates
+1. [Identity Domains module](./identity-domains/)
+    - Group membership updates managed through some means other than via the module can be either ignored or honored. This is enabled by new attribute *ignore_external_membership_updates* within *identity_domain_groups_configuration* variable. See it in [variables.tf](./identity-domains/variables.tf). The attribute behavior is described in [Identity Domains module README.md](./identity-domains/README.md#functioning).
+    - Removed *attribute_sets = ["all"]* from *oci_identity_domains_group* resource block, as it has been observed it prevents tags from being updated. A solution for the less harmful side effect of unsolicited updates during *terraform plan* is being sought.
+    - Added module default freeform tags to groups and dynamic groups.
+2. [Policies module](./policies/)  
+    - Moved permissions in template policies to application administrators for reading Tag namespaces, Compute images, Catalog listings and repositories to the tenancy level, even when an enclosing compartment is deployed.
+    - Description of policies updated to "Core Landing Zone policy for...".
+
+
 # March 25, 2025 Release Notes - 0.2.8
 ## Updates
 1. [Identity Domains module](./identity-domains/)

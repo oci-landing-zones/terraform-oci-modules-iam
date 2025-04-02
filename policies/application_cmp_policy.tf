@@ -90,7 +90,7 @@ locals {
       (upper("${k}-application-policy")) => {
         name             = length(regexall("^${local.policy_name_prefix}", values["name"])) > 0 ? (length(split(",",values["cmp-type"])) > 1 ? "${values["name"]}-application${local.policy_name_suffix}" : "${values["name"]}${local.policy_name_suffix}") : (length(split(",",values["cmp-type"])) > 1 ? "${local.policy_name_prefix}${values["name"]}-application${local.policy_name_suffix}" : "${local.policy_name_prefix}${values["name"]}${local.policy_name_suffix}")
         compartment_id   = values.ocid
-        description      = "CIS Landing Zone policy for Application compartment."
+        description      = "Core Landing Zone policy for Application compartment."
         defined_tags     = var.policies_configuration.defined_tags
         freeform_tags    = var.policies_configuration.freeform_tags
         statements       = concat(local.application_admin_grants_on_application_cmp_map[k],local.application_read_grants_on_application_cmp_map[k],

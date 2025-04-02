@@ -70,7 +70,7 @@ locals {
       (upper("${k}-enclosing-policy")) => {
         name             = length(regexall("^${local.policy_name_prefix}", values["name"])) > 0 ? (length(split(",",values["cmp-type"])) > 1 ? "${values["name"]}-enclosing${local.policy_name_suffix}" : "${values["name"]}${local.policy_name_suffix}") : (length(split(",",values["cmp-type"])) > 1 ? "${local.policy_name_prefix}${values["name"]}-enclosing${local.policy_name_suffix}" : "${local.policy_name_prefix}${values["name"]}${local.policy_name_suffix}")
         compartment_id   = values.ocid
-        description      = "CIS Landing Zone policy for enclosing compartment."
+        description      = "Core Landing Zone policy for enclosing compartment."
         defined_tags     = var.policies_configuration.defined_tags
         freeform_tags    = var.policies_configuration.freeform_tags
         statements       = concat(local.read_grants_on_enclosing_cmp_map[k],local.iam_admin_grants_on_enclosing_cmp_map[k],

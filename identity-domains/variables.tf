@@ -38,13 +38,14 @@ variable "identity_domain_groups_configuration" {
   description = "The identity domain groups configuration."
   type = object({
     default_identity_domain_id  = optional(string)
+    ignore_external_membership_updates = optional(bool, true)
     default_defined_tags        = optional(map(string))
     default_freeform_tags       = optional(map(string))
     groups = map(object({
       identity_domain_id        = optional(string),
       name                      = string,
       description               = optional(string),
-      requestable               = optional(bool),
+      requestable               = optional(bool,true),
       members                   = optional(list(string)),
       defined_tags              = optional(map(string)),
       freeform_tags             = optional(map(string))
