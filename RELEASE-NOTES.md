@@ -1,7 +1,10 @@
-# August 01, 2025 Release Notes - 0.3.0
+# August 14, 2025 Release Notes - 0.3.0
 ## Updates
 1. [Compartments module](./compartments/)
     - Module now allows users to create a compartment with a tag default, that uses a tag from a tag namespace created in the same terraform run.
+2. [Identity Domains module](./identity-domains/)
+    - User lookup optimized. Users are now searched once for each provided identity domain and only for identity domains where the members attribute is non empty.  
+    
 
 # April 01, 2025 Release Notes - 0.2.9
 ## Updates
