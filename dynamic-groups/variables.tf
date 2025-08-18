@@ -8,7 +8,7 @@ variable "tenancy_ocid" {
 variable "dynamic_groups_configuration" {
   description = "The dynamic groups."
   type = object({
-    default_defined_tags = optional(map(string)),
+    default_defined_tags  = optional(map(string)),
     default_freeform_tags = optional(map(string))
     dynamic_groups = map(object({
       name          = string,
@@ -21,8 +21,8 @@ variable "dynamic_groups_configuration" {
   default = null
 }
 
-variable module_name {
+variable "module_name" {
   description = "The module name."
-  type = string
-  default = "iam-dynamic-groups"
+  type        = string
+  default     = "iam-dynamic-groups"
 }

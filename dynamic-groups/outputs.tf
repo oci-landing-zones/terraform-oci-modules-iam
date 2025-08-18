@@ -3,5 +3,5 @@
 
 output "dynamic_groups" {
   description = "The dynamic groups."
-  value = oci_identity_dynamic_group.these
+  value       = oci_identity_dynamic_group.these
 }

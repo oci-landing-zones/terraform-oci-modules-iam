@@ -3,7 +3,7 @@
 
 module "vision_identity_domains" {
   source       = "../../"
-  tenancy_ocid                                  = var.tenancy_ocid
+  tenancy_ocid = var.tenancy_ocid
   #identity_domains_configuration                = var.identity_domains_configuration  #Using existing Identity Domains
   #identity_domain_groups_configuration          = var.identity_domain_groups_configuration
   #identity_domain_dynamic_groups_configuration  = var.identity_domain_dynamic_groups_configuration
