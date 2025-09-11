@@ -38,6 +38,7 @@ resource "oci_identity_domains_group" "these" {
     }
   }
   #attribute_sets = ["all"]
+  attributes = "members,urnietfparamsscimschemasoracleidcsextensiongroup_group,urnietfparamsscimschemasoracleidcsextension_oci_tags,urnietfparamsscimschemasoracleidcsextensionrequestable_group"
   idcs_endpoint = contains(keys(oci_identity_domain.these), coalesce(each.value.identity_domain_id, "None")) ? oci_identity_domain.these[each.value.identity_domain_id].url : (contains(keys(oci_identity_domain.these), coalesce(var.identity_domain_groups_configuration.default_identity_domain_id, "None")) ? oci_identity_domain.these[var.identity_domain_groups_configuration.default_identity_domain_id].url : data.oci_identity_domain.grp_domain[each.key].url)
   display_name  = each.value.name
   schemas       = ["urn:ietf:params:scim:schemas:core:2.0:Group", "urn:ietf:params:scim:schemas:oracle:idcs:extension:requestable:Group", "urn:ietf:params:scim:schemas:oracle:idcs:extension:OCITags", "urn:ietf:params:scim:schemas:oracle:idcs:extension:group:Group"]
@@ -84,6 +85,7 @@ resource "oci_identity_domains_group" "these_with_external_membership_updates" {
     }
   }
   #attribute_sets = ["all"]
+  attributes = "members,urnietfparamsscimschemasoracleidcsextensiongroup_group,urnietfparamsscimschemasoracleidcsextension_oci_tags,urnietfparamsscimschemasoracleidcsextensionrequestable_group"
   idcs_endpoint = contains(keys(oci_identity_domain.these), coalesce(each.value.identity_domain_id, "None")) ? oci_identity_domain.these[each.value.identity_domain_id].url : (contains(keys(oci_identity_domain.these), coalesce(var.identity_domain_groups_configuration.default_identity_domain_id, "None")) ? oci_identity_domain.these[var.identity_domain_groups_configuration.default_identity_domain_id].url : data.oci_identity_domain.grp_domain[each.key].url)
   display_name  = each.value.name
   schemas       = ["urn:ietf:params:scim:schemas:core:2.0:Group", "urn:ietf:params:scim:schemas:oracle:idcs:extension:requestable:Group", "urn:ietf:params:scim:schemas:oracle:idcs:extension:OCITags", "urn:ietf:params:scim:schemas:oracle:idcs:extension:group:Group"]
