@@ -2,18 +2,48 @@
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 data "oci_identity_domain" "grp_domain" {
-  for_each  = (var.identity_domain_groups_configuration != null) ? (var.identity_domain_groups_configuration["groups"] != null ? var.identity_domain_groups_configuration["groups"] : {}) : {}
-  domain_id = each.value.identity_domain_id != null ? each.value.identity_domain_id : var.identity_domain_groups_configuration.default_identity_domain_id
+  for_each = (var.identity_domain_groups_configuration != null) ? (var.identity_domain_groups_configuration["groups"] != null ? var.identity_domain_groups_configuration["groups"] : {}) : {}
+  domain_id = each.value.identity_domain_id != null ? (
+    length(regexall("^ocid1.$", each.value.identity_domain_id)) > 0 ?
+    each.value.identity_domain_id : var.identity_domains_dependency[each.value.identity_domain_id].id
+    ) : (
+    length(regexall("^ocid1.$", var.identity_domain_groups_configuration.default_identity_domain_id)) > 0 ?
+    var.identity_domain_groups_configuration.default_identity_domain_id : var.identity_domains_dependency[var.identity_domain_groups_configuration.default_identity_domain_id].id
+  )
 }
 
 locals {
   # Map of identity domains with all requested members
-  identity_domains_members = { for k, g in try(var.identity_domain_groups_configuration.groups, {}) : coalesce(g.identity_domain_id, var.identity_domain_groups_configuration.default_identity_domain_id) => g.members... }
+  identity_domains_members = { for k, g in try(var.identity_domain_groups_configuration.groups, {}) :
+    coalesce(g.identity_domain_id, var.identity_domain_groups_configuration.default_identity_domain_id)
+  => g.members... }
   # Map of identity domains with all requested members (flattened, dupes removed)
   identity_domains_members_flattened = { for k, g in local.identity_domains_members : k => toset(flatten(g)) }
   # Map of identity domains with their respective endpoint URLs and requested members
-  identity_domains = merge({ for k, g in try(var.identity_domain_groups_configuration.groups, {}) : coalesce(g.identity_domain_id, var.identity_domain_groups_configuration.default_identity_domain_id) => { "url" : oci_identity_domain.these[coalesce(g.identity_domain_id, var.identity_domain_groups_configuration.default_identity_domain_id)].url, "members" : local.identity_domains_members_flattened[coalesce(g.identity_domain_id, var.identity_domain_groups_configuration.default_identity_domain_id)] }... if length(g.members) > 0 && length(regexall("^ocid1.*$", coalesce(g.identity_domain_id, var.identity_domain_groups_configuration.default_identity_domain_id))) == 0 }, { for k, g in try(var.identity_domain_groups_configuration.groups, {}) : coalesce(g.identity_domain_id, var.identity_domain_groups_configuration.default_identity_domain_id) => { "url" : data.oci_identity_domain.grp_domain[k].url, "members" : local.identity_domains_members_flattened[coalesce(g.identity_domain_id, var.identity_domain_groups_configuration.default_identity_domain_id)] }... if length(g.members) > 0 && length(regexall("^ocid1.*$", coalesce(g.identity_domain_id, var.identity_domain_groups_configuration.default_identity_domain_id))) > 0 })
+  identity_domains = merge(
+    { for k, g in try(var.identity_domain_groups_configuration.groups, {}) :
+      coalesce(g.identity_domain_id, var.identity_domain_groups_configuration.default_identity_domain_id)
+      => {
+        "url" : oci_identity_domain.these[coalesce(g.identity_domain_id, var.identity_domain_groups_configuration.default_identity_domain_id)].url,
+      "members" : local.identity_domains_members_flattened[coalesce(g.identity_domain_id, var.identity_domain_groups_configuration.default_identity_domain_id)] }...
+      if length(g.members) > 0 &&
+      # use identity domain created in same session when the identity domain id is not ocid, and is not a depdency key
+      (length(regexall("^ocid1.*$", coalesce(g.identity_domain_id, var.identity_domain_groups_configuration.default_identity_domain_id))) == 0 &&
+        !contains(keys(var.identity_domains_dependency), coalesce(g.identity_domain_id, var.identity_domain_groups_configuration.default_identity_domain_id))
+    ) }
+    ,
+    { for k, g in try(var.identity_domain_groups_configuration.groups, {}) :
+      coalesce(g.identity_domain_id, var.identity_domain_groups_configuration.default_identity_domain_id)
+      => {
+        "url" : data.oci_identity_domain.grp_domain[k].url,
+      "members" : local.identity_domains_members_flattened[coalesce(g.identity_domain_id, var.identity_domain_groups_configuration.default_identity_domain_id)] }...
+      if length(g.members) > 0 && (
+        # use existing identity domain when the identity domain id is an ocid or dependency key
+        length(regexall("^ocid1.*$", coalesce(g.identity_domain_id, var.identity_domain_groups_configuration.default_identity_domain_id))) > 0 ||
+        contains(keys(var.identity_domains_dependency), coalesce(g.identity_domain_id, var.identity_domain_groups_configuration.default_identity_domain_id))
+  ) })
 }
+
 
 # Users lookup. Used to retrieve the user id attribute for requested members. The user id is used when granting group membership (see dynamic "members" block in resource "oci_identity_domains_group" "these").
 data "oci_identity_domains_users" "these" {
