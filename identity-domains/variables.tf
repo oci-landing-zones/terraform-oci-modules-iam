@@ -255,3 +255,11 @@ variable "compartments_dependency" {
   }))
   default = null
 }
+
+variable "identity_domains_dependency" {
+  description = "A map of objects containing the externally managed identity domains this module may depend on. All map objects must have the same type and must contain at least an 'id' attribute (representing the compartment OCID) of string type."
+  type = map(object({
+    id = string
+  }))
+  default = null
+}

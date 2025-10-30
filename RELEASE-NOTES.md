@@ -1,3 +1,9 @@
+# October 30, 2025 Release Notes - 0.3.1
+## Updates
+1. [Identity Domain module](./identity-domains/)
+    - Bug fix: Allow adding groups to externally created Identity Domains in groups.
+    - Allow referencing Identity Domains by dependency key in groups and dynamic-groups.
+
 # August 18, 2025 Release Notes - 0.3.0
 ## Updates
 1. [Compartments module](./compartments/)
