@@ -232,9 +232,7 @@ variable "identity_domain_applications_configuration" {
       fa_admin_password       = optional(string)
       fa_ssl_enabled          = optional(bool)
       fa_override_custom_sync = optional(bool)
-      fa_admin_roles          = optional(list(string))
-
-
+      fa_admin_roles          = optional(list(string)),
       defined_tags  = optional(map(string)),
       freeform_tags = optional(map(string))
     }))
@@ -250,6 +248,14 @@ variable "module_name" {
 
 variable "compartments_dependency" {
   description = "A map of objects containing the externally managed compartments this module may depend on. All map objects must have the same type and must contain at least an 'id' attribute (representing the compartment OCID) of string type."
+  type = map(object({
+    id = string
+  }))
+  default = null
+}
+
+variable "identity_domains_dependency" {
+  description = "A map of objects containing the externally managed identity domains this module may depend on. All map objects must have the same type and must contain at least an 'id' attribute (representing the compartment OCID) of string type."
   type = map(object({
     id = string
   }))
