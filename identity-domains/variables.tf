@@ -232,9 +232,7 @@ variable "identity_domain_applications_configuration" {
       fa_admin_password       = optional(string)
       fa_ssl_enabled          = optional(bool)
       fa_override_custom_sync = optional(bool)
-      fa_admin_roles          = optional(list(string))
-
-
+      fa_admin_roles          = optional(list(string)),
       defined_tags  = optional(map(string)),
       freeform_tags = optional(map(string))
     }))
