@@ -2,7 +2,7 @@
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 data "oci_identity_domain" "dyngrp_domain" {
   for_each  = (var.identity_domain_dynamic_groups_configuration != null) ? (var.identity_domain_dynamic_groups_configuration["dynamic_groups"] != null ? var.identity_domain_dynamic_groups_configuration["dynamic_groups"] : {}) : {}
-  domain_id = each.value.identity_domain_id != null ? (length(regexall("^ocid1.$", each.value.identity_domain_id)) > 0 ? each.value.identity_domain_id : var.identity_domains_dependency[each.value.identity_domain_id].id) : (length(regexall("^ocid1.$", var.identity_domain_dynamic_groups_configuration.default_identity_domain_id)) > 0 ? var.identity_domain_dynamic_groups_configuration.default_identity_domain_id : var.identity_domains_dependency[var.identity_domain_dynamic_groups_configuration.default_identity_domain_id].id)
+  domain_id = each.value.identity_domain_id != null ? (length(regexall("^ocid1.*$", each.value.identity_domain_id)) > 0 ? each.value.identity_domain_id : var.identity_domains_dependency[each.value.identity_domain_id].id) : (length(regexall("^ocid1.*$", coalesce(var.identity_domain_dynamic_groups_configuration.default_identity_domain_id, " "))) > 0 ? var.identity_domain_dynamic_groups_configuration.default_identity_domain_id : try(var.identity_domains_dependency[var.identity_domain_dynamic_groups_configuration.default_identity_domain_id].id, null))
 }
 
 resource "oci_identity_domains_dynamic_resource_group" "these" {
