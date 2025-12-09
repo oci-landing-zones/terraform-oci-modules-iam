@@ -4,10 +4,10 @@
 data "oci_identity_domain" "grp_domain" {
   for_each = (var.identity_domain_groups_configuration != null) ? (var.identity_domain_groups_configuration["groups"] != null ? var.identity_domain_groups_configuration["groups"] : {}) : {}
   domain_id = each.value.identity_domain_id != null ? (
-    length(regexall("^ocid1.$", each.value.identity_domain_id)) > 0 ?
+    length(regexall("^ocid1.*$", each.value.identity_domain_id)) > 0 ?
     each.value.identity_domain_id : var.identity_domains_dependency[each.value.identity_domain_id].id
     ) : (
-    length(regexall("^ocid1.$", var.identity_domain_groups_configuration.default_identity_domain_id)) > 0 ?
+    length(regexall("^ocid1.*$", var.identity_domain_groups_configuration.default_identity_domain_id)) > 0 ?
     var.identity_domain_groups_configuration.default_identity_domain_id : var.identity_domains_dependency[var.identity_domain_groups_configuration.default_identity_domain_id].id
   )
 }
