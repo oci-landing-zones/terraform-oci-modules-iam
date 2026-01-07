@@ -1,4 +1,4 @@
-# Dec 4, 2025 Release Notes - 0.3.2
+# Jan 7, 2026 Release Notes - 0.3.2
 ## Updates
 1. [Identity Domain module](./identity-domains/)
    - Bug fix: Fixed Identity Domain OCID resolution in groups and dynamic groups.
