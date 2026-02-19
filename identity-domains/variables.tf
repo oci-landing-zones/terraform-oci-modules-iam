@@ -253,7 +253,7 @@ variable "compartments_dependency" {
   type = map(object({
     id = string
   }))
-  default = null
+  default = {}
 }
 
 variable "identity_domains_dependency" {
@@ -261,5 +261,5 @@ variable "identity_domains_dependency" {
   type = map(object({
     id = string
   }))
-  default = null
+  default = {}
 }
