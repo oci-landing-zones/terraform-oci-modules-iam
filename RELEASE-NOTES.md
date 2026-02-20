@@ -1,3 +1,16 @@
+# Feb 20, 2026 Release Notes - 0.3.3
+## Updates
+1. [Identity Domain module](./identity-domains/)
+   - Bug fix: Identity domain data source lookup in [groups.tf](./identity-domains/groups.tf) and [dynamic_groups.tf](./identity-domains/dynamic-groups.tf) now checks if provided identity domain key exists in var.identity_domains_dependency. This fixes the provisioning of new groups and new dynamic groups within a new identity domain. Prior to the fix, the module errors out with:
+   ```
+   Error: Attempt to index null value
+   on .terraform/modules/lz_new_identity_domain/identity-domains/groups.tf line 11, in data "oci_identity_domain" "grp_domain":
+   11: var.identity_domain_groups_configuration.default_identity_domain_id : var.identity_domains_dependency[var.identity_domain_groups_configuration.default_identity_domain_id].id
+   ├────────────────
+   │ var.identity_domain_groups_configuration.default_identity_domain_id is "NEW-DOMAIN"
+   │ var.identity_domains_dependency is null
+   ```
+
 # Jan 7, 2026 Release Notes - 0.3.2
 ## Updates
 1. [Identity Domain module](./identity-domains/)
