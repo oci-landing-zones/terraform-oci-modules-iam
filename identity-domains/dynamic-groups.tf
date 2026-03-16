@@ -22,14 +22,14 @@ resource "oci_identity_domains_dynamic_resource_group" "these" {
       content {
         key       = split(".", defined_tags["key"])[1]
         namespace = split(".", defined_tags["key"])[0]
-        value     = defined_tags["value"]
+        value     = trimspace(defined_tags["value"])
       }
     }
     dynamic "freeform_tags" {
       for_each = each.value.freeform_tags != null ? merge(local.cislz_module_tag, each.value.freeform_tags) : (var.identity_domain_dynamic_groups_configuration.default_freeform_tags != null ? merge(local.cislz_module_tag, var.identity_domain_dynamic_groups_configuration.default_freeform_tags) : local.cislz_module_tag)
       content {
         key   = freeform_tags["key"]
-        value = freeform_tags["value"]
+        value = trimspace(freeform_tags["value"])
       }
     }
   }
