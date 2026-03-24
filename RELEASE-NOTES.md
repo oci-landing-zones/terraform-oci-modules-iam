@@ -1,4 +1,4 @@
-# March 16, 2026 Release Notes - 0.3.4
+# March 24, 2026 Release Notes - 0.3.4
 ## Updates
 1. [Identity Domains module](./identity-domains/)
     - Added *attribute_sets = ["all"]* to *oci_identity_domains_group* resource blocks. This works in conjunction with OCI Terraform provider 8.5.0, that fixes unsolicited groups updates and groups' tags updates. **Users must upgrade to OCI Terraform provider 8.5.0**.
