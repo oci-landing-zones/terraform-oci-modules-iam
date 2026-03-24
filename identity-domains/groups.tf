@@ -56,13 +56,13 @@ locals {
 resource "oci_identity_domains_group" "these" {
   for_each = var.identity_domain_groups_configuration != null ? (try(var.identity_domain_groups_configuration.ignore_external_membership_updates, true) == true ? var.identity_domain_groups_configuration.groups : {}) : {}
   lifecycle {
-    ignore_changes = [members]
+    ignore_changes = all
     precondition {
       condition     = length(each.value.members) > 0 ? length(setsubtract(toset(each.value.members), toset([for m in each.value.members : m if contains(keys(local.users[each.key]), m)]))) == 0 : true
       error_message = length(each.value.members) > 0 ? "VALIDATION FAILURE: following provided usernames in \"members\" attribute of group \"${each.key}\" do not exist or are not active\": ${join(", ", setsubtract(toset(each.value.members), toset([for m in each.value.members : m if contains(keys(local.users[each.key]), m)])))}. Please either correct their spelling or activate them." : ""
     }
   }
-  #attribute_sets = ["all"]
+  attribute_sets = ["all"]
   idcs_endpoint = each.value.identity_domain_id != null ? (
     contains(keys(oci_identity_domain.these), each.value.identity_domain_id) ? oci_identity_domain.these[each.value.identity_domain_id].url : (
     data.oci_identity_domain.grp_domain[each.key].url)
@@ -90,14 +90,14 @@ resource "oci_identity_domains_group" "these" {
       content {
         key       = split(".", defined_tags["key"])[1]
         namespace = split(".", defined_tags["key"])[0]
-        value     = defined_tags["value"]
+        value     = trimspace(defined_tags["value"])
       }
     }
     dynamic "freeform_tags" {
       for_each = each.value.freeform_tags != null ? merge(local.cislz_module_tag, each.value.freeform_tags) : (var.identity_domain_groups_configuration.default_freeform_tags != null ? merge(local.cislz_module_tag, var.identity_domain_groups_configuration.default_freeform_tags) : local.cislz_module_tag)
       content {
         key   = freeform_tags["key"]
-        value = freeform_tags["value"]
+        value = trimspace(freeform_tags["value"])
       }
     }
   }
@@ -114,7 +114,7 @@ resource "oci_identity_domains_group" "these_with_external_membership_updates" {
       error_message = length(each.value.members) > 0 ? "VALIDATION FAILURE: following provided usernames in \"members\" attribute of group \"${each.key}\" do not exist or are not active\": ${join(", ", setsubtract(toset(each.value.members), toset([for m in each.value.members : m if contains(keys(local.users[each.key]), m)])))}. Please either correct their spelling or activate them." : ""
     }
   }
-  #attribute_sets = ["all"]
+  attribute_sets = ["all"]
   idcs_endpoint = each.value.identity_domain_id != null ? (
     contains(keys(oci_identity_domain.these), each.value.identity_domain_id) ? oci_identity_domain.these[each.value.identity_domain_id].url : (
     data.oci_identity_domain.grp_domain[each.key].url)
@@ -142,14 +142,14 @@ resource "oci_identity_domains_group" "these_with_external_membership_updates" {
       content {
         key       = split(".", defined_tags["key"])[1]
         namespace = split(".", defined_tags["key"])[0]
-        value     = defined_tags["value"]
+        value     = trimspace(defined_tags["value"])
       }
     }
     dynamic "freeform_tags" {
       for_each = each.value.freeform_tags != null ? merge(local.cislz_module_tag, each.value.freeform_tags) : (var.identity_domain_groups_configuration.default_freeform_tags != null ? merge(local.cislz_module_tag, var.identity_domain_groups_configuration.default_freeform_tags) : local.cislz_module_tag)
       content {
         key   = freeform_tags["key"]
-        value = freeform_tags["value"]
+        value = trimspace(freeform_tags["value"])
       }
     }
   }

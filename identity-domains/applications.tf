@@ -390,14 +390,14 @@ resource "oci_identity_domains_app" "these" {
       content {
         key       = split(".", defined_tags["key"])[1]
         namespace = split(".", defined_tags["key"])[0]
-        value     = defined_tags["value"]
+        value     = trimspace(defined_tags["value"])
       }
     }
     dynamic "freeform_tags" {
       for_each = each.value.freeform_tags != null ? each.value.freeform_tags : (var.identity_domain_applications_configuration.default_freeform_tags != null ? var.identity_domain_applications_configuration.default_freeform_tags : {})
       content {
         key   = freeform_tags["key"]
-        value = freeform_tags["value"]
+        value = trimspace(freeform_tags["value"])
       }
     }
 

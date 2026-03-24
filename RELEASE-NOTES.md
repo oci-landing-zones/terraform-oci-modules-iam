@@ -1,3 +1,9 @@
+# March 24, 2026 Release Notes - 0.3.4
+## Updates
+1. [Identity Domains module](./identity-domains/)
+    - Fixed unsolicited updates on identity domains groups, by adding *attribute_sets = ["all"]* to *oci_identity_domains_group* resource blocks. This works in conjunction with OCI Terraform provider 8.5.0.  **Users must upgrade to OCI Terraform provider 8.5.0** to stop seeing those updates during Terraform plan.
+    - Any Terraform updates on *oci_identity_domains_group.these* resource block are now blocked. Added *lifecycle ignore_changes = all* to *oci_identity_domains_group.these* resource block. This is due to a bug in the OCI Terraform Provider that makes terraform to error out when updating the resource. Note that updates can be made through other means than Terraform and will be preserved.
+
 # Feb 20, 2026 Release Notes - 0.3.3
 ## Updates
 1. [Identity Domain module](./identity-domains/)
