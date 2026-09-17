@@ -10,3 +10,8 @@ output "tag_defaults" {
   description = "The tag defaults."
   value       = oci_identity_tag_default.these
 }
+
+output "tag_defaults_configuration" {
+  description = "The normalized tag-default configuration keyed by stable logical identifiers."
+  value       = local.tag_defaults_map
+}

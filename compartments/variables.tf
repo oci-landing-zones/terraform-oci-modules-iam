@@ -93,6 +93,12 @@ variable "derive_keys_from_hierarchy" {
   default     = false
 }
 
+variable "enable_tag_defaults" {
+  description = "Whether this module instance manages tag defaults."
+  type        = bool
+  default     = true
+}
+
 variable "module_name" {
   description = "The module name."
   type        = string

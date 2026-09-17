@@ -6,6 +6,7 @@ This repository contains Terraform OCI (Oracle Cloud Infrastructure) modules for
 
 The following modules are available:
 - [Compartments](./compartments/)
+- [Tag Defaults](./tag-defaults/)
 - [Policies](./policies/)
 - [Groups](./groups/)
 - [Dynamic Groups](./dynamic-groups/)

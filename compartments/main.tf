@@ -126,9 +126,21 @@ locals {
       }
     ] if cmp.tag_defaults != null
   ])
+  tag_defaults_map = {
+    for td in local.tag_defaults : td.key => {
+      compartment_id    = td.compartment_id
+      tag_definition_id = td.tag_definition_id
+      default_value     = td.default_value
+      is_user_required  = td.is_user_required
+    }
+  }
 }
 
 resource "oci_identity_compartment" "these" {
+  lifecycle {
+    ignore_changes = [freeform_tags["ocilz-terraform-module"]]
+  }
+
   for_each = { for c in local.level_1 : c.key => { name : c.name,
     description : c.description,
     parent_ocid : c.parent_ocid,
@@ -144,6 +156,10 @@ resource "oci_identity_compartment" "these" {
 }
 
 resource "oci_identity_compartment" "level_2" {
+  lifecycle {
+    ignore_changes = [freeform_tags["ocilz-terraform-module"]]
+  }
+
   for_each = { for c in local.level_2 : c.key => { name : c.name,
     description : c.description,
     parent_ocid : c.parent_ocid,
@@ -159,6 +175,10 @@ resource "oci_identity_compartment" "level_2" {
 }
 
 resource "oci_identity_compartment" "level_3" {
+  lifecycle {
+    ignore_changes = [freeform_tags["ocilz-terraform-module"]]
+  }
+
   for_each = { for c in local.level_3 : c.key => { name : c.name,
     description : c.description,
     parent_ocid : c.parent_ocid,
@@ -174,6 +194,10 @@ resource "oci_identity_compartment" "level_3" {
 }
 
 resource "oci_identity_compartment" "level_4" {
+  lifecycle {
+    ignore_changes = [freeform_tags["ocilz-terraform-module"]]
+  }
+
   for_each = { for c in local.level_4 : c.key => { name : c.name,
     description : c.description,
     parent_ocid : c.parent_ocid,
@@ -189,6 +213,10 @@ resource "oci_identity_compartment" "level_4" {
 }
 
 resource "oci_identity_compartment" "level_5" {
+  lifecycle {
+    ignore_changes = [freeform_tags["ocilz-terraform-module"]]
+  }
+
   for_each = { for c in local.level_5 : c.key => { name : c.name,
     description : c.description,
     parent_ocid : c.parent_ocid,
@@ -204,6 +232,10 @@ resource "oci_identity_compartment" "level_5" {
 }
 
 resource "oci_identity_compartment" "level_6" {
+  lifecycle {
+    ignore_changes = [freeform_tags["ocilz-terraform-module"]]
+  }
+
   for_each = { for c in local.level_6 : c.key => { name : c.name,
     description : c.description,
     parent_ocid : c.parent_ocid,
@@ -219,10 +251,8 @@ resource "oci_identity_compartment" "level_6" {
 }
 
 resource "oci_identity_tag_default" "these" {
-  for_each = { for td in local.tag_defaults : td.key => { tag_definition_id = td.tag_definition_id
-    compartment_id = td.compartment_id
-    default_value  = td.default_value
-  is_user_required = td.is_user_required } }
+  for_each = var.enable_tag_defaults ? local.tag_defaults_map : {}
+
   compartment_id    = each.value.compartment_id
   tag_definition_id = each.value.tag_definition_id
   value             = each.value.default_value

@@ -27,6 +27,12 @@ Note it is possible to apply tag defaults to compartments. Tag defaults are tag 
 
 Tag defaults are defined using *tag_defaults* attribute within each compartment in *compartments* attribute. You can have multiple tag defaults in a single compartment. Each tag default requires an immutable key (use an uppercase string as a convention), a tag id (*tag_id*), the default value (*default_value*) and whether or not the value is required from users when creating resources (*is_user_required*). If *is_user_required* is not provided or set to false, the default value is automatically applied upon resource creation.  
 
+- **enable_tag_defaults** &ndash; (Optional) Whether this module instance creates the configured tag defaults. The default is `true`. Set it to `false` only when passing `tag_defaults_configuration` to a separate [Tag Defaults module](../tag-defaults/).
+
+The **tag_defaults_configuration** output exposes the normalized desired tag-default configuration. It is keyed by the same stable identifiers used by the existing `oci_identity_tag_default.these` resources, allowing another module instance to manage those resources without changing their logical keys.
+
+The module sets the reserved `ocilz-terraform-module` freeform tag when it creates a compartment. Later changes to only this internal module-version tag are ignored, preventing a module release from making otherwise unchanged compartments unknown during planning. All other freeform and defined tags remain managed normally. Existing compartments therefore keep the internal module version recorded when they were created, while new compartments receive the current version.
+
 ## Identifying Keys
 
 Each compartment is identified by Terraform with an artificial key provided in the input variable. For example, in the snippet below, *DATABASE* (rows 4-13) identifies the *database-cmp* compartment, while *PROD* (rows 8-11) identifies its child *database-production-cmp* compartment.

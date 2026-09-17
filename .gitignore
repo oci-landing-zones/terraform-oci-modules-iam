@@ -13,3 +13,4 @@
 **/*.cert
 **/*.ini
 **/creds
+/docs/superpowers/

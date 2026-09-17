@@ -1,3 +1,11 @@
+# September 17, 2026 Release Notes - 0.3.5
+## Updates
+1. [Compartments module](./compartments/)
+   - Added an opt-out switch and normalized tag-default configuration output so composed modules can manage tag defaults outside the compartment dependency graph. Existing standalone behavior remains enabled by default. Fixes [#51](https://github.com/oci-landing-zones/terraform-oci-modules-iam/issues/51).
+   - Module-version-only changes to the reserved `ocilz-terraform-module` freeform tag are now ignored for existing compartments. This keeps otherwise unchanged compartment IDs available during planning; all other compartment tags remain managed.
+2. [Tag Defaults module](./tag-defaults/)
+   - Added a focused module for managing normalized compartment tag defaults with stable Terraform keys.
+
 # March 24, 2026 Release Notes - 0.3.4
 ## Updates
 1. [Identity Domains module](./identity-domains/)
