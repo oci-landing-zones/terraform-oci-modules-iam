@@ -36,6 +36,7 @@ identity_domain_groups_configuration = {
         identity_domain_id        = "<REPLACE-BY-IDENTITY-DOMAIN-OCID"
         name                      = "devgroup1"
         description               = "Dev Group 1"
+        requestable               = false
         members                   = ["<REPLACE WITH LIST OF EXISTING USERNAMES:  username1,username2..."]
         
       }
@@ -43,6 +44,7 @@ identity_domain_groups_configuration = {
         identity_domain_id        = "<REPLACE-BY-IDENTITY-DOMAIN-OCID"
         name                      = "prodgroup1"
         description               = "Prod Group 1"
+        requestable               = false
         members                   = ["<REPLACE WITH LIST OF EXISTING USERNAMES:  username1,username2..."]
       }
     }

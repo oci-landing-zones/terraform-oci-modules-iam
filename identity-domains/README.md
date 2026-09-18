@@ -106,7 +106,7 @@ Use *identity_domain_groups_configuration* attribute. It supports the following 
   - **identity_domain_id**: (Optional) The identity domain for the group. This attribute is overloaded: it can be either an existing identity domain OCID (if provisioning the group in an existing identity domain) or the identity domain reference (key) in identity_domains map.
   - **name**:  (Required) The display name of the group.
   - **description**: (Optional) The description of the group.
-  - **requestable**: (Optional) Flag controlling whether group membership can be requested by users through self service console.  Example: true
+  - **requestable**: (Optional) Controls whether users can request group membership through the self-service console. Defaults to *false*. Set it to *true* only when self-service access is intentional and an appropriate approval process is configured. Existing groups with an omitted or null value can be updated to *false* when *ignore_external_membership_updates = false*. Groups managed with *ignore_external_membership_updates = true* are not updated automatically because that resource path ignores all changes.
   - **members**: (Optional)  List of existing user names to assign to the group.
   - **defined_tags**: (Optional) defined tags to apply to the group. *default_defined_tags* is used if undefined.
   - **freeform_tags**: (Optional) free tags to apply to the group. *default_freeform_tags* is used if undefined.

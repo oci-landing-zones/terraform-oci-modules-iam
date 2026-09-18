@@ -1,3 +1,8 @@
+# Unreleased - Target 0.4.0
+## Updates
+1. [Identity Domains module](./identity-domains/)
+    - Changed the default value of `identity_domain_groups_configuration.groups[*].requestable` from `true` to `false` so omitted values are not exposed through the self-service access catalog unless callers explicitly opt in. Explicit `requestable = true` remains supported. Existing groups with `ignore_external_membership_updates = false` can be updated on the next apply; groups managed with `ignore_external_membership_updates = true` are not changed automatically because that resource path uses `ignore_changes = all`. See the [upgrade guide](./UPGRADE.md#identity-domains-group-requestability). Fixes [#50](https://github.com/oci-landing-zones/terraform-oci-modules-iam/issues/50).
+
 # March 24, 2026 Release Notes - 0.3.4
 ## Updates
 1. [Identity Domains module](./identity-domains/)

@@ -99,6 +99,7 @@ identity_domain_groups_configuration = {
         identity_domain_id        = "PROD-DOMAIN"
         name                      = "usermgmtgroup"
         description               = "User Management Group"
+        requestable               = false
       }
     }
 }

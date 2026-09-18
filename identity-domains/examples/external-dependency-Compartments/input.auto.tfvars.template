@@ -124,12 +124,14 @@ identity_domain_groups_configuration = {
         identity_domain_id        = null
         name                      = "devgroup1"
         description               = "Dev Group 1"
+        requestable               = false
         
       }
       GRP2 : {
         identity_domain_id        = "PROD-DOMAIN"
         name                      = "prodgroup1"
         description               = "Prod Group 1"
+        requestable               = false
       }
     }
 }
