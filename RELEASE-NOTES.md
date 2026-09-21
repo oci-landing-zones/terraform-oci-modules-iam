@@ -1,7 +1,7 @@
 # September 21, 2026 Release Notes - 0.3.5
 ## Updates
 1. [Identity Domains module](./identity-domains/)
-    - Disabling requestable groups as default. Note that if you need this change on an existing landing zone, it requires manual update on each group.
+    - Requestable identity domain groups is disabled by default. Updating groups provisioned by an existing landing zone deployment requires manual update on each group. This can be done by disabling "User can request access" in OCI Console on each group.
 
 # March 24, 2026 Release Notes - 0.3.4
 ## Updates
